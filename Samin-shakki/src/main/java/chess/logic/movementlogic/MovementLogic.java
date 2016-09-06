@@ -6,8 +6,8 @@ import chess.logic.movementlogic.piecemovers.*;
 import chess.domain.board.ChessBoard;
 import chess.domain.board.Player;
 import chess.domain.board.Square;
-import chess.domain.datastructures.MyHashSet;
 import static chess.domain.board.Klass.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -83,7 +83,7 @@ public class MovementLogic {
             default:
                 break;
         }
-        return new MyHashSet<>();
+        return new HashSet<>();
     }
 
     /**
@@ -112,7 +112,7 @@ public class MovementLogic {
             default:
                 break;
         }
-        return new MyHashSet<>();
+        return new HashSet<>();
     }
 
     /**
@@ -158,7 +158,7 @@ public class MovementLogic {
      * @return set containing all squares that given player's pieces threaten
      */
     public Set<Square> squaresThreatenedByPlayer(Player player, ChessBoard board) {
-        Set<Square> threatenedSquares = new MyHashSet();
+        Set<Square> threatenedSquares = new HashSet();
         board.getPieces(player).stream()
                 .filter(owned -> !owned.isTaken())
                 .forEach(piece -> {
@@ -176,7 +176,7 @@ public class MovementLogic {
      * @return set containing all squares that given player's pieces can move to
      */
     public Set<Square> possibleMovesByPlayer(Player player, ChessBoard board) {
-        Set<Square> possibleMoves = new MyHashSet();
+        Set<Square> possibleMoves = new HashSet();
         board.getPieces(player).stream()
                 .filter(owned -> !owned.isTaken())
                 .forEach(piece -> {

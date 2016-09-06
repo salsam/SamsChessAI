@@ -4,8 +4,8 @@ import chess.domain.GameSituation;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
 import chess.domain.board.Square;
-import chess.domain.datastructures.MyHashSet;
 import chess.domain.board.Piece;
+import java.util.HashSet;
 
 public abstract class PieceMover {
 
@@ -28,7 +28,7 @@ public abstract class PieceMover {
      * @return list containing all squares given piece can legally move to
      */
     public Set<Square> possibleMoves(Piece piece, ChessBoard board) {
-        Set<Square> moves = new MyHashSet();
+        Set<Square> moves = new HashSet();
 
         threatenedSquares(piece, board).stream()
                 .filter((move) -> (legalToMoveTo(piece, move, board)))
@@ -55,7 +55,7 @@ public abstract class PieceMover {
     }
 
     protected Set<Square> possibilities(Square location, int[] columnChange, int[] rowChange, ChessBoard board) {
-        Set<Square> possibilities = new MyHashSet();
+        Set<Square> possibilities = new HashSet();
 
         for (int i = 0; i < columnChange.length; i++) {
             int newColumn = location.getColumn() + columnChange[i];

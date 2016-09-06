@@ -1,5 +1,6 @@
 package chess.domain.datastructures;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,7 +14,7 @@ public class TranspositionTable {
     private Map<TranspositionKey, TranspositionEntry> table;
 
     public TranspositionTable() {
-        table = new MyHashMap();
+        table = new HashMap();
     }
 
     public boolean containsRelevantKey(TranspositionKey key, int height) {

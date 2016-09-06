@@ -3,11 +3,11 @@ package chess.gui.boarddrawing;
 import chess.domain.datastructures.Pair;
 import static chess.io.ImageLoader.getImage;
 import chess.domain.board.Player;
-import chess.domain.datastructures.MyHashMap;
-import chess.domain.board.Piece;
 import static chess.domain.board.Klass.*;
+import chess.domain.board.Piece;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,7 +19,7 @@ public class PieceDrawer {
     private Map<Pair, Image> images;
 
     public PieceDrawer() {
-        images = new MyHashMap();
+        images = new HashMap();
         addImages();
     }
 

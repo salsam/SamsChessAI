@@ -199,7 +199,7 @@ public class AILogicTest {
     }
 
     @Test
-    public void negamaxReturnsMinus123456789IfTimeLimitIsReached() {
+    public void negamaxReturnsMinus123456790IfTimeLimitIsReached() {
         ChessBoard cb = sit.getChessBoard();
         Piece wr = new Piece(ROOK, 1, 4, Player.WHITE, "wr");
         Piece bp = new Piece(PAWN, 5, 6, Player.BLACK, "bp");
@@ -207,7 +207,7 @@ public class AILogicTest {
         putPieceOnBoard(cb, bp);
         sit.reHashBoard(true);
         ai.setStart(System.currentTimeMillis() - 1000);
-        assertEquals(-123456789, ai.negaMax(0, -12345679, 12345678, Player.WHITE));
+        assertEquals(-123456790, ai.negaMax(0, -12345679, 12345678, Player.WHITE));
 
     }
 

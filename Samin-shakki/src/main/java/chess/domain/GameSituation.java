@@ -5,12 +5,11 @@ import chess.domain.board.ChessBoard;
 import chess.logic.chessboardinitializers.ChessBoardInitializer;
 import chess.domain.board.Player;
 import chess.domain.board.Square;
-import chess.domain.datastructures.MyHashMap;
-import chess.domain.board.Piece;
 import static chess.domain.board.Klass.PAWN;
 import chess.logic.ailogic.ZobristHasher;
 import chess.logic.gamelogic.CheckingLogic;
 import chess.logic.gamelogic.LegalityChecker;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -83,7 +82,7 @@ public class GameSituation {
         turn = 1;
         legalityChecker = new LegalityChecker(board);
         checkLogic = new CheckingLogic(this);
-        chessBoardSituationCounter = new MyHashMap();
+        chessBoardSituationCounter = new HashMap();
         continues = true;
         hasher = new ZobristHasher();
         boardHash = hasher.hash(board);

@@ -1,12 +1,12 @@
 package chess.domain.board;
 
 import chess.domain.GameSituation;
-import chess.domain.datastructures.MyArrayList;
 import static chess.domain.board.Klass.KING;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import chess.logic.chessboardinitializers.ChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.addPieceToOwner;
+import java.util.ArrayList;
 
 /**
  * This class is used to make copies of ChessBoards with method copy as well as
@@ -48,8 +48,8 @@ public class ChessBoardCopier {
     }
 
     private static void setPieces(ChessBoard board) {
-        board.setBlackPieces(new MyArrayList());
-        board.setWhitePieces(new MyArrayList());
+        board.setBlackPieces(new ArrayList());
+        board.setWhitePieces(new ArrayList());
 
         for (int i = 0; i < board.getTable().length; i++) {
             for (int j = 0; j < board.getTable()[0].length; j++) {

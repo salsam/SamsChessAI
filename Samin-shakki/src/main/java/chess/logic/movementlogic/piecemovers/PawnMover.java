@@ -4,10 +4,10 @@ import chess.domain.GameSituation;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
 import chess.domain.board.Square;
-import chess.domain.datastructures.MyHashSet;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.PAWN;
 import static chess.logic.gamelogic.PromotionLogic.promotePiece;
+import java.util.HashSet;
 
 /**
  * This class is responsible for containing all pawn-related movement logic.
@@ -65,7 +65,7 @@ public class PawnMover extends PieceMover {
      */
     @Override
     public Set<Square> threatenedSquares(Piece piece, ChessBoard board) {
-        Set<Square> squares = new MyHashSet();
+        Set<Square> squares = new HashSet();
         int[] columnChange = new int[]{1, -1};
         int column = piece.getColumn();
         int row = piece.getRow() + piece.getOwner().getDirection();
@@ -126,7 +126,7 @@ public class PawnMover extends PieceMover {
      */
     @Override
     public Set<Square> possibleMoves(Piece piece, ChessBoard board) {
-        Set<Square> moves = new MyHashSet<>();
+        Set<Square> moves = new HashSet<>();
         int newrow = piece.getRow() + piece.getOwner().getDirection();
 
         if (addSquareIfWithinTableAndEmpty(board, piece.getColumn(), newrow, moves)) {

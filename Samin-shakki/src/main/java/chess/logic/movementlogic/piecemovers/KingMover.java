@@ -11,9 +11,9 @@ import java.util.Set;
 import chess.domain.board.Player;
 import static chess.domain.board.Player.getOpponent;
 import chess.domain.board.Square;
-import chess.domain.datastructures.MyHashSet;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.ROOK;
+import java.util.HashSet;
 
 /**
  * This class is responsible for all king-related movement logic.
@@ -81,8 +81,8 @@ public class KingMover extends PieceMover {
 
     /**
      * Returns a list containing all squares chosen king can legally move to.
-     * That means all neighbor squares of king's location that aren't
-     * threatened by opponent or contain player's own piece.
+     * That means all neighbor squares of king's location that aren't threatened
+     * by opponent or contain player's own piece.
      *
      * @param piece target king
      * @param board chessboard on which movement happens
@@ -90,7 +90,7 @@ public class KingMover extends PieceMover {
      */
     @Override
     public Set<Square> possibleMoves(Piece piece, ChessBoard board) {
-        Set<Square> moves = new MyHashSet<>();
+        Set<Square> moves = new HashSet<>();
         board.updateThreatenedSquares(getOpponent(piece.getOwner()));
 
         threatenedSquares(piece, board).stream()

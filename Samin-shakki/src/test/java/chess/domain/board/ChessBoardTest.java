@@ -1,11 +1,11 @@
 package chess.domain.board;
 
-import chess.domain.datastructures.MyHashSet;
 import static chess.domain.board.Klass.QUEEN;
 import chess.logic.chessboardinitializers.ChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
 import chess.logic.movementlogic.MovementLogic;
 import chess.logic.chessboardinitializers.BetterChessBoardInitializer;
+import java.util.HashSet;
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,7 +60,7 @@ public class ChessBoardTest {
     @Test
     public void blackThreatenedSquaresReturnsAllSquaresThreatenedByBlackInStandardStart() {
         init.initialize(board);
-        Set<Square> correct = new MyHashSet();
+        Set<Square> correct = new HashSet();
         int[] rows = new int[]{0, 0, 0, 0, 0, 0};
         int[] cols = new int[]{1, 2, 3, 4, 5, 6};
 
@@ -83,7 +83,7 @@ public class ChessBoardTest {
     @Test
     public void blackThreatenedSquaresReturnsOnlyThreatenedSquares() {
         init.initialize(board);
-        Set<Square> wrong = new MyHashSet();
+        Set<Square> wrong = new HashSet();
         int[] cols = new int[]{0, 7};
         int[] rows = new int[]{0, 0};
 
@@ -106,7 +106,7 @@ public class ChessBoardTest {
     @Test
     public void whiteThreatenedSquaresReturnsAllSquaresThreatenedByWhiteInStandardStart() {
         init.initialize(board);
-        Set<Square> correct = new MyHashSet();
+        Set<Square> correct = new HashSet();
         int[] rows = new int[]{7, 7, 7, 7, 7, 7};
         int[] cols = new int[]{1, 2, 3, 4, 5, 6};
 
@@ -129,7 +129,7 @@ public class ChessBoardTest {
     @Test
     public void whiteThreatenedSquaresReturnsOnlySquaresThreatenedByWhite() {
         init.initialize(board);
-        Set<Square> wrong = new MyHashSet();
+        Set<Square> wrong = new HashSet();
         int[] cols = new int[]{0, 7};
         int[] rows = new int[]{7, 7};
 

@@ -5,8 +5,8 @@ import chess.domain.board.Piece;
 import chess.domain.GameSituation;
 import chess.domain.board.Player;
 import static chess.domain.board.Player.getOpponent;
-import chess.domain.datastructures.MyHashMap;
 import static chess.domain.board.Klass.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,7 +23,7 @@ public class GameSituationEvaluator {
     private static Map<Klass, Integer[][]> positionalValues;
 
     private static void initValues() {
-        values = new MyHashMap();
+        values = new HashMap();
         values.put(PAWN, 100);
         values.put(KNIGHT, 320);
         values.put(BISHOP, 333);
@@ -33,7 +33,7 @@ public class GameSituationEvaluator {
     }
 
     private static void initPositionValues() {
-        positionalValues = new MyHashMap();
+        positionalValues = new HashMap();
         initBishopPositionalValues();
         initKingPositionalValues();
         initKnightPositionalValues();

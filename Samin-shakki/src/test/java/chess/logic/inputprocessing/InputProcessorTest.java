@@ -2,10 +2,8 @@ package chess.logic.inputprocessing;
 
 import chess.domain.board.Player;
 import chess.domain.board.Square;
-import chess.logic.chessboardinitializers.ChessBoardInitializer;
-import chess.logic.chessboardinitializers.EmptyBoardInitializer;
+import chess.logic.chessboardinitializers.*;
 import chess.domain.GameSituation;
-import chess.domain.datastructures.MyHashMap;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.KING;
 import static chess.domain.board.Klass.PAWN;
@@ -13,6 +11,7 @@ import static chess.domain.board.Klass.QUEEN;
 import static chess.domain.board.Klass.ROOK;
 import chess.logic.chessboardinitializers.BetterChessBoardInitializer;
 import chess.logic.movementlogic.MovementLogic;
+import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -149,7 +148,7 @@ public class InputProcessorTest {
 
     @Test
     public void outputTellsIfGameHasEndedInCheckMate() {
-        Map<String, JFrame> frames = new MyHashMap<>();
+        Map<String, JFrame> frames = new HashMap<>();
         frames.put("endingScreen", new JFrame());
         frames.get("endingScreen").setVisible(false);
         inputProcessor.setFrames(frames);
@@ -168,7 +167,7 @@ public class InputProcessorTest {
 
     @Test
     public void outputTellsIfGameHasEndedInStaleMate() {
-        Map<String, JFrame> frames = new MyHashMap<>();
+        Map<String, JFrame> frames = new HashMap<>();
         frames.put("endingScreen", new JFrame());
         frames.get("endingScreen").setVisible(false);
         inputProcessor.setFrames(frames);

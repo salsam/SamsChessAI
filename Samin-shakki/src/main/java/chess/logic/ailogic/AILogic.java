@@ -10,13 +10,14 @@ import static chess.domain.board.Player.getOpponent;
 import static chess.logic.ailogic.GameSituationEvaluator.evaluateGameSituation;
 import chess.logic.movementlogic.MovementLogic;
 import chess.domain.board.Square;
-import chess.domain.datastructures.MyArrayList;
 import chess.domain.datastructures.Pair;
 import chess.domain.datastructures.TranspositionEntry;
 import chess.domain.datastructures.TranspositionKey;
 import chess.domain.datastructures.TranspositionTable;
 import chess.domain.datastructures.Type;
 import chess.domain.board.Piece;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -46,7 +47,7 @@ public class AILogic {
 
     private GameSituation sit;
     private MovementLogic ml;
-    private MyArrayList<Move> bestMoves;
+    private List<Move> bestMoves;
     private int[] bestValues;
     private long timeLimit;
     private long start;
@@ -63,7 +64,7 @@ public class AILogic {
 
     public AILogic() {
         bestValues = new int[plies + 1];
-        bestMoves = new MyArrayList();
+        bestMoves = new ArrayList();
         killerCandidates = new Move[plies];
         killerMoves = new Move[plies][3];
         lastPlies = 0;

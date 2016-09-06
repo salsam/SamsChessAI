@@ -1,7 +1,7 @@
 package chess.domain.board;
 
-import chess.domain.datastructures.MyHashSet;
 import static chess.domain.board.Klass.PAWN;
+import java.util.HashSet;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class SquareTest {
 
     public static void testMultipleSquares(int[] columns, int[] rows, Set<Square> possibleMoves) {
-        Set<Square> realPossibilities = new MyHashSet<>();
+        Set<Square> realPossibilities = new HashSet<>();
         for (int i = 0; i < columns.length; i++) {
             realPossibilities.add(new Square(columns[i], rows[i]));
         }

@@ -1,9 +1,9 @@
 package chess.domain.board;
 
-import chess.domain.datastructures.MyArrayList;
-import chess.domain.datastructures.MyHashMap;
-import chess.domain.datastructures.MyHashSet;
 import chess.logic.movementlogic.MovementLogic;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,11 +54,11 @@ public class ChessBoard {
     public ChessBoard(MovementLogic movementLogic) {
         initializeBoard();
         this.movementLogic = movementLogic;
-        this.blackPieces = new MyArrayList<>();
-        this.whitePieces = new MyArrayList<>();
-        this.squaresThreatenedByBlack = new MyHashSet();
-        this.squaresThreatenedByWhite = new MyHashSet();
-        this.kings = new MyHashMap();
+        this.blackPieces = new ArrayList<>();
+        this.whitePieces = new ArrayList<>();
+        this.squaresThreatenedByBlack = new HashSet();
+        this.squaresThreatenedByWhite = new HashSet();
+        this.kings = new HashMap();
     }
 
     /**
