@@ -1,7 +1,9 @@
 package chess.domain.datastructures;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  * This class is used for saving search results of AI for search corresponding
@@ -12,9 +14,15 @@ import java.util.Map;
 public class TranspositionTable {
 
     private Map<TranspositionKey, TranspositionEntry> table;
+    private PriorityQueue<TranspositionKey> pq;
 
     public TranspositionTable() {
         table = new HashMap();
+        pq = new PriorityQueue(new Comparator<TranspositionKey>() {
+            public int compare(TranspositionKey k1, TranspositionKey k2) {
+                return table.get(k2).getHeight() - table.get(k1).getHeight();
+            }
+        });
     }
 
     public boolean containsRelevantKey(TranspositionKey key, int height) {
@@ -43,6 +51,14 @@ public class TranspositionTable {
      * @param entry entry representing the result of said search.
      */
     public void put(TranspositionKey key, TranspositionEntry entry) {
+        if (table.size() == 100000) {
+            TranspositionKey removed = pq.poll();
+            while (removed.isSaved()) {
+                removed = pq.poll();
+            }
+            table.remove(removed);
+
+        }
         if (!table.containsKey(key)) {
             table.put(key, entry);
         } else if (table.get(key).getHeight() < entry.getHeight()) {
@@ -58,6 +74,18 @@ public class TranspositionTable {
         table.keySet().stream().forEach((key) -> {
             key.setSaved(false);
         });
+        pq.clear();
+        pq.addAll(table.keySet());
+    }
+
+    /**
+     * Removes given key from priority queue that is responsible for ordering
+     * removed keys.
+     *
+     * @param key TranspositionKey that is removed from to-be-removed queue.
+     */
+    public void makeSaved(TranspositionKey key) {
+        key.setSaved(true);
     }
 
 }

@@ -21,6 +21,7 @@ public class GameSituationEvaluator {
 
     private static Map<Klass, Integer> values;
     private static Map<Klass, Integer[][]> positionalValues;
+    private static final int mobilityWeight = 10;
 
     private static void initValues() {
         values = new HashMap();
@@ -163,6 +164,18 @@ public class GameSituationEvaluator {
                     return sit.getChessBoard().getMovementLogic().possibleMoves(p, sit.getChessBoard()).size();
                 }).sum();
 
-        return 10 * value;
+        return mobilityWeight * value;
+    }
+
+    /**
+     * Returns total value of piece for it's owner.
+     * @param sit
+     * @param piece
+     * @return 
+     */
+    public static int getValue(GameSituation sit, Piece piece) {
+        int value = values.get(piece.getKlass()) + getPositionalValue(piece);
+        value += mobilityWeight * sit.getChessBoard().getMovementLogic().possibleMoves(piece, sit.getChessBoard()).size();
+        return value;
     }
 }

@@ -2,20 +2,14 @@ package chess.logic.ailogic;
 
 import chess.domain.GameSituation;
 import chess.domain.Move;
-import chess.domain.board.ChessBoard;
 import static chess.domain.board.ChessBoardCopier.copy;
 import static chess.domain.board.ChessBoardCopier.undoMove;
-import chess.domain.board.Player;
 import static chess.domain.board.Player.getOpponent;
 import static chess.logic.ailogic.GameSituationEvaluator.evaluateGameSituation;
 import chess.logic.movementlogic.MovementLogic;
-import chess.domain.board.Square;
-import chess.domain.datastructures.Pair;
-import chess.domain.datastructures.TranspositionEntry;
-import chess.domain.datastructures.TranspositionKey;
-import chess.domain.datastructures.TranspositionTable;
-import chess.domain.datastructures.Type;
-import chess.domain.board.Piece;
+import chess.domain.datastructures.*;
+import chess.domain.board.*;
+import static chess.logic.ailogic.GameSituationEvaluator.getValue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -61,6 +55,8 @@ public class AILogic {
     private Move[] killerCandidates;
     private Move[][] killerMoves;
     private TranspositionTable transpositionTable;
+    private long sum = 0;
+    private int count = 0;
 
     public AILogic() {
         bestValues = new int[plies + 1];
@@ -149,7 +145,7 @@ public class AILogic {
 
         if (transpositionTable.containsRelevantKey(key, height)) {
             TranspositionEntry entry = transpositionTable.get(key);
-            key.setSaved(true);
+            transpositionTable.makeSaved(key);
             switch (entry.getType()) {
                 case EXACT:
                     return entry.getValue();
@@ -202,7 +198,7 @@ public class AILogic {
         alpha = testPrincipalMove(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
         alpha = testKillerMoves(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
 
-        for (int loopCount = 0; loopCount < 2; loopCount++) {
+        for (int loopCount = 0; loopCount < 4; loopCount++) {
             for (Piece piece : sit.getChessBoard().getPieces(maxingPlayer)) {
                 if (alpha >= beta || System.currentTimeMillis() - start >= timeLimit) {
                     break;
@@ -228,7 +224,7 @@ public class AILogic {
      * for being killer move. If beta-cutoff was reached, last killer candidate
      * will be saved as new killer move assuming such exists.
      *
-     * @param piece piece being moved.
+     * @param moved piece being moved.
      * @param loopCount looping count.
      * @param height height from leaf nodes.
      * @param alpha current alpha value.
@@ -239,29 +235,47 @@ public class AILogic {
      * @param from square piece is located in before movement.
      * @return new alpha value of situation.
      */
-    public int tryMovingPiece(int height, int loopCount, Piece piece, Square from, int ogAlpha, int alpha, int beta, Player maxingPlayer, ChessBoard backUp) {
+    public int tryMovingPiece(int height, int loopCount, Piece moved, Square from, int ogAlpha, int alpha, int beta, Player maxingPlayer, ChessBoard backUp) {
 
-        for (Square possibility : ml.possibleMoves(piece, sit.getChessBoard())) {
+        for (Square possibility : ml.possibleMoves(moved, sit.getChessBoard())) {
 
             if (System.currentTimeMillis() - start >= timeLimit) {
                 break;
             }
 
-            if ((loopCount == 0 && !possibility.containsAPiece())
-                    || (loopCount == 1 && possibility.containsAPiece())
-                    || moveHasBeenTestedAlready(height, piece, possibility)) {
+            if (!willBeHandledOnThisLoopThrough(loopCount, possibility, height, moved)) {
                 continue;
             }
-            alpha = testAMove(piece, possibility, from, maxingPlayer, height, ogAlpha, alpha, beta, backUp);
+
+            alpha = testAMove(moved, possibility, from, maxingPlayer, height, ogAlpha, alpha, beta, backUp);
 
             if (alpha >= beta) {
                 saveNewKillerMove(height);
                 break;
             }
-            killerCandidates[searchDepth - height] = new Move(piece, possibility);
+            killerCandidates[searchDepth - height] = new Move(moved, possibility);
         }
 
         return alpha;
+    }
+
+    private boolean willBeHandledOnThisLoopThrough(int loopCount, Square possibility, int height, Piece moved) {
+        if ((loopCount < 3 && !possibility.containsAPiece())
+                || (loopCount == 3 && possibility.containsAPiece())
+                || moveHasBeenTestedAlready(height, moved, possibility)) {
+            return false;
+        }
+
+        if (loopCount < 3) {
+            int movedVal = getValue(sit, moved);
+            int capVal = getValue(sit, possibility.getPiece());
+            if ((loopCount == 0 && capVal <= movedVal)
+                    || (loopCount == 1 && capVal != movedVal)
+                    || (loopCount == 2 && capVal >= movedVal)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -477,7 +491,8 @@ public class AILogic {
         transpositionTable.makePairsUnsaved();
         ml = sit.getChessBoard().getMovementLogic();
         salvageLastPrincipalVariation();
-        for (int i = 1; i <= plies; i++) {
+        int i = 1;
+        for (; i <= plies; i++) {
             searchDepth = i;
             negaMax(i, -123456789, 123456789, situation.whoseTurn());
             lastPlies++;
@@ -486,6 +501,7 @@ public class AILogic {
                 break;
             }
         }
+        System.out.println("Recursion depth: " + i);
 
         lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
     }
