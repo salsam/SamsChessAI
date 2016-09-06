@@ -1,0 +1,14 @@
+chess.domain
+chess.domain.board
+chess.domain.datastructures
+chess.gui
+chess.gui.actionlisteners
+chess.gui.boarddrawing
+chess.io
+chess.logic.ailogic
+chess.logic.chessboardinitializers
+chess.logic.gamelogic
+chess.logic.inputprocessing
+chess.logic.movementlogic
+chess.logic.movementlogic.piecemovers
+main
