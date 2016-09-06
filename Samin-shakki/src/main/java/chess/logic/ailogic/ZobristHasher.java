@@ -1,6 +1,7 @@
 package chess.logic.ailogic;
 
 import chess.domain.board.ChessBoard;
+import chess.domain.board.Klass;
 import chess.domain.board.Player;
 import chess.domain.board.Square;
 import static chess.domain.board.Klass.*;
@@ -44,34 +45,42 @@ public class ZobristHasher {
      * @param sq square of which piece is being checked.
      * @return index of piece placed on this square.
      */
-    private int numberOfPieceAtSquare(ChessBoard board, Square square) {
+    private int indexOfPieceAtSquare(ChessBoard board, Square square) {
         Square sq = board.getSquare(square.getColumn(), square.getRow());
         if (!sq.containsAPiece()) {
             return 0;
         }
         int ret = 0;
 
+        ret += indexOf(sq.getPiece().getKlass());
+
+        if (ret == 6 && kingCanCastle(board, sq)) {
+            return 13;
+        }
+
         if (sq.getPiece().getOwner() == Player.BLACK) {
             ret += 6;
         }
 
-        if (sq.getPiece().getKlass() == PAWN) {
-            ret += 1;
-        } else if (sq.getPiece().getKlass() == ROOK) {
-            ret += 2;
-        } else if (sq.getPiece().getKlass() == KNIGHT) {
-            ret += 3;
-        } else if (sq.getPiece().getKlass() == BISHOP) {
-            ret += 4;
-        } else if (sq.getPiece().getKlass() == QUEEN) {
-            ret += 5;
-        } else if (kingCanCastle(board, sq)) {
-            ret = 13;
-        } else {
-            ret += 6;
-        }
-
         return ret;
+
+    }
+
+    public int indexOf(Klass klass) {
+        switch (klass) {
+            case PAWN:
+                return 1;
+            case ROOK:
+                return 2;
+            case KNIGHT:
+                return 3;
+            case BISHOP:
+                return 4;
+            case QUEEN:
+                return 5;
+            default:
+                return 6;
+        }
 
     }
 
@@ -101,7 +110,7 @@ public class ZobristHasher {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                hash ^= squareHashes[8 * i + j][numberOfPieceAtSquare(board, board.getSquare(i, j))];
+                hash ^= squareHashes[8 * i + j][indexOfPieceAtSquare(board, board.getSquare(i, j))];
             }
         }
 
@@ -121,10 +130,10 @@ public class ZobristHasher {
      * @return new hash of chessboard after movement.
      */
     public long getHashAfterMove(long hash, ChessBoard board, Square from, Square to) {
-        hash ^= squareHashes[8 * from.getColumn() + from.getRow()][numberOfPieceAtSquare(board, from)];
+        hash ^= squareHashes[8 * from.getColumn() + from.getRow()][indexOfPieceAtSquare(board, from)];
         hash ^= squareHashes[8 * from.getColumn() + from.getRow()][0];
-        hash ^= squareHashes[8 * to.getColumn() + to.getRow()][numberOfPieceAtSquare(board, to)];
-        hash ^= squareHashes[8 * to.getColumn() + to.getRow()][numberOfPieceAtSquare(board, from)];
+        hash ^= squareHashes[8 * to.getColumn() + to.getRow()][indexOfPieceAtSquare(board, to)];
+        hash ^= squareHashes[8 * to.getColumn() + to.getRow()][indexOfPieceAtSquare(board, from)];
         return hash;
     }
 
@@ -140,10 +149,10 @@ public class ZobristHasher {
      * @return hash of chessboard before move was made.
      */
     public long getHashBeforeMove(long hash, ChessBoard board, ChessBoard backup, Square from, Square to) {
-        hash ^= squareHashes[8 * to.getColumn() + to.getRow()][numberOfPieceAtSquare(board, to)];
-        hash ^= squareHashes[8 * to.getColumn() + to.getRow()][numberOfPieceAtSquare(backup, to)];
+        hash ^= squareHashes[8 * to.getColumn() + to.getRow()][indexOfPieceAtSquare(board, to)];
+        hash ^= squareHashes[8 * to.getColumn() + to.getRow()][indexOfPieceAtSquare(backup, to)];
         hash ^= squareHashes[8 * from.getColumn() + from.getRow()][0];
-        hash ^= squareHashes[8 * from.getColumn() + from.getRow()][numberOfPieceAtSquare(backup, from)];
+        hash ^= squareHashes[8 * from.getColumn() + from.getRow()][indexOfPieceAtSquare(backup, from)];
         return hash;
     }
 
@@ -156,23 +165,25 @@ public class ZobristHasher {
      * @return hash after piece is taken.
      */
     public long getHashAfterPieceIsTaken(long hash, ChessBoard board, Square location) {
-        hash ^= squareHashes[8 * location.getColumn() + location.getRow()][numberOfPieceAtSquare(board, location)];
+        hash ^= squareHashes[8 * location.getColumn() + location.getRow()][indexOfPieceAtSquare(board, location)];
         hash ^= squareHashes[8 * location.getColumn() + location.getRow()][0];
         return hash;
     }
 
     /**
-     * Updates hash for changing class of piece at location from pawn to queen.
+     * Updates hash for changing klass of piece at location from pawn to chosen
+     * klass.
      *
      * @param hash old hash of given chessboard.
      * @param board chessboard on which piece is on.
      * @param location square that piece being promoted is placed on.
+     * @param klass klass that piece is promoted to.
      * @return hash after piece is promoted.
      */
-    public long getHashAfterPromotion(long hash, ChessBoard board, Square location) {
-        int pieceType = numberOfPieceAtSquare(board, location);
+    public long getHashAfterPromotion(long hash, ChessBoard board, Square location, Klass klass) {
+        int pieceType = indexOfPieceAtSquare(board, location);
         hash ^= squareHashes[8 * location.getColumn() + location.getRow()][pieceType];
-        hash ^= squareHashes[8 * location.getColumn() + location.getRow()][pieceType + 4];
+        hash ^= squareHashes[8 * location.getColumn() + location.getRow()][pieceType + indexOf(klass) - 1];
         return hash;
     }
 
@@ -185,9 +196,13 @@ public class ZobristHasher {
      * @return hash after piece is demoted.
      */
     public long getHashBeforePromotion(long hash, ChessBoard board, Square location) {
-        int pieceType = numberOfPieceAtSquare(board, location);
+        int pieceType = indexOfPieceAtSquare(board, location);
+        int newType = 1;
+        if (pieceType > 7) {
+            newType = 7;
+        }
         hash ^= squareHashes[8 * location.getColumn() + location.getRow()][pieceType];
-        hash ^= squareHashes[8 * location.getColumn() + location.getRow()][pieceType - 4];
+        hash ^= squareHashes[8 * location.getColumn() + location.getRow()][newType];
         return hash;
     }
 

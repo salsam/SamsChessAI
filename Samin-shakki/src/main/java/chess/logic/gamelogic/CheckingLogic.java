@@ -6,6 +6,7 @@ import chess.domain.board.Player;
 import static chess.domain.board.Player.getOpponent;
 import chess.domain.board.ChessBoardCopier;
 import static chess.domain.board.ChessBoardCopier.undoMove;
+import static chess.domain.board.Klass.*;
 import chess.domain.board.Square;
 import chess.domain.board.Piece;
 
@@ -105,5 +106,48 @@ public class CheckingLogic {
         }
         game.setContinues(false);
         return true;
+    }
+
+    /**
+     * Returns true if there's insufficient material on board for checkmate.
+     *
+     * @return true if checkmate is impossible with pieces on board, otherwise
+     * false.
+     */
+    public boolean insufficientMaterial() {
+        boolean[][] hasBishopKnight = new boolean[2][2];
+        for (int i = 0; i < 2; i++) {
+            for (Piece p : game.getChessBoard().getPieces(Player.values()[i])) {
+                if (p.isTaken()) {
+                    continue;
+                }
+
+                if (p.getKlass() == PAWN || p.getKlass() == QUEEN || p.getKlass() == ROOK) {
+                    return false;
+                } else if (p.getKlass() == BISHOP) {
+                    if (hasBishopKnight[i][0] == true) {
+                        return false;
+                    }
+                    hasBishopKnight[i][0] = true;
+                } else if (p.getKlass() == KNIGHT) {
+                    if (hasBishopKnight[i][1] == true) {
+                        return false;
+                    }
+                    hasBishopKnight[i][1] = true;
+                }
+            }
+        }
+
+        if (hasBishopKnight[0][0] == false && hasBishopKnight[0][1] == false) {
+            if (hasBishopKnight[1][0] == false || hasBishopKnight[1][1] == false) {
+                return true;
+            }
+        } else if (hasBishopKnight[1][0] == false && hasBishopKnight[1][1] == false) {
+            if (hasBishopKnight[0][0] == false || hasBishopKnight[0][1] == false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

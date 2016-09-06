@@ -93,9 +93,11 @@ public abstract class PieceMover {
 
         Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
         sit.updateHashForMoving(from, target);
+        sit.decrementMovesTillDraw();
 
         from.setPiece(null);
         if (target.containsAPiece()) {
+            sit.refresh50MoveRule();
             target.getPiece().setTaken(true);
         }
         target.setPiece(piece);

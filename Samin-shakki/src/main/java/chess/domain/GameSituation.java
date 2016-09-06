@@ -2,6 +2,7 @@ package chess.domain;
 
 import chess.logic.movementlogic.MovementLogic;
 import chess.domain.board.ChessBoard;
+import chess.domain.board.Klass;
 import chess.logic.chessboardinitializers.ChessBoardInitializer;
 import chess.domain.board.Player;
 import chess.domain.board.Square;
@@ -70,6 +71,12 @@ public class GameSituation {
     private long boardHash;
 
     /**
+     * Keeps track of how many moves have to be made until game is drawn by
+     * 50-move rule.
+     */
+    private int movesTillDraw;
+
+    /**
      * Creates a new game with given movement logic and chessboard initializer.
      *
      * @param init chessboard initializer to be used for this game
@@ -84,6 +91,7 @@ public class GameSituation {
         checkLogic = new CheckingLogic(this);
         chessBoardSituationCounter = new HashMap();
         continues = true;
+        movesTillDraw = 100;
         hasher = new ZobristHasher();
         boardHash = hasher.hash(board);
         incrementCountOfCurrentBoardSituation();
@@ -145,6 +153,18 @@ public class GameSituation {
 
     public long getBoardHash() {
         return boardHash;
+    }
+
+    public void refresh50MoveRule() {
+        movesTillDraw = 100;
+    }
+
+    public void decrementMovesTillDraw() {
+        movesTillDraw--;
+    }
+
+    public int getMovesTillDraw() {
+        return movesTillDraw;
     }
 
     /**
@@ -230,9 +250,10 @@ public class GameSituation {
      * Updates hash for having piece at target square promoted to queen.
      *
      * @param location square that piece is located on.
+     * @param klass klass that piece is promoted to.
      */
-    public void updateHashForPromotion(Square location) {
-        boardHash = hasher.getHashAfterPromotion(boardHash, board, location);
+    public void updateHashForPromotion(Square location, Klass klass) {
+        boardHash = hasher.getHashAfterPromotion(boardHash, board, location, klass);
     }
 
     /**

@@ -7,7 +7,9 @@ import chess.domain.board.Square;
 import chess.domain.GameSituation;
 import chess.domain.Move;
 import static chess.domain.board.ChessBoardCopier.undoMove;
+import static chess.domain.board.Klass.PAWN;
 import chess.domain.board.Piece;
+import chess.gui.PromotionScreen;
 import chess.logic.ailogic.AILogic;
 import java.util.Map;
 import java.util.Set;
@@ -109,6 +111,7 @@ public class InputProcessor {
                 possibilities = game.getChessBoard().getMovementLogic().possibleMoves(chosen, game.getChessBoard());
             }
         }
+        
     }
 
     private void makeBestMoveAccordingToAILogic(GameSituation game) {
@@ -125,6 +128,11 @@ public class InputProcessor {
         Square from = game.getChessBoard().getSquare(chosen.getColumn(), chosen.getRow());
 
         game.getChessBoard().getMovementLogic().move(chosen, target, game);
+        
+        if (chosen.getKlass()==PAWN && chosen.isAtOpposingEnd()) {
+            PromotionScreen pr = new PromotionScreen(game, chosen);
+        }
+        
         chosen = null;
         possibilities = null;
 
@@ -143,8 +151,11 @@ public class InputProcessor {
             game.setContinues(false);
             textArea.setText("Third repetition of situation. Game ended as a draw!");
             frames.get("endingScreen").setVisible(true);
-        }
-        if (game.getCheckLogic().checkIfChecked(game.whoseTurn())) {
+        } else if (game.getMovesTillDraw() < 1) {
+            game.setContinues(false);
+            textArea.setText("50-move rule reached. Game ended as a draw!");
+            frames.get("endingScreen").setVisible(true);
+        } else if (game.getCheckLogic().checkIfChecked(game.whoseTurn())) {
             textArea.setText(textArea.getText() + " Check!");
             if (game.getCheckLogic().checkMate(game.whoseTurn())) {
                 textArea.setText("Checkmate! " + getOpponent(game.whoseTurn()) + " won!");
@@ -152,6 +163,9 @@ public class InputProcessor {
             }
         } else if (game.getCheckLogic().stalemate(game.whoseTurn())) {
             textArea.setText("Stalemate! Game ended as a draw!");
+            frames.get("endingScreen").setVisible(true);
+        } else if (game.getCheckLogic().insufficientMaterial()) {
+            textArea.setText("Insufficient material! Game ended as a draw!");
             frames.get("endingScreen").setVisible(true);
         }
     }

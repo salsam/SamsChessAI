@@ -6,8 +6,9 @@ import java.util.Set;
 import chess.domain.board.Square;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.PAWN;
-import static chess.logic.gamelogic.PromotionLogic.promotePiece;
+import static chess.domain.board.Klass.QUEEN;
 import java.util.HashSet;
+import static chess.logic.gamelogic.PromotionLogic.promote;
 
 /**
  * This class is responsible for containing all pawn-related movement logic.
@@ -50,7 +51,7 @@ public class PawnMover extends PieceMover {
         }
 
         super.move(piece, target, sit);
-        promotePiece(piece, sit);
+        sit.refresh50MoveRule();
     }
 
     /**
