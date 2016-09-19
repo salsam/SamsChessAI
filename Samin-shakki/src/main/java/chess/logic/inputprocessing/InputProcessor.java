@@ -8,9 +8,11 @@ import chess.domain.GameSituation;
 import chess.domain.Move;
 import static chess.domain.board.ChessBoardCopier.undoMove;
 import static chess.domain.board.Klass.PAWN;
+import static chess.domain.board.Klass.QUEEN;
 import chess.domain.board.Piece;
 import chess.gui.PromotionScreen;
 import chess.logic.ailogic.AILogic;
+import chess.logic.gamelogic.PromotionLogic;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JFrame;
@@ -103,7 +105,7 @@ public class InputProcessor {
             makeBestMoveAccordingToAILogic(game);
         } else if (game.getChessBoard().withinTable(column, row)) {
             if (chosen != null && possibilities.contains(game.getChessBoard().getSquare(column, row))) {
-                moveToTargetLocation(column, row, game);
+                moveToTargetLocation(column, row, game, false);
             } else if (game.getChecker().checkPlayerOwnsPieceOnTargetSquare(game.whoseTurn(), column, row)) {
                 setChosen(game.getChessBoard().getSquare(column, row).getPiece());
             }
@@ -111,7 +113,7 @@ public class InputProcessor {
                 possibilities = game.getChessBoard().getMovementLogic().possibleMoves(chosen, game.getChessBoard());
             }
         }
-        
+
     }
 
     private void makeBestMoveAccordingToAILogic(GameSituation game) {
@@ -119,20 +121,18 @@ public class InputProcessor {
         Move move = ais[game.getTurn() % 2].getBestMove();
         setChosen(move.getPiece());
         moveToTargetLocation(move.getTarget().getColumn(),
-                move.getTarget().getRow(), game);
+                move.getTarget().getRow(), game, true);
     }
 
-    private void moveToTargetLocation(int column, int row, GameSituation game) {
+    private void moveToTargetLocation(int column, int row, GameSituation game, boolean aisTurn) {
         ChessBoard backUp = ChessBoardCopier.copy(game.getChessBoard());
         Square target = game.getChessBoard().getSquare(column, row);
         Square from = game.getChessBoard().getSquare(chosen.getColumn(), chosen.getRow());
 
         game.getChessBoard().getMovementLogic().move(chosen, target, game);
-        
-        if (chosen.getKlass()==PAWN && chosen.isAtOpposingEnd()) {
-            PromotionScreen pr = new PromotionScreen(game, chosen);
-        }
-        
+
+        handlePromotion(aisTurn, game);
+
         chosen = null;
         possibilities = null;
 
@@ -142,6 +142,17 @@ public class InputProcessor {
         }
 
         startNextTurn(game);
+    }
+
+    private void handlePromotion(boolean aisTurn, GameSituation game) {
+        if (chosen.getKlass() == PAWN && chosen.isAtOpposingEnd()) {
+            if (aisTurn) {
+                PromotionLogic.promote(game, chosen, QUEEN);
+            } else {
+                game.setContinues(false);
+                PromotionScreen pr = new PromotionScreen(game, chosen);
+            }
+        }
     }
 
     private void startNextTurn(GameSituation game) {

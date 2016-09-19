@@ -6,7 +6,7 @@ import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import static chess.domain.board.Klass.ROOK;
 import chess.logic.movementlogic.MovementLogic;
-import chess.logic.chessboardinitializers.BetterChessBoardInitializer;
+import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import chess.logic.chessboardinitializers.ChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
 import chess.logic.chessboardinitializers.EmptyBoardInitializer;
@@ -29,7 +29,7 @@ public class ChessBoardCopierTest {
 
     @BeforeClass
     public static void setUpClass() {
-        init = new BetterChessBoardInitializer();
+        init = new StandardChessBoardInitializer();
         sit = new GameSituation(init, new MovementLogic());
     }
 

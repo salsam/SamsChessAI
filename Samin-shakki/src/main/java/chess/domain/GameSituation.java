@@ -247,19 +247,19 @@ public class GameSituation {
     }
 
     /**
-     * Updates hash for having piece at target square promoted to queen.
+     * Updates hash for having piece at target square promoted to chosen class.
      *
      * @param location square that piece is located on.
-     * @param klass klass that piece is promoted to.
+     * @param klass class that piece is promoted to.
      */
     public void updateHashForPromotion(Square location, Klass klass) {
         boardHash = hasher.getHashAfterPromotion(boardHash, board, location, klass);
     }
 
     /**
-     * Updates hash for having piece at location reverted from queen to pawn.
+     * Updates hash for having piece at location reverted to pawn.
      *
-     * @param location location of piece being reverted from queen to pawn.
+     * @param location location of piece being reverted to pawn.
      */
     public void updateHashForUndoingPromotion(Square location) {
         boardHash = hasher.getHashBeforePromotion(boardHash, board, location);

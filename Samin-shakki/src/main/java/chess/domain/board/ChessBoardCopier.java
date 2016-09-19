@@ -3,7 +3,6 @@ package chess.domain.board;
 import chess.domain.GameSituation;
 import static chess.domain.board.Klass.KING;
 import static chess.domain.board.Klass.PAWN;
-import static chess.domain.board.Klass.QUEEN;
 import chess.logic.chessboardinitializers.ChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.addPieceToOwner;
 import java.util.ArrayList;
@@ -103,7 +102,7 @@ public class ChessBoardCopier {
     public static void undoMove(ChessBoard backUp, GameSituation sit, Square from, Square to) {
         Piece old = backUp.getSquare(from.getColumn(), from.getRow()).getPiece();
         sit.decrementCountOfCurrentBoardSituation();
-        if (old.getKlass() == PAWN && to.getPiece().getKlass() == QUEEN) {
+        if (old.getKlass() != to.getPiece().getKlass()) {
             sit.updateHashForUndoingPromotion(to);
         }
         sit.updateHashForUndoingMove(backUp, from, to);

@@ -97,7 +97,7 @@ public class AILogicTest {
 
     @Test
     public void findBestMoveDoesNotChangeChessBoard() {
-        sit = new GameSituation(new BetterChessBoardInitializer(), new MovementLogic());
+        sit = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
         ChessBoard backUp = copy(sit.getChessBoard());
         ai.findBestMoves(sit);
 
@@ -112,7 +112,7 @@ public class AILogicTest {
 
     @Test
     public void findBestMoveDoesNotChangePawns() {
-        sit = new GameSituation(new BetterChessBoardInitializer(), new MovementLogic());
+        sit = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
         MovementLogic ml = sit.getChessBoard().getMovementLogic();
         ChessBoard cb = sit.getChessBoard();
         ml.move(cb.getSquare(1, 1).getPiece(), cb.getSquare(1, 3), sit);

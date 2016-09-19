@@ -10,7 +10,7 @@ import static chess.logic.gamelogic.PromotionLogic.promote;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,7 +23,7 @@ import javax.swing.WindowConstants;
 public class PromotionScreen extends JFrame {
 
     public PromotionScreen(GameSituation sit, Piece promotee) {
-        this.setPreferredSize(new Dimension(450, 300));
+        this.setPreferredSize(new Dimension(400, 300));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initComponents(this.getContentPane(), sit, promotee);
         this.pack();
@@ -34,35 +34,40 @@ public class PromotionScreen extends JFrame {
     private void initComponents(Container cont, GameSituation sit, Piece promotee) {
         JLabel label = new JLabel("Which class would you like to promote your pawn?");
         JButton bishop = new JButton("Bishop");
-        bishop.setPreferredSize(new Dimension(50, 50));
+        bishop.setPreferredSize(new Dimension(250, 50));
         JButton knight = new JButton("Knight");
-        knight.setPreferredSize(new Dimension(50, 50));
+        knight.setPreferredSize(new Dimension(250, 50));
         JButton queen = new JButton("Queen");
-        queen.setPreferredSize(new Dimension(50, 50));
+        queen.setPreferredSize(new Dimension(250, 50));
         JButton rook = new JButton("Rook");
-        rook.setPreferredSize(new Dimension(50, 50));
+        rook.setPreferredSize(new Dimension(250, 50));
         PromotionScreen pr = this;
 
         bishop.addActionListener((ActionEvent ae) -> {
             promote(sit, promotee, BISHOP);
+            sit.setContinues(true);
             pr.dispose();
         });
 
         knight.addActionListener((ActionEvent ae) -> {
             promote(sit, promotee, KNIGHT);
+            sit.setContinues(true);
             pr.dispose();
         });
 
         queen.addActionListener((ActionEvent ae) -> {
             promote(sit, promotee, QUEEN);
+            sit.setContinues(true);
             pr.dispose();
         });
 
         rook.addActionListener((ActionEvent ae) -> {
             promote(sit, promotee, ROOK);
+            sit.setContinues(true);
             pr.dispose();
         });
 
+        cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
         cont.add(label);
         cont.add(bishop);
         cont.add(knight);

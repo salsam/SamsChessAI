@@ -9,7 +9,10 @@ import static chess.logic.ailogic.GameSituationEvaluator.evaluateGameSituation;
 import chess.logic.movementlogic.MovementLogic;
 import chess.domain.datastructures.*;
 import chess.domain.board.*;
+import static chess.domain.board.Klass.PAWN;
+import static chess.domain.board.Klass.QUEEN;
 import static chess.logic.ailogic.GameSituationEvaluator.getValue;
+import chess.logic.gamelogic.PromotionLogic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -300,6 +303,11 @@ public class AILogic {
         }
 
         ml.move(piece, possibility, sit);
+        if (piece.getKlass() == PAWN && piece.isAtOpposingEnd()) {
+            sit.decrementCountOfCurrentBoardSituation();
+            PromotionLogic.promote(sit, piece, QUEEN);
+            sit.incrementCountOfCurrentBoardSituation();
+        }
         alpha = checkForChange(piece, possibility, height, maxingPlayer, ogAlpha, alpha, beta);
         undoMove(backUp, sit, from, possibility);
         sit.setContinues(true);

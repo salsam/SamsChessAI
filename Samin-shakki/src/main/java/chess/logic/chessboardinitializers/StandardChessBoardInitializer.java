@@ -12,7 +12,7 @@ import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceO
  *
  * @author samisalo
  */
-public class BetterChessBoardInitializer extends ChessBoardInitializer {
+public class StandardChessBoardInitializer extends ChessBoardInitializer {
 
     /**
      * Initializes the ChessBoard given as parameter with standard chess

@@ -11,7 +11,7 @@ import chess.logic.chessboardinitializers.EmptyBoardInitializer;
 import static chess.domain.board.Klass.KING;
 import static chess.domain.board.Klass.PAWN;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
-import chess.logic.chessboardinitializers.BetterChessBoardInitializer;
+import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -24,14 +24,14 @@ import org.junit.BeforeClass;
 public class GameSituationTest {
 
     private GameSituation game;
-    private static BetterChessBoardInitializer init;
+    private static StandardChessBoardInitializer init;
 
     public GameSituationTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
-        init = new BetterChessBoardInitializer();
+        init = new StandardChessBoardInitializer();
     }
 
     @Before

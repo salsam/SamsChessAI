@@ -82,7 +82,7 @@ public class CheckingLogicTest {
 
     @Test
     public void chessBoardIsNotAffectedByCheckingIfKingIsCheckMatedInComplexSituation() {
-        ChessBoardInitializer stdinit = new BetterChessBoardInitializer();
+        ChessBoardInitializer stdinit = new StandardChessBoardInitializer();
         stdinit.initialize(game.getChessBoard());
         MovementLogic mvl = game.getChessBoard().getMovementLogic();
 
@@ -116,7 +116,7 @@ public class CheckingLogicTest {
 
     @Test
     public void checkMateFalseInComplexSituationWhereKingThreatenedByProtectedPieceButCanBeAvoided() {
-        game = new GameSituation(new BetterChessBoardInitializer(), ml);
+        game = new GameSituation(new StandardChessBoardInitializer(), ml);
         Piece whiteKing = game.getChessBoard().getKings().get(Player.WHITE);
         Piece whitePawn = game.getChessBoard().getSquare(5, 1).getPiece();
         Piece blackPawn1 = game.getChessBoard().getSquare(5, 6).getPiece();

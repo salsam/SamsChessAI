@@ -9,7 +9,7 @@ import static chess.domain.board.Klass.KING;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import static chess.domain.board.Klass.ROOK;
-import chess.logic.chessboardinitializers.BetterChessBoardInitializer;
+import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import chess.logic.movementlogic.MovementLogic;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class InputProcessorTest {
 
     @BeforeClass
     public static void setUpClass() {
-        init = new BetterChessBoardInitializer();
+        init = new StandardChessBoardInitializer();
         output = new JLabel("");
     }
 
@@ -94,32 +94,6 @@ public class InputProcessorTest {
         assertFalse(game.getChessBoard().getSquare(1, 6).containsAPiece());
         assertTrue(game.getChessBoard().getSquare(1, 5).containsAPiece());
         assertEquals(piece, game.getChessBoard().getSquare(1, 5).getPiece());
-    }
-
-    @Test
-    public void ifPawnIsMovedToOpposingEndOfBoardItIsPromotedToQueenOnSameSquare() {
-        ChessBoardInitializer.putPieceOnBoard(game.getChessBoard(), new Piece(PAWN, 1, 1, Player.WHITE, "wp9"));
-        inputProcessor.processClick(1, 1, game);
-        inputProcessor.processClick(0, 0, game);
-
-        assertTrue(game.getChessBoard().getSquare(0, 0).containsAPiece());
-        assertTrue(game.getChessBoard().getSquare(0, 0).getPiece().getKlass() == QUEEN);
-        Piece q = game.getChessBoard().getSquare(0, 0).getPiece();
-        assertEquals(Player.WHITE, q.getOwner());
-        assertEquals("wp9", q.getPieceCode());
-    }
-
-    @Test
-    public void ifPawnIsMovedToOpposingEndOfBoardItIsReplacedByQueenWithSamePieceCode() {
-        ChessBoardInitializer.putPieceOnBoard(game.getChessBoard(), new Piece(PAWN, 1, 1, Player.WHITE, "wp9"));
-        inputProcessor.processClick(1, 1, game);
-        inputProcessor.processClick(0, 0, game);
-        assertTrue(game.getChessBoard().getPieces(Player.WHITE).stream()
-                .noneMatch(whitePiece -> whitePiece.getPieceCode().equals("wp9")
-                        && whitePiece.getKlass() == PAWN));
-
-        assertTrue(game.getChessBoard().getPieces(Player.WHITE).stream()
-                .anyMatch(whitePiece -> whitePiece.getPieceCode().equals("wp9")));
     }
 
     @Test

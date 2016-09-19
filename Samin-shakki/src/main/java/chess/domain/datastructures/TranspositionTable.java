@@ -17,7 +17,7 @@ public class TranspositionTable {
     private PriorityQueue<TranspositionKey> pq;
 
     public TranspositionTable() {
-        table = new HashMap();
+        table = new HashMap(100000);
         pq = new PriorityQueue(new Comparator<TranspositionKey>() {
             public int compare(TranspositionKey k1, TranspositionKey k2) {
                 return table.get(k2).getHeight() - table.get(k1).getHeight();

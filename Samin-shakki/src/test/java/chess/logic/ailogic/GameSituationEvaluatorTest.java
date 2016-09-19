@@ -6,7 +6,7 @@ import chess.domain.board.Player;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.*;
 import static chess.logic.ailogic.GameSituationEvaluator.evaluateGameSituation;
-import chess.logic.chessboardinitializers.BetterChessBoardInitializer;
+import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
 import chess.logic.chessboardinitializers.EmptyBoardInitializer;
 import chess.logic.movementlogic.MovementLogic;
@@ -47,7 +47,7 @@ public class GameSituationEvaluatorTest {
 
     @Test
     public void standardStartingPositionIsWorthZero() {
-        situation = new GameSituation(new BetterChessBoardInitializer(), new MovementLogic());
+        situation = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
         assertEquals(0, evaluateGameSituation(situation, Player.BLACK));
         assertEquals(0, evaluateGameSituation(situation, Player.WHITE));
     }

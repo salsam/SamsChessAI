@@ -4,7 +4,7 @@ import static chess.domain.board.Klass.QUEEN;
 import chess.logic.chessboardinitializers.ChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
 import chess.logic.movementlogic.MovementLogic;
-import chess.logic.chessboardinitializers.BetterChessBoardInitializer;
+import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Assert;
@@ -22,7 +22,7 @@ public class ChessBoardTest {
     private static ChessBoardInitializer init;
 
     public ChessBoardTest() {
-        init = new BetterChessBoardInitializer();
+        init = new StandardChessBoardInitializer();
     }
 
     @Before

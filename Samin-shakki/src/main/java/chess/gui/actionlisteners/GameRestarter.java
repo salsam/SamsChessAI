@@ -3,7 +3,7 @@ package chess.gui.actionlisteners;
 import chess.domain.GameSituation;
 import chess.gui.GameWindow;
 import chess.logic.ailogic.AILogic;
-import chess.logic.chessboardinitializers.BetterChessBoardInitializer;
+import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import chess.logic.movementlogic.MovementLogic;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +26,7 @@ public class GameRestarter implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         GameWindow gameWindow = (GameWindow) frames.get("game");
         boolean[] players = gameWindow.getGame().getAis();
-        gameWindow.setGame(new GameSituation(new BetterChessBoardInitializer(), new MovementLogic()));
+        gameWindow.setGame(new GameSituation(new StandardChessBoardInitializer(), new MovementLogic()));
         gameWindow.getGame().setBlackAI(players[0]);
         gameWindow.getGame().setWhiteAI(players[1]);
         AILogic[] ai = gameWindow.getInputProcessor().getAis();

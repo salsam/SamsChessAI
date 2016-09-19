@@ -15,18 +15,18 @@ import static org.junit.Assert.*;
  *
  * @author sami
  */
-public class BetterChessBoardInitializerTest {
+public class StandardChessBoardInitializerTest {
 
     private static ChessBoard board;
     private static ChessBoardInitializer init;
 
-    public BetterChessBoardInitializerTest() {
+    public StandardChessBoardInitializerTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
         board = new ChessBoard(new MovementLogic());
-        init = new BetterChessBoardInitializer();
+        init = new StandardChessBoardInitializer();
     }
 
     @Before

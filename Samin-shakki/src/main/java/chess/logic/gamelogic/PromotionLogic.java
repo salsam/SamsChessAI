@@ -3,9 +3,10 @@ package chess.logic.gamelogic;
 import chess.domain.GameSituation;
 import chess.domain.board.Klass;
 import chess.domain.board.Piece;
-import static chess.domain.board.Klass.*;
+import static chess.domain.board.Klass.PAWN;
 
 /**
+ * This class is responsible promotion related logic.
  *
  * @author sami
  */
@@ -19,5 +20,11 @@ public class PromotionLogic {
                 piece.setKlass(klass);
             }
         }
+    }
+
+    public static void undoPromotion(GameSituation sit, Piece piece) {
+        sit.updateHashForUndoingPromotion(
+                sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow()));
+        piece.setKlass(PAWN);
     }
 }

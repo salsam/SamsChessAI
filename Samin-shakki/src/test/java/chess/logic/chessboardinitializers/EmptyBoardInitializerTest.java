@@ -26,7 +26,7 @@ public class EmptyBoardInitializerTest {
     @Test
     public void initializerClearsBoardOfAllPiecesWhenInitializingABoard() {
         ChessBoard board = new ChessBoard(new MovementLogic());
-        ChessBoardInitializer stdinit = new BetterChessBoardInitializer();
+        ChessBoardInitializer stdinit = new StandardChessBoardInitializer();
         stdinit.initialize(board);
         init.initialize(board);
 
@@ -40,7 +40,7 @@ public class EmptyBoardInitializerTest {
     @Test
     public void initializerClearsAllPiecesFromPlayersToo() {
         ChessBoard board = new ChessBoard(new MovementLogic());
-        ChessBoardInitializer stdinit = new BetterChessBoardInitializer();
+        ChessBoardInitializer stdinit = new StandardChessBoardInitializer();
         stdinit.initialize(board);
         init.initialize(board);
 
