@@ -26,7 +26,7 @@ public class SideChooser extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initComponents(this.getContentPane(), main);
         this.pack();
-        this.setVisible(false);
+        this.setVisible(true);
     }
 
     private void initComponents(Container container, MainFrame main) {

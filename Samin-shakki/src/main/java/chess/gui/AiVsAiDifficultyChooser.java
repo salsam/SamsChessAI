@@ -1,6 +1,5 @@
 package chess.gui;
 
-import chess.gui.actionlisteners.AiVsAiGameStarter;
 import chess.gui.actionlisteners.DifficultySetter;
 import static java.awt.Component.CENTER_ALIGNMENT;
 import java.awt.Container;
@@ -22,19 +21,20 @@ import javax.swing.WindowConstants;
  */
 public class AiVsAiDifficultyChooser extends JFrame {
 
-    public AiVsAiDifficultyChooser(MainFrame main) throws HeadlessException {
+    public AiVsAiDifficultyChooser(Controller contr) throws HeadlessException {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setPreferredSize(new Dimension(330, 330));
-        initComponents(this.getContentPane(), main);
+        initComponents(this.getContentPane(), contr);
         this.pack();
-        this.setVisible(false);
+        this.setVisible(true);
     }
 
-    private void initComponents(Container cont, MainFrame main) {
-        JPanel topPanel = topPanel(main);
+    private void initComponents(Container cont, Controller contr) {
+        JPanel topPanel = topPanel((MainFrame) contr.getMain());
         JButton start = new JButton("Start game");
         start.setAlignmentX(CENTER_ALIGNMENT);
-        start.addActionListener(new AiVsAiGameStarter(main, this));
+        start.setActionCommand("STARTAIVAI");
+        start.addActionListener(contr);
         cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
         cont.add(topPanel);
         cont.add(start);

@@ -100,9 +100,14 @@ public class InputProcessor {
         if (!game.getContinues()) {
             return;
         }
-
+        frames.get("game").repaint();
         if (game.getAis()[game.getTurn() % 2]) {
             makeBestMoveAccordingToAILogic(game);
+//            while (game.getAis()[game.getTurn() % 2] && game.getContinues()) {
+//                frames.get("game").repaint();
+//                makeBestMoveAccordingToAILogic(game);
+//                frames.get("game").repaint();
+//            }
         } else if (game.getChessBoard().withinTable(column, row)) {
             if (chosen != null && possibilities.contains(game.getChessBoard().getSquare(column, row))) {
                 moveToTargetLocation(column, row, game, false);
@@ -113,6 +118,7 @@ public class InputProcessor {
                 possibilities = game.getChessBoard().getMovementLogic().possibleMoves(chosen, game.getChessBoard());
             }
         }
+        frames.get("game").repaint();
 
     }
 

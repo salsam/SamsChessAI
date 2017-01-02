@@ -16,9 +16,10 @@ public class GraphicalUserInterface implements Runnable {
 
     public GraphicalUserInterface(InputProcessor inputProcessor, GameSituation game) {
         frames = new HashMap();
+        Controller controller = new Controller(frames);
         frames.put("game", new GameWindow(inputProcessor, game));
-        frames.put("main", new MainFrame(frames.get("game")));
-        frames.put("endingScreen", new EndingScreen(frames));
+        frames.put("main", new MainFrame(frames.get("game"), controller));
+        frames.put("endingScreen", new EndingScreen(controller));
         inputProcessor.setFrames(frames);
     }
 

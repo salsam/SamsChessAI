@@ -5,10 +5,8 @@ import chess.domain.board.Square;
 import chess.logic.chessboardinitializers.*;
 import chess.domain.GameSituation;
 import chess.domain.board.Piece;
-import static chess.domain.board.Klass.KING;
-import static chess.domain.board.Klass.PAWN;
-import static chess.domain.board.Klass.QUEEN;
-import static chess.domain.board.Klass.ROOK;
+import static chess.domain.board.Klass.*;
+import chess.gui.GameWindow;
 import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import chess.logic.movementlogic.MovementLogic;
 import java.util.HashMap;
@@ -45,6 +43,9 @@ public class InputProcessorTest {
         game = new GameSituation(init, new MovementLogic());
         inputProcessor = new InputProcessor();
         inputProcessor.setTextArea(output);
+        Map<String, JFrame> frames = new HashMap();
+        frames.put("game", new GameWindow(inputProcessor, game));
+        inputProcessor.setFrames(frames);
         output.setText("");
     }
 
@@ -124,6 +125,7 @@ public class InputProcessorTest {
     public void outputTellsIfGameHasEndedInCheckMate() {
         Map<String, JFrame> frames = new HashMap<>();
         frames.put("endingScreen", new JFrame());
+        frames.put("game", new GameWindow(inputProcessor, game));
         frames.get("endingScreen").setVisible(false);
         inputProcessor.setFrames(frames);
         EmptyBoardInitializer emptyinit = new EmptyBoardInitializer();
@@ -143,6 +145,7 @@ public class InputProcessorTest {
     public void outputTellsIfGameHasEndedInStaleMate() {
         Map<String, JFrame> frames = new HashMap<>();
         frames.put("endingScreen", new JFrame());
+        frames.put("game", new JFrame());
         frames.get("endingScreen").setVisible(false);
         inputProcessor.setFrames(frames);
         EmptyBoardInitializer emptyinit = new EmptyBoardInitializer();

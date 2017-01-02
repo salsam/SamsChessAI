@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ *Image source https://en.wikipedia.org/wiki/Chess .
  * @author sami
  */
 public class PieceDrawer {
