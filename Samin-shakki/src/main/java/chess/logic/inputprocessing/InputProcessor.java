@@ -76,6 +76,10 @@ public class InputProcessor {
         this.textArea = textArea;
     }
 
+    public String getText() {
+        return this.textArea.getText();
+    }
+
     public Set<Square> getPossibilities() {
         return possibilities;
     }
@@ -100,14 +104,8 @@ public class InputProcessor {
         if (!game.getContinues()) {
             return;
         }
-        frames.get("game").repaint();
         if (game.getAis()[game.getTurn() % 2]) {
             makeBestMoveAccordingToAILogic(game);
-//            while (game.getAis()[game.getTurn() % 2] && game.getContinues()) {
-//                frames.get("game").repaint();
-//                makeBestMoveAccordingToAILogic(game);
-//                frames.get("game").repaint();
-//            }
         } else if (game.getChessBoard().withinTable(column, row)) {
             if (chosen != null && possibilities.contains(game.getChessBoard().getSquare(column, row))) {
                 moveToTargetLocation(column, row, game, false);

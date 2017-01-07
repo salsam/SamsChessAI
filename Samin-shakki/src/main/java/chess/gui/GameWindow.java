@@ -68,7 +68,6 @@ public class GameWindow extends JFrame {
 
     @Override
     public void repaint() {
-        textArea.setText(game.whoseTurn() + "'s turn.");
         super.repaint();
     }
 

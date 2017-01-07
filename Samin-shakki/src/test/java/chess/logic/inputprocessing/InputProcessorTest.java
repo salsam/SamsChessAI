@@ -101,10 +101,10 @@ public class InputProcessorTest {
     public void outputTellsWhoseTurnItIsCorrectly() {
         inputProcessor.processClick(1, 6, game);
         inputProcessor.processClick(1, 5, game);
-        assertEquals("BLACK's turn.", output.getText());
+        assertEquals("BLACK's turn.", inputProcessor.getText());
         inputProcessor.processClick(1, 1, game);
         inputProcessor.processClick(1, 2, game);
-        assertEquals("WHITE's turn.", output.getText());
+        assertEquals("WHITE's turn.", inputProcessor.getText());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class InputProcessorTest {
         inputProcessor.processClick(4, 5, game);
         inputProcessor.processClick(4, 6, game);
 
-        assertEquals("WHITE's turn. Check!", output.getText());
+        assertEquals("WHITE's turn. Check!", inputProcessor.getText());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class InputProcessorTest {
         inputProcessor.processClick(4, 1, game);
         inputProcessor.processClick(1, 1, game);
 
-        assertEquals("Checkmate! BLACK won!", output.getText());
+        assertEquals("Checkmate! BLACK won!", inputProcessor.getText());
     }
 
     @Test
@@ -158,6 +158,6 @@ public class InputProcessorTest {
         inputProcessor.processClick(1, 7, game);
         inputProcessor.processClick(1, 6, game);
 
-        assertEquals("Stalemate! Game ended as a draw!", output.getText());
+        assertEquals("Stalemate! Game ended as a draw!", inputProcessor.getText());
     }
 }
