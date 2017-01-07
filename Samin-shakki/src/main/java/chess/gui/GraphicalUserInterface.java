@@ -13,8 +13,13 @@ import javax.swing.JFrame;
 public class GraphicalUserInterface implements Runnable {
 
     private Map<String, JFrame> frames;
+    private GameSituation game;
+    private InputProcessor input;
 
     public GraphicalUserInterface(InputProcessor inputProcessor, GameSituation game) {
+        this.game = game;
+        this.input = inputProcessor;
+
         frames = new HashMap();
         Controller controller = new Controller(frames);
         frames.put("game", new GameWindow(inputProcessor, game));

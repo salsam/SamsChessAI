@@ -15,12 +15,14 @@ import chess.logic.ailogic.AILogic;
 import chess.logic.gamelogic.PromotionLogic;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 /**
  * This is responsible for connecting graphical user interface to other logic
- * classes. Class offers methods update text given to players and process
+ * classes. Class offers methods to update text given to players and process
  * information given by graphical user interface to move pieces accordingly in
  * game.
  *
@@ -101,21 +103,39 @@ public class InputProcessor {
      * @param game game which is going on
      */
     public void processClick(int column, int row, GameSituation game) {
-        if (!game.getContinues()) {
-            return;
-        }
-        if (game.getAis()[game.getTurn() % 2]) {
-            makeBestMoveAccordingToAILogic(game);
-        } else if (game.getChessBoard().withinTable(column, row)) {
-            if (chosen != null && possibilities.contains(game.getChessBoard().getSquare(column, row))) {
-                moveToTargetLocation(column, row, game, false);
-            } else if (game.getChecker().checkPlayerOwnsPieceOnTargetSquare(game.whoseTurn(), column, row)) {
-                setChosen(game.getChessBoard().getSquare(column, row).getPiece());
-            }
-            if (chosen != null) {
-                possibilities = game.getChessBoard().getMovementLogic().possibleMoves(chosen, game.getChessBoard());
+        if (game.getTurn() != 1) {
+            if (!game.getContinues() || game.getAis()[game.getTurn() % 2]) {
+                return;
             }
         }
+        if (!game.getAis()[game.getTurn() % 2]) {
+            if (game.getChessBoard().withinTable(column, row)) {
+                if (chosen != null && possibilities.contains(game.getChessBoard().getSquare(column, row))) {
+                    moveToTargetLocation(column, row, game, false);
+                } else if (game.getChecker().checkPlayerOwnsPieceOnTargetSquare(game.whoseTurn(), column, row)) {
+                    setChosen(game.getChessBoard().getSquare(column, row).getPiece());
+                }
+                if (chosen != null) {
+                    possibilities = game.getChessBoard().getMovementLogic().possibleMoves(chosen, game.getChessBoard());
+                }
+            }
+        }
+
+        new Thread() {
+            public void run() {
+                while (game.getContinues() && game.getAis()[game.getTurn() % 2]) {
+                    frames.get("game").repaint();
+                    makeBestMoveAccordingToAILogic(game);
+                    frames.get("game").repaint();
+                }
+                try {
+                    this.join();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(InputProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }.start();
+
         frames.get("game").repaint();
 
     }

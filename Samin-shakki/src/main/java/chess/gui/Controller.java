@@ -14,21 +14,21 @@ import javax.swing.JFrame;
  * @author sami
  */
 public class Controller implements ActionListener {
-
+    
     private Map<String, JFrame> frames;
-
+    
     public Controller(Map<String, JFrame> frames) {
         this.frames = frames;
     }
-
+    
     public MainFrame getMain() {
         return (MainFrame) frames.get("main");
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent ae) {
         String cmd = ae.getActionCommand().toUpperCase().trim();
-
+        
         if (cmd.equals("AIVAI")) {
             frames.get("main").setVisible(false);
             frames.put("adc", new AiVsAiDifficultyChooser(this));
@@ -50,6 +50,7 @@ public class Controller implements ActionListener {
             gameWindow.setGame(new GameSituation(new StandardChessBoardInitializer(), new MovementLogic()));
             gameWindow.getGame().setBlackAI(players[0]);
             gameWindow.getGame().setWhiteAI(players[1]);
+            gameWindow.getGame().setContinues(true);
             AILogic[] ai = gameWindow.getInputProcessor().getAis();
             long temp = ai[0].getTimeLimit();
             ai[0] = new AILogic();
@@ -64,9 +65,10 @@ public class Controller implements ActionListener {
             main.setVisible(false);
             main.getGameWindow().getGame().setBlackAI(true);
             main.getGameWindow().getGame().setWhiteAI(true);
+            main.getGameWindow().getGame().setContinues(true);
             main.getGameWindow().setVisible(true);
             frames.get("adc").dispose();
         }
     }
-
+    
 }
