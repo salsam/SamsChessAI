@@ -1,6 +1,6 @@
 package chess.gui;
 
-import chess.domain.GameSituation;
+import chess.domain.Game;
 import static chess.domain.board.Klass.BISHOP;
 import static chess.domain.board.Klass.KNIGHT;
 import static chess.domain.board.Klass.QUEEN;
@@ -22,16 +22,16 @@ import javax.swing.WindowConstants;
  */
 public class PromotionScreen extends JFrame {
 
-    public PromotionScreen(GameSituation sit, Piece promotee) {
+    public PromotionScreen(Game game, Piece promotee) {
         this.setPreferredSize(new Dimension(400, 300));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        initComponents(this.getContentPane(), sit, promotee);
+        initComponents(this.getContentPane(), game, promotee);
         this.pack();
         this.setVisible(true);
         this.setAlwaysOnTop(true);
     }
 
-    private void initComponents(Container cont, GameSituation sit, Piece promotee) {
+    private void initComponents(Container cont, Game game, Piece promotee) {
         JLabel label = new JLabel("Which class would you like to promote your pawn?");
         JButton bishop = new JButton("Bishop");
         bishop.setPreferredSize(new Dimension(250, 50));
@@ -44,26 +44,26 @@ public class PromotionScreen extends JFrame {
         PromotionScreen pr = this;
 
         bishop.addActionListener((ActionEvent ae) -> {
-            promote(sit, promotee, BISHOP);
-            sit.setContinues(true);
+            promote(game.getSituation(), promotee, BISHOP);
+            game.setContinues(true);
             pr.dispose();
         });
 
         knight.addActionListener((ActionEvent ae) -> {
-            promote(sit, promotee, KNIGHT);
-            sit.setContinues(true);
+            promote(game.getSituation(), promotee, KNIGHT);
+            game.setContinues(true);
             pr.dispose();
         });
 
         queen.addActionListener((ActionEvent ae) -> {
-            promote(sit, promotee, QUEEN);
-            sit.setContinues(true);
+            promote(game.getSituation(), promotee, QUEEN);
+            game.setContinues(true);
             pr.dispose();
         });
 
         rook.addActionListener((ActionEvent ae) -> {
-            promote(sit, promotee, ROOK);
-            sit.setContinues(true);
+            promote(game.getSituation(), promotee, ROOK);
+            game.setContinues(true);
             pr.dispose();
         });
 

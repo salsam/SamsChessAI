@@ -373,7 +373,8 @@ public class AILogicTest {
         ChessBoard backUp = copy(cb);
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis() - 1000);
-        assertEquals(-12345, ai.tryMovingPiece(1, 1, wr, cb.getSquare(1, 4), -12345, -12345, 123456, Player.WHITE, backUp));
+        assertEquals(-12345, ai.tryMovingPiece(1, 1, wr, cb.getSquare(1, 4),
+                -12345, -12345, 123456, Player.WHITE, backUp));
     }
 
     @Test
@@ -387,7 +388,8 @@ public class AILogicTest {
         ChessBoard backUp = copy(cb);
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis());
-        assertEquals(500, ai.tryMovingPiece(1, 1, wr, cb.getSquare(1, 4), -12345, -12345, 123456, Player.WHITE, backUp));
+        assertEquals(500, ai.tryMovingPiece(1, 1, wr, cb.getSquare(1, 4),
+                -12345, -12345, 123456, Player.WHITE, backUp));
     }
 
     @Test

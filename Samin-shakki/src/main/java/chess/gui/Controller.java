@@ -1,9 +1,6 @@
 package chess.gui;
 
-import chess.domain.GameSituation;
 import chess.logic.ailogic.AILogic;
-import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
-import chess.logic.movementlogic.MovementLogic;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
@@ -42,26 +39,18 @@ public class Controller implements ActionListener {
         } else if (cmd.equals("PVP")) {
             frames.get("main").setVisible(false);
             frames.get("game").setVisible(true);
+            ((GameWindow) frames.get("game")).getGame().start();
         } else if (cmd.equals("REPAINT")) {
             frames.get("game").repaint();
         } else if (cmd.equals("RESTART")) {
-            GameWindow gameWindow = (GameWindow) frames.get("game");
-            boolean[] players = gameWindow.getGame().getAis();
-            gameWindow.getGame().reset();
-            gameWindow.getGame().setBlackAI(players[0]);
-            gameWindow.getGame().setWhiteAI(players[1]);
-            gameWindow.getGame().setContinues(true);
-            AILogic[] ai = gameWindow.getInputProcessor().getAis();
-            ai[0].reset();
-            ai[1].reset();
-            gameWindow.repaint();
+            ((GameWindow) frames.get("game")).getGame().restart();
             frames.get("endingScreen").setVisible(false);
         } else if (cmd.equals("STARTAIVAI")) {
             MainFrame main = (MainFrame) frames.get("main");
             main.setVisible(false);
             main.getGameWindow().getGame().setBlackAI(true);
             main.getGameWindow().getGame().setWhiteAI(true);
-            main.getGameWindow().getGame().setContinues(true);
+            main.getGameWindow().getGame().start();
             main.getGameWindow().setVisible(true);
             frames.get("adc").dispose();
         }

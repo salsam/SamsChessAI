@@ -31,7 +31,7 @@ public class GameVsAiStarter implements ActionListener {
             main.getGameWindow().getGame().setBlackAI(true);
         }
         main.getGameWindow().setVisible(true);
-        main.getGameWindow().getGame().setContinues(true);
+        main.getGameWindow().getGame().start();
         sc.dispose();
     }
 }

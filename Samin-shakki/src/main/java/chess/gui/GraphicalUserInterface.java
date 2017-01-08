@@ -1,7 +1,6 @@
 package chess.gui;
 
-import chess.domain.GameSituation;
-import chess.logic.inputprocessing.InputProcessor;
+import chess.domain.Game;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFrame;
@@ -13,19 +12,15 @@ import javax.swing.JFrame;
 public class GraphicalUserInterface implements Runnable {
 
     private Map<String, JFrame> frames;
-    private GameSituation game;
-    private InputProcessor input;
 
-    public GraphicalUserInterface(InputProcessor inputProcessor, GameSituation game) {
-        this.game = game;
-        this.input = inputProcessor;
+    public GraphicalUserInterface(Game game) {
 
         frames = new HashMap();
         Controller controller = new Controller(frames);
-        frames.put("game", new GameWindow(inputProcessor, game));
+        frames.put("game", new GameWindow(game));
         frames.put("main", new MainFrame(frames.get("game"), controller));
         frames.put("endingScreen", new EndingScreen(controller));
-        inputProcessor.setFrames(frames);
+        game.getInput().setFrames(frames);
     }
 
     @Override

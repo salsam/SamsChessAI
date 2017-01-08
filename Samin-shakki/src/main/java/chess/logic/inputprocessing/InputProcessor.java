@@ -1,10 +1,10 @@
 package chess.logic.inputprocessing;
 
+import chess.domain.Game;
 import chess.domain.board.ChessBoard;
 import chess.domain.board.ChessBoardCopier;
 import static chess.domain.board.Player.getOpponent;
 import chess.domain.board.Square;
-import chess.domain.GameSituation;
 import chess.domain.Move;
 import static chess.domain.board.ChessBoardCopier.undoMove;
 import static chess.domain.board.Klass.PAWN;
@@ -15,8 +15,6 @@ import chess.logic.ailogic.AILogic;
 import chess.logic.gamelogic.PromotionLogic;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -35,7 +33,8 @@ public class InputProcessor {
      */
     private JLabel textArea;
     /**
-     * Map containing all frames in the GUI so this class can open EndingScreen.
+     * Map containing all frames in the GUI so this class repaint game and open
+     * ending screen.
      */
     private Map<String, JFrame> frames;
     /**
@@ -49,13 +48,16 @@ public class InputProcessor {
 
     private AILogic[] ais;
 
+    private Game game;
+
     /**
      * Creates a new InputProcessor-object.
      */
-    public InputProcessor() {
+    public InputProcessor(Game game) {
         ais = new AILogic[2];
         this.ais[0] = new AILogic();
         this.ais[1] = new AILogic();
+        this.game = game;
     }
 
     public Piece getChosen() {
@@ -104,72 +106,60 @@ public class InputProcessor {
      *
      * @param column column that was clicked
      * @param row row that was clicked
-     * @param game game which is going on
      */
-    public void processClick(int column, int row, GameSituation game) {
-        if (game.getTurn() != 1) {
-            if (!game.getContinues() || game.getAis()[game.getTurn() % 2]) {
-                return;
-            }
-        }
-        if (!game.getAis()[game.getTurn() % 2]) {
-            if (game.getChessBoard().withinTable(column, row)) {
-                if (chosen != null && possibilities.contains(game.getChessBoard().getSquare(column, row))) {
-                    moveToTargetLocation(column, row, game, false);
-                } else if (game.getChecker().checkPlayerOwnsPieceOnTargetSquare(game.whoseTurn(), column, row)) {
-                    setChosen(game.getChessBoard().getSquare(column, row).getPiece());
-                }
-                if (chosen != null) {
-                    possibilities = game.getChessBoard().getMovementLogic().possibleMoves(chosen, game.getChessBoard());
-                }
-            }
+    public void processClick(int column, int row) {
+        if (!game.getContinues() || game.isAIsTurn()) {
+            return;
         }
 
-        //This is just a patch to make AI work, this will be removed when Game-class is ready and AIs have their own threads.
-        new Thread() {
-            public void run() {
-                while (game.getContinues() && game.getAis()[game.getTurn() % 2]) {
-                    makeBestMoveAccordingToAILogic(game);
-                    frames.get("game").repaint();
-                }
+        if (game.getSituation().getChessBoard().withinTable(column, row)) {
+            if (chosen != null && possibilities.contains(game.getSquare(column, row))) {
+                game.addMove(new Move(chosen, column, row, game));
+                moveToTargetLocation(column, row, false);
+            } else if (game.getSituation().getChecker().checkPlayerOwnsPieceOnTargetSquare(
+                    game.getSituation().whoseTurn(), column, row)) {
+                setChosen(game.getSquare(column, row).getPiece());
             }
-        }.start();
-        
+            if (chosen != null) {
+                possibilities = game.possibleMovesOnMainBoard(chosen);
+            }
+        }
         frames.get("game").repaint();
     }
 
-    public void makeBestMoveAccordingToAILogic(GameSituation game) {
-        ais[game.getTurn() % 2].findBestMoves(game);
-        Move move = ais[game.getTurn() % 2].getBestMove();
+    public Move makeBestMoveAccordingToAILogic() {
+        ais[game.getSituation().getTurn() % 2].findBestMoves(game.getSituation());
+        Move move = ais[game.getSituation().getTurn() % 2].getBestMove();
+        move.setFrom(game);
         setChosen(move.getPiece());
-        moveToTargetLocation(move.getTarget().getColumn(),
-                move.getTarget().getRow(), game, true);
+        moveToTargetLocation(move.getTargetColumn(), move.getTargetRow(), true);
+        return move;
     }
 
-    private void moveToTargetLocation(int column, int row, GameSituation game, boolean aisTurn) {
-        ChessBoard backUp = ChessBoardCopier.copy(game.getChessBoard());
-        Square target = game.getChessBoard().getSquare(column, row);
-        Square from = game.getChessBoard().getSquare(chosen.getColumn(), chosen.getRow());
+    private void moveToTargetLocation(int column, int row, boolean aisTurn) {
+        ChessBoard backUp = ChessBoardCopier.copy(game.getSituation().getChessBoard());
+        Square target = game.getSquare(column, row);
+        Square from = game.getSquare(chosen.getColumn(), chosen.getRow());
 
-        game.getChessBoard().getMovementLogic().move(chosen, target, game);
-
-        handlePromotion(aisTurn, game);
+        game.moveOnMainBoard(chosen, target);
+        handlePromotion(aisTurn);
 
         chosen = null;
         possibilities = null;
 
-        if (game.getCheckLogic().checkIfChecked(game.whoseTurn())) {
-            undoMove(backUp, game, from, target);
+        if (game.getSituation().getCheckLogic().checkIfChecked(game.getSituation().whoseTurn())) {
+            undoMove(backUp, game.getSituation(), from, target);
             return;
         }
 
-        startNextTurn(game);
+        game.getSituation().nextTurn();
+        updateTextArea();
     }
 
-    private void handlePromotion(boolean aisTurn, GameSituation game) {
+    private void handlePromotion(boolean aisTurn) {
         if (chosen.getKlass() == PAWN && chosen.isAtOpposingEnd()) {
             if (aisTurn) {
-                PromotionLogic.promote(game, chosen, QUEEN);
+                PromotionLogic.promote(game.getSituation(), chosen, QUEEN);
             } else {
                 game.setContinues(false);
                 PromotionScreen pr = new PromotionScreen(game, chosen);
@@ -177,27 +167,29 @@ public class InputProcessor {
         }
     }
 
-    private void startNextTurn(GameSituation game) {
-        game.nextTurn();
-        textArea.setText(game.whoseTurn() + "'s turn.");
-        if (game.getCountOfCurrentSituation() >= 3) {
-            game.setContinues(false);
+    public void updateTextArea() {
+        textArea.setText(game.getSituation().whoseTurn() + "'s turn.");
+        if (game.getSituation().getCountOfCurrentSituation() >= 3) {
+            game.stop();
             textArea.setText("Third repetition of situation. Game ended as a draw!");
             frames.get("endingScreen").setVisible(true);
-        } else if (game.getMovesTillDraw() < 1) {
-            game.setContinues(false);
+        } else if (game.getSituation().getMovesTillDraw() < 1) {
+            game.stop();
             textArea.setText("50-move rule reached. Game ended as a draw!");
             frames.get("endingScreen").setVisible(true);
-        } else if (game.getCheckLogic().checkIfChecked(game.whoseTurn())) {
+        } else if (game.getSituation().getCheckLogic().checkIfChecked(game.getSituation().whoseTurn())) {
             textArea.setText(textArea.getText() + " Check!");
-            if (game.getCheckLogic().checkMate(game.whoseTurn())) {
-                textArea.setText("Checkmate! " + getOpponent(game.whoseTurn()) + " won!");
+            if (game.getSituation().getCheckLogic().checkMate(game.getSituation().whoseTurn())) {
+                textArea.setText("Checkmate! " + getOpponent(game.getSituation().whoseTurn()) + " won!");
+                game.stop();
                 frames.get("endingScreen").setVisible(true);
             }
-        } else if (game.getCheckLogic().stalemate(game.whoseTurn())) {
+        } else if (game.getSituation().getCheckLogic().stalemate(game.getSituation().whoseTurn())) {
+            game.stop();
             textArea.setText("Stalemate! Game ended as a draw!");
             frames.get("endingScreen").setVisible(true);
-        } else if (game.getCheckLogic().insufficientMaterial()) {
+        } else if (game.getSituation().getCheckLogic().insufficientMaterial()) {
+            game.stop();
             textArea.setText("Insufficient material! Game ended as a draw!");
             frames.get("endingScreen").setVisible(true);
         }

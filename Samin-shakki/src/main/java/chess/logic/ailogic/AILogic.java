@@ -267,7 +267,7 @@ public class AILogic {
                 break;
             }
 
-            if (!willBeHandledOnThisLoopThrough(loopCount, possibility, height, moved)) {
+            if (!handledOnThisLoopThrough(loopCount, possibility, height, moved)) {
                 continue;
             }
 
@@ -283,7 +283,7 @@ public class AILogic {
         return alpha;
     }
 
-    private boolean willBeHandledOnThisLoopThrough(int loopCount, Square possibility, int height, Piece moved) {
+    private boolean handledOnThisLoopThrough(int loopCount, Square possibility, int height, Piece moved) {
         if ((loopCount < 3 && !possibility.containsAPiece())
                 || (loopCount == 3 && possibility.containsAPiece())
                 || moveHasBeenTestedAlready(height, moved, possibility)) {
@@ -530,7 +530,7 @@ public class AILogic {
                 break;
             }
         }
-        System.out.println("Recursion depth: " + i);
+//        System.out.println("Recursion depth: " + i);
 
         lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
     }

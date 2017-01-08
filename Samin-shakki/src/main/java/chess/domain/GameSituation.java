@@ -307,7 +307,6 @@ public class GameSituation {
      */
     public void reset() {
         continues = true;
-        board = new ChessBoard(new MovementLogic());
         init.initialize(board);
         chessBoardSituationCounter.clear();
         reHashBoard(true);
