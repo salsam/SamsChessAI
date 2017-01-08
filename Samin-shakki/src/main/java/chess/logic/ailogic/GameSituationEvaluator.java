@@ -171,7 +171,7 @@ public class GameSituationEvaluator {
      * Returns total value of piece for it's owner.
      * @param sit
      * @param piece
-     * @return 
+     * @return value of piece
      */
     public static int getValue(GameSituation sit, Piece piece) {
         int value = values.get(piece.getKlass()) + getPositionalValue(piece);
