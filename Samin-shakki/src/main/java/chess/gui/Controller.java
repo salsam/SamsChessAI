@@ -14,21 +14,21 @@ import javax.swing.JFrame;
  * @author sami
  */
 public class Controller implements ActionListener {
-    
+
     private Map<String, JFrame> frames;
-    
+
     public Controller(Map<String, JFrame> frames) {
         this.frames = frames;
     }
-    
+
     public MainFrame getMain() {
         return (MainFrame) frames.get("main");
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         String cmd = ae.getActionCommand().toUpperCase().trim();
-        
+
         if (cmd.equals("AIVAI")) {
             frames.get("main").setVisible(false);
             frames.put("adc", new AiVsAiDifficultyChooser(this));
@@ -47,17 +47,13 @@ public class Controller implements ActionListener {
         } else if (cmd.equals("RESTART")) {
             GameWindow gameWindow = (GameWindow) frames.get("game");
             boolean[] players = gameWindow.getGame().getAis();
-            gameWindow.setGame(new GameSituation(new StandardChessBoardInitializer(), new MovementLogic()));
+            gameWindow.getGame().reset();
             gameWindow.getGame().setBlackAI(players[0]);
             gameWindow.getGame().setWhiteAI(players[1]);
             gameWindow.getGame().setContinues(true);
             AILogic[] ai = gameWindow.getInputProcessor().getAis();
-            long temp = ai[0].getTimeLimit();
-            ai[0] = new AILogic();
-            ai[0].setTimeLimit(temp);
-            temp = ai[1].getTimeLimit();
-            ai[1] = new AILogic();
-            ai[1].setTimeLimit(temp);
+            ai[0].reset();
+            ai[1].reset();
             gameWindow.repaint();
             frames.get("endingScreen").setVisible(false);
         } else if (cmd.equals("STARTAIVAI")) {
@@ -70,5 +66,5 @@ public class Controller implements ActionListener {
             frames.get("adc").dispose();
         }
     }
-    
+
 }

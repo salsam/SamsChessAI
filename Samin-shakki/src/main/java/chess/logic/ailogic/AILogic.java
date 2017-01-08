@@ -110,6 +110,27 @@ public class AILogic {
         this.timeLimit = newTimeLimit;
     }
 
+    public void reset() {
+        bestValues = new int[plies + 1];
+        bestMoves.clear();
+        killerCandidates = new Move[plies];
+        killerMoves = new Move[plies][3];
+        lastPlies = 0;
+        oldestIndex = 0;
+        principalMoves = new Move[plies];
+        transpositionTable.clear();
+
+        for (int i = 0; i < plies; i++) {
+            bestValues[i] = 0;
+            killerCandidates[i] = null;
+            principalMoves[i] = null;
+            for (int j = 0; j < 3; j++) {
+                killerMoves[i][j] = null;
+            }
+        }
+        bestValues[plies] = 0;
+    }
+
     /**
      * Returns a random move with highest associated value.
      *

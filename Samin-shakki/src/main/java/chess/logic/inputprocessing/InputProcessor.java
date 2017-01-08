@@ -70,6 +70,10 @@ public class InputProcessor {
         this.frames = frames;
     }
 
+    public Map<String, JFrame> getFrames() {
+        return this.frames;
+    }
+
     public void setAiDifficulty(int whose, long timeLimit) {
         this.ais[whose].setTimeLimit(timeLimit);
     }
@@ -121,26 +125,20 @@ public class InputProcessor {
             }
         }
 
+        //This is just a patch to make AI work, this will be removed when Game-class is ready and AIs have their own threads.
         new Thread() {
             public void run() {
                 while (game.getContinues() && game.getAis()[game.getTurn() % 2]) {
-                    frames.get("game").repaint();
                     makeBestMoveAccordingToAILogic(game);
                     frames.get("game").repaint();
                 }
-                try {
-                    this.join();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(InputProcessor.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
         }.start();
-
+        
         frames.get("game").repaint();
-
     }
 
-    private void makeBestMoveAccordingToAILogic(GameSituation game) {
+    public void makeBestMoveAccordingToAILogic(GameSituation game) {
         ais[game.getTurn() % 2].findBestMoves(game);
         Move move = ais[game.getTurn() % 2].getBestMove();
         setChosen(move.getPiece());

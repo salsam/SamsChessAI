@@ -88,4 +88,9 @@ public class TranspositionTable {
         key.setSaved(true);
     }
 
+    public void clear() {
+        table.clear();
+        pq.clear();
+    }
+
 }
