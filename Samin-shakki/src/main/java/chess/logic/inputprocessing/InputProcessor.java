@@ -7,16 +7,20 @@ import static chess.domain.board.Player.getOpponent;
 import chess.domain.board.Square;
 import chess.domain.Move;
 import static chess.domain.board.ChessBoardCopier.undoMove;
+import chess.domain.board.Klass;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import chess.domain.board.Piece;
+import chess.gui.PromotionPopup;
 import chess.gui.PromotionScreen;
 import chess.logic.ailogic.AILogic;
 import chess.logic.gamelogic.PromotionLogic;
+import java.awt.Dialog;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  * This is responsible for connecting graphical user interface to other logic
@@ -165,36 +169,53 @@ public class InputProcessor {
             if (aisTurn) {
                 PromotionLogic.promote(game.getSituation(), chosen, QUEEN);
             } else {
-                game.setContinues(false);
-                PromotionScreen pr = new PromotionScreen(game, chosen);
+                Object[] options = {"Bishop",
+                    "Knight",
+                    "Queen",
+                    "Rook"
+                };
+                int n = JOptionPane.showOptionDialog(frames.get("game"),
+                        "Which class would you like to promote your pawn?",
+                        "Promotion screen",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[2]);
+                Klass[] klasses= {Klass.BISHOP, Klass.KNIGHT, Klass.QUEEN, Klass.ROOK};
+                PromotionLogic.promote(game.getSituation(), chosen, klasses[n]);
             }
         }
     }
 
     public void updateTextArea() {
         textArea.setText(game.getSituation().whoseTurn() + "'s turn.");
+        boolean ended = false;
         if (game.getSituation().getCountOfCurrentSituation() >= 3) {
             game.stop();
             textArea.setText("Third repetition of situation. Game ended as a draw!");
-            frames.get("endingScreen").setVisible(true);
+            ended = true;
         } else if (game.getSituation().getMovesTillDraw() < 1) {
             game.stop();
             textArea.setText("50-move rule reached. Game ended as a draw!");
-            frames.get("endingScreen").setVisible(true);
+            ended = true;
         } else if (game.getSituation().getCheckLogic().checkIfChecked(game.getSituation().whoseTurn())) {
             textArea.setText(textArea.getText() + " Check!");
             if (game.getSituation().getCheckLogic().checkMate(game.getSituation().whoseTurn())) {
                 textArea.setText("Checkmate! " + getOpponent(game.getSituation().whoseTurn()) + " won!");
                 game.stop();
-                frames.get("endingScreen").setVisible(true);
+                ended = true;
             }
         } else if (game.getSituation().getCheckLogic().stalemate(game.getSituation().whoseTurn())) {
             game.stop();
             textArea.setText("Stalemate! Game ended as a draw!");
-            frames.get("endingScreen").setVisible(true);
+            ended = true;
         } else if (game.getSituation().getCheckLogic().insufficientMaterial()) {
             game.stop();
             textArea.setText("Insufficient material! Game ended as a draw!");
+            ended = true;
+        }
+        if (ended) {
             frames.get("endingScreen").setVisible(true);
         }
     }

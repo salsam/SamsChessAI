@@ -82,16 +82,17 @@ public class Game {
         this.continues = true;
 
         aiThread = new Thread() {
+            @Override
             public void run() {
                 while (continues && !interrupted()) {
+                    while(!isAIsTurn()) {
+                        try {
+                            wait();
+                        } catch (Exception e) {};
+                    }
                     if (isAIsTurn()) {
                         moves.add(input.makeBestMoveAccordingToAILogic());
                         input.updateScreen();
-                    } else {
-                        try {
-                            sleep(100);
-                        } catch (InterruptedException e) {
-                        }
                     }
                 }
             }

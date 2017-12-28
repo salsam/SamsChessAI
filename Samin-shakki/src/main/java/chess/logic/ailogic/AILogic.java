@@ -540,7 +540,7 @@ public class AILogic {
                 break;
             }
         }
-        System.out.println("Recursion depth: " + i);
+        //System.out.println("Recursion depth: " + i);
 
         lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
     }

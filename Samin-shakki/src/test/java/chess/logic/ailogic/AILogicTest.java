@@ -380,14 +380,11 @@ public class AILogicTest {
     @Test
     public void tryMovingPieceReturnsHighestValueForSituationAfterMovingPiece() {
         ChessBoard cb = sit.getChessBoard();
-        cb.printTable();
         Piece wr = new Piece(ROOK, 1, 4, Player.WHITE, "wr");
         Piece bp = new Piece(PAWN, 5, 6, Player.BLACK, "bp");
         putPieceOnBoard(cb, wr);
         putPieceOnBoard(cb, bp);
         sit.reHashBoard(true);
-        System.out.println();
-        cb.printTable();
         ChessBoard backUp = copy(cb);
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis());
