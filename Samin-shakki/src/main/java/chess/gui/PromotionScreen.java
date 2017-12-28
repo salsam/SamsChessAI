@@ -34,7 +34,7 @@ public class PromotionScreen extends JFrame {
     private void initComponents(Container cont, Game game, Piece promotee) {
         JLabel label = new JLabel("Which class would you like to promote your pawn?");
         JButton bishop = new JButton("Bishop");
-        bishop.setPreferredSize(new Dimension(250, 50));
+        bishop.setPreferredSize(new Dimension(250, 100));
         JButton knight = new JButton("Knight");
         knight.setPreferredSize(new Dimension(250, 50));
         JButton queen = new JButton("Queen");
@@ -73,6 +73,5 @@ public class PromotionScreen extends JFrame {
         cont.add(knight);
         cont.add(queen);
         cont.add(rook);
-
     }
 }

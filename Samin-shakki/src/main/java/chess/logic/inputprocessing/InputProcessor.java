@@ -124,6 +124,10 @@ public class InputProcessor {
                 possibilities = game.possibleMovesOnMainBoard(chosen);
             }
         }
+        updateScreen();
+    }
+
+    public void updateScreen() {
         frames.get("game").repaint();
     }
 

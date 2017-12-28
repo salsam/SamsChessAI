@@ -14,7 +14,6 @@ public class GraphicalUserInterface implements Runnable {
     private Map<String, JFrame> frames;
 
     public GraphicalUserInterface(Game game) {
-
         frames = new HashMap();
         Controller controller = new Controller(frames);
         frames.put("game", new GameWindow(game));

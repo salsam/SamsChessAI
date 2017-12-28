@@ -86,7 +86,7 @@ public class Game {
                 while (continues && !interrupted()) {
                     if (isAIsTurn()) {
                         moves.add(input.makeBestMoveAccordingToAILogic());
-                        input.getFrames().get("game").repaint();
+                        input.updateScreen();
                     } else {
                         try {
                             sleep(100);

@@ -380,15 +380,18 @@ public class AILogicTest {
     @Test
     public void tryMovingPieceReturnsHighestValueForSituationAfterMovingPiece() {
         ChessBoard cb = sit.getChessBoard();
+        cb.printTable();
         Piece wr = new Piece(ROOK, 1, 4, Player.WHITE, "wr");
         Piece bp = new Piece(PAWN, 5, 6, Player.BLACK, "bp");
         putPieceOnBoard(cb, wr);
         putPieceOnBoard(cb, bp);
         sit.reHashBoard(true);
+        System.out.println();
+        cb.printTable();
         ChessBoard backUp = copy(cb);
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis());
-        assertEquals(500, ai.tryMovingPiece(1, 1, wr, cb.getSquare(1, 4),
+        assertEquals(500, ai.tryMovingPiece(1, 3, wr, cb.getSquare(1, 4),
                 -12345, -12345, 123456, Player.WHITE, backUp));
     }
 
@@ -407,7 +410,7 @@ public class AILogicTest {
         ai.getKillerCandidates()[0] = null;
 
         ai.setStart(System.currentTimeMillis());
-        ai.tryMovingPiece(1, 1, wp, cb.getSquare(1, 6), -12345, -12345, 123456, Player.WHITE, backUp);
+        ai.tryMovingPiece(1, 3, wp, cb.getSquare(1, 6), -12345, -12345, 123456, Player.WHITE, backUp);
         assertNotEquals(null, ai.getKillerCandidates()[0]);
     }
 

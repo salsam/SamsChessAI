@@ -208,6 +208,9 @@ public class AILogic {
      * If tested move doesn't produce beta-cutoff, move is saved as candidate
      * for being killer move. If beta-cutoff was reached, last killer candidate
      * will be saved as new killer move assuming such exists.
+     * 
+     * LoopCount keeps track of which of 4 loopthroughs is happening.
+     * First loop through only considers winning captures.
      *
      * @param height recursion depth left (height from leaves).
      * @param ogAlpha original alpha value at this height.
@@ -282,6 +285,13 @@ public class AILogic {
 
         return alpha;
     }
+    
+    /*
+    *First loop handles winning captures.
+    *Second handles neutral captures.
+    *Third considers losing captures.
+    *Last considers positional moves.
+    */
 
     private boolean handledOnThisLoopThrough(int loopCount, Square possibility, int height, Piece moved) {
         if ((loopCount < 3 && !possibility.containsAPiece())
@@ -530,7 +540,7 @@ public class AILogic {
                 break;
             }
         }
-//        System.out.println("Recursion depth: " + i);
+        System.out.println("Recursion depth: " + i);
 
         lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
     }
