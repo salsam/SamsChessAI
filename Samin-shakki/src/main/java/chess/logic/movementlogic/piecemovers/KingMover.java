@@ -6,6 +6,7 @@
 package chess.logic.movementlogic.piecemovers;
 
 import chess.domain.GameSituation;
+import chess.domain.Move;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
 import chess.domain.board.Player;
@@ -46,6 +47,25 @@ public class KingMover extends PieceMover {
         castleIfChosen(piece, target, sit, rookMover);
 
         super.move(piece, target, sit);
+    }
+    
+    /**
+     * This method moves king on the board and saves true to field hasBeenMoved.
+     * If movement is castling, this method also moves the chosen rook to
+     * correct square. Castling is noticed from king moving two squares.
+     *
+     * @param move to be made.
+     * @param sit situation being changed.
+     */
+    @Override
+    public void commitMove(Move move, GameSituation sit) {
+
+        move.getPiece().setHasBeenMoved(true);
+        RookMover rookMover = new RookMover();
+
+        castleIfChosen(move.getPiece(), move.getTarget(), sit, rookMover);
+
+        super.commitMove(move, sit);
     }
 
     private void castleIfChosen(Piece king, Square target, GameSituation sit, RookMover rookMover) {

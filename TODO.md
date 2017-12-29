@@ -8,3 +8,4 @@
 * Add menu that allows players to restart game/return to main menu during game.
 * Fix evaluation sometimes stopping at first level (sometimes also breaks test aiWillNotInitiateLosingTrades, could be useful for debugging)
 * Is there sitll problems with Zobrist hashing causing hash collisions? Recheck that is functions as it should, if necessary consider alternatives.
+* MovementLogic should be game specific not chessboard specific!

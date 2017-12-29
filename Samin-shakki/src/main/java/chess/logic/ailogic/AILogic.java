@@ -40,7 +40,7 @@ import java.util.Random;
  *
  * @author sami
  */
-public class AILogic {
+public class AILogic implements AI {
 
     private GameSituation sit;
     private MovementLogic ml;

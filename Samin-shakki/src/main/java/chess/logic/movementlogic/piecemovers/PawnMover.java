@@ -1,14 +1,13 @@
 package chess.logic.movementlogic.piecemovers;
 
 import chess.domain.GameSituation;
+import chess.domain.Move;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
 import chess.domain.board.Square;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.PAWN;
-import static chess.domain.board.Klass.QUEEN;
 import java.util.HashSet;
-import static chess.logic.gamelogic.PromotionLogic.promote;
 
 /**
  * This class is responsible for containing all pawn-related movement logic.
@@ -51,6 +50,35 @@ public class PawnMover extends PieceMover {
         }
 
         super.move(piece, target, sit);
+        sit.refresh50MoveRule();
+    }
+    
+    /**
+     * This method moves pawns on board to target square. If pawn moves two
+     * squares that is saved to field movedTwoSquaresLastTurn and thus this pawn
+     * will be en passantable on opponent's next turn. Also if movement is en
+     * passant, piece in the square one step back from target will be removed.
+     * En passant is spotted from target square being empty and in different
+     * column as moving pawn.
+     *
+     * @param move to be made.
+     */
+    @Override
+    public void commitMove(Move move, GameSituation sit) {
+
+        move.getPiece().setHasBeenMoved(true);
+
+        if (Math.abs(move.getFrom().getRow() - move.getTargetRow()) == 2) {
+            move.getPiece().setMovedTwoSquaresLastTurn(true);
+        }
+
+        if (!move.getTarget().containsAPiece() && move.getTargetColumn() != move.getFrom().getColumn()) {
+            Square enPassanted = sit.getChessBoard().getSquare(move.getTargetColumn(), move.getFrom().getRow());
+            sit.updateHashForTakingPiece(enPassanted);
+            enPassanted.getPiece().setTaken(true);
+        }
+
+        super.commitMove(move, sit);
         sit.refresh50MoveRule();
     }
 

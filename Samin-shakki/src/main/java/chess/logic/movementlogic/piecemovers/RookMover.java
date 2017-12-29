@@ -6,6 +6,7 @@
 package chess.logic.movementlogic.piecemovers;
 
 import chess.domain.GameSituation;
+import chess.domain.Move;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
 import chess.domain.board.Square;
@@ -34,6 +35,17 @@ public class RookMover extends PieceMover {
     public void move(Piece piece, Square target, GameSituation sit) {
         piece.setHasBeenMoved(true);
         super.move(piece, target, sit);
+    }
+    
+    /**
+     * Moves rook on the board and saves true to field hasBeenMoved.
+     *
+     * @param move to be made.
+     */
+    @Override
+    public void commitMove(Move move, GameSituation sit) {
+        move.getPiece().setHasBeenMoved(true);
+        super.commitMove(move, sit);
     }
 
     /**

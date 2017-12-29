@@ -179,6 +179,34 @@ public class MovementLogic {
         sit.incrementCountOfCurrentBoardSituation();
     }
 
+    /*
+    *Commit selected move by moving specified piece from selected square to target square.
+     */
+    public void commitAMove(Move move, GameSituation sit) {
+        switch (move.getPiece().getKlass()) {
+            case BISHOP:
+                bishopMover.commitMove(move, sit);
+                break;
+            case KING:
+                kingMover.commitMove(move, sit);
+                break;
+            case KNIGHT:
+                knightMover.commitMove(move, sit);
+                break;
+            case PAWN:
+                pawnMover.commitMove(move, sit);
+                break;
+            case QUEEN:
+                queenMover.commitMove(move, sit);
+                break;
+            case ROOK:
+                rookMover.commitMove(move, sit);
+                break;
+        }
+
+        sit.incrementCountOfCurrentBoardSituation();
+    }
+
     /**
      * Returns set containing all squares that given player's pieces threaten on
      * given board.

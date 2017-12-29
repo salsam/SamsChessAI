@@ -101,7 +101,6 @@ public abstract class PieceMover {
      * @param sit situation being changed.
      */
     public void move(Piece piece, Square target, GameSituation sit) {
-
         Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
         sit.updateHashForMoving(from, target);
         sit.decrementMovesTillDraw();
@@ -115,6 +114,31 @@ public abstract class PieceMover {
 
         piece.setColumn(target.getColumn());
         piece.setRow(target.getRow());
+    }
+    
+    /**
+     * Commits selected move. If this piece
+     * takes an opposing piece, that will be removed from its owner on board.
+     *
+     * BreadAndButter movement without any class specific actions.
+     * 
+     * @param move to be made.
+     * @param sit situation being changed.
+     */
+    public void commitMove(Move move, GameSituation sit) {
+        Square from = move.getFrom();
+        sit.updateHashForMoving(from, move.getTarget());
+        sit.decrementMovesTillDraw();
+
+        from.setPiece(null);
+        if (move.getTarget().containsAPiece()) {
+            sit.refresh50MoveRule();
+            move.getTarget().getPiece().setTaken(true);
+        }
+        move.getTarget().setPiece(move.getPiece());
+
+        move.getPiece().setColumn(move.getTargetColumn());
+        move.getPiece().setRow(move.getTargetRow());
     }
 
     private void possibilitiesToDirection(Square current, ChessBoard board, Set<Square> possibilities, int columnChange, int rowChange) {
