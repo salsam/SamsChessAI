@@ -17,7 +17,10 @@ import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
 /**
- *
+ ******************************Deprecated!
+ * 
+ * 
+ * 
  * @author sami
  */
 public class PromotionScreen extends JFrame {
