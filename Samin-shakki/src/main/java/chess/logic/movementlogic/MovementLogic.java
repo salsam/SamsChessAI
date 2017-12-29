@@ -2,6 +2,7 @@ package chess.logic.movementlogic;
 
 import chess.domain.board.Piece;
 import chess.domain.GameSituation;
+import chess.domain.Move;
 import chess.logic.movementlogic.piecemovers.*;
 import chess.domain.board.ChessBoard;
 import chess.domain.board.Player;
@@ -87,7 +88,7 @@ public class MovementLogic {
     }
 
     /**
-     * Uses corresponding mover to returns a set containing all squares given
+     * Uses corresponding mover to return a set containing all squares given
      * piece can move to on given board.
      *
      * @param piece piece of which possible moves are being checked
@@ -109,6 +110,35 @@ public class MovementLogic {
                 return queenMover.possibleMoves(piece, board);
             case ROOK:
                 return rookMover.possibleMoves(piece, board);
+            default:
+                break;
+        }
+        return new HashSet<>();
+    }
+
+    /**
+     * Uses corresponding mover to return a set containing all moevements
+     * possible.
+     *
+     * @param piece piece of which possible moves are being checked
+     * @param board board on which piece is placed
+     * @return a set containing all squares given piece can move to on given
+     * board
+     */
+    public Set<Move> possibleMovements(Piece piece, ChessBoard board) {
+        switch (piece.getKlass()) {
+            case BISHOP:
+                return bishopMover.possibleMovements(piece, board);
+            case KING:
+                return kingMover.possibleMovements(piece, board);
+            case KNIGHT:
+                return knightMover.possibleMovements(piece, board);
+            case PAWN:
+                return pawnMover.possibleMovements(piece, board);
+            case QUEEN:
+                return queenMover.possibleMovements(piece, board);
+            case ROOK:
+                return rookMover.possibleMovements(piece, board);
             default:
                 break;
         }
@@ -183,6 +213,23 @@ public class MovementLogic {
                     possibleMoves.addAll(possibleMoves(piece, board));
                 });
         return possibleMoves;
+    }
+
+    /**
+     * Returns set containing all movements that given player can commit.
+     *
+     * @param player given player
+     * @param board given chessboard
+     * @return set containing all squares that given player's pieces can move to
+     */
+    public Set<Move> possibleMovementsByPlayer(Player player, ChessBoard board) {
+        Set<Move> possibleMovements = new HashSet();
+        board.getPieces(player).stream()
+                .filter(owned -> !owned.isTaken())
+                .forEach(piece -> {
+                    possibleMovements.addAll(possibleMovements(piece, board));
+                });
+        return possibleMovements;
     }
 
 }

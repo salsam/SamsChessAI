@@ -52,7 +52,6 @@ public class AILogic {
     private int lastPlies;
     private int searchDepth;
     private int oldestIndex;
-    private Random random;
     private Pair<Integer, Move[]> lastPrincipalVariation;
     private Move[] principalMoves;
     private Move[] killerCandidates;
@@ -69,7 +68,6 @@ public class AILogic {
         lastPlies = 0;
         oldestIndex = 0;
         principalMoves = new Move[plies];
-        random = new Random();
         searchDepth = 3;
         timeLimit = 1000;
         transpositionTable = new TranspositionTable();
@@ -137,7 +135,7 @@ public class AILogic {
      * @return random best move
      */
     public Move getBestMove() {
-        return bestMoves.get(random.nextInt(bestMoves.size()));
+        return bestMoves.get(new Random().nextInt(bestMoves.size()));
     }
 
     /**

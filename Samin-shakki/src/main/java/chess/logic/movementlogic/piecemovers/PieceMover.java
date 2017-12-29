@@ -1,6 +1,7 @@
 package chess.logic.movementlogic.piecemovers;
 
 import chess.domain.GameSituation;
+import chess.domain.Move;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
 import chess.domain.board.Square;
@@ -33,6 +34,16 @@ public abstract class PieceMover {
         threatenedSquares(piece, board).stream()
                 .filter((move) -> (legalToMoveTo(piece, move, board)))
                 .forEach((move) -> moves.add(move));
+
+        return moves;
+    }
+    
+    public Set<Move> possibleMovements(Piece piece, ChessBoard board) {
+        Set<Move> moves = new HashSet();
+
+        threatenedSquares(piece, board).stream()
+                .filter((targetSquare) -> (legalToMoveTo(piece, targetSquare, board)))
+                .forEach((targetSquare) -> moves.add(new Move(piece, targetSquare)));
 
         return moves;
     }

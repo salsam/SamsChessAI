@@ -5,7 +5,7 @@ import chess.domain.board.Piece;
 import java.util.Objects;
 
 /**
- * One move made by a player.
+ * One move made by a player. Knows piece being moved, square that movement starts from as well as the end square.
  *
  * @author sami
  */
