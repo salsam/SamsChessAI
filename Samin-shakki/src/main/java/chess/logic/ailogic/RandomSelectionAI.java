@@ -27,23 +27,17 @@ public class RandomSelectionAI implements AI {
     }
 
     @Override
-    public void findBestMoves(GameSituation sit) {
-        Player p = sit.whoseTurn();
-        Set<Move> possibilities = movementLogic.possibleMovementsByPlayer(p, sit.getChessBoard());
+    public Move findBestMove(GameSituation situation) {
+        Player p = situation.whoseTurn();
+        Set<Move> possibilities = movementLogic.possibleMovementsByPlayer(p, situation.getChessBoard());
         int i = random.nextInt(possibilities.size());
         int j = 0;
         for (Move m : possibilities) {
             if (i == j) {
-                bestMove = m;
-                break;
+                return m;
             }
             j++;
         }
+        return null;
     }
-
-    @Override
-    public Move getBestMove() {
-        return bestMove;
-    }
-
 }

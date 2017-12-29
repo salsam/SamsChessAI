@@ -47,14 +47,9 @@ public class SimpleNegamax implements AI {
     }
     
     @Override
-    public void findBestMoves(GameSituation sit) {
+    public Move findBestMove(GameSituation sit) {
         this.sit=sit;
         negaMax(searchDepth, sit.whoseTurn());
-    }
-
-    @Override
-    public Move getBestMove() {
         return bestMove;
     }
-    
 }

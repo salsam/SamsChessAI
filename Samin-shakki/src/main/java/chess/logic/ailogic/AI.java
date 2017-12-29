@@ -8,6 +8,5 @@ import chess.domain.Move;
  * @author sami
  */
 public interface AI {
-    public void findBestMoves(GameSituation sit);
-    public Move getBestMove();
+    public Move findBestMove(GameSituation situation);
 }

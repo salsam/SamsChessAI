@@ -542,6 +542,14 @@ public class AILogic implements AI {
 
         lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
     }
+    
+    /*
+    Find best move for current player in this game situation.
+    */
+    public Move findBestMove(GameSituation situation) {
+        findBestMoves(situation);
+        return getBestMove();
+    }
 
     /**
      * Sets matching part of last principal variation as start for current one.
