@@ -5,6 +5,7 @@
  */
 package chess.logic.movementlogic.piecemovers;
 
+import chess.domain.Coordinates;
 import chess.domain.GameSituation;
 import chess.domain.Move;
 import chess.domain.board.ChessBoard;
@@ -32,7 +33,7 @@ public class RookMover extends PieceMover {
      * @param target square this rook is moving to.
      */
     @Override
-    public void move(Piece piece, Square target, GameSituation sit) {
+    public void move(Piece piece, Coordinates target, GameSituation sit) {
         piece.setHasBeenMoved(true);
         super.move(piece, target, sit);
     }
@@ -55,10 +56,10 @@ public class RookMover extends PieceMover {
      * @return list containing all squares this rook threatens
      */
     @Override
-    public Set<Square> threatenedSquares(Piece piece, ChessBoard board) {
-        Set<Square> possibilities = new HashSet<>();
-        addHorizontalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()), board, possibilities);
-        addVerticalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()), board, possibilities);
+    public Set<Coordinates> threatenedSquares(Piece piece, ChessBoard board) {
+        Set<Coordinates> possibilities = new HashSet<>();
+        addHorizontalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()).getLocation(), board, possibilities);
+        addVerticalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()).getLocation(), board, possibilities);
 
         return possibilities;
     }

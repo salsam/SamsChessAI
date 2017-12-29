@@ -17,7 +17,7 @@ public class SimpleNegamax implements AI {
     private GameSituation sit;
     private Move bestMove;
     private final int plies=10;
-    private int searchDepth=3;
+    private int searchDepth=1;
 
     public void setSearchDepth(int searchDepth) {
         this.searchDepth = searchDepth;
@@ -31,8 +31,10 @@ public class SimpleNegamax implements AI {
         int best=Integer.MIN_VALUE;
         ChessBoard backUp=ChessBoardCopier.copy(sit.getChessBoard());
         
+        System.out.println("Start depth: " + depth);
         for (Move m:sit.getChessBoard().getMovementLogic().possibleMovementsByPlayer(player, sit.getChessBoard())) {
-            sit.getChessBoard().getMovementLogic().commitAMove(m, sit);
+            System.out.println(m);
+            sit.getChessBoard().getMovementLogic().commitMove(m, sit);
             if (m.getPiece().getKlass()==PAWN && m.getPiece().isAtOpposingEnd()) {
                 PromotionLogic.promote(sit, m.getPiece(), QUEEN);
             }
@@ -51,5 +53,10 @@ public class SimpleNegamax implements AI {
         this.sit=sit;
         negaMax(searchDepth, sit.whoseTurn());
         return bestMove;
+    }
+
+    @Override
+    public void reset() {
+        bestMove=null;
     }
 }

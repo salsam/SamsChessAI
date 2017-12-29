@@ -5,9 +5,9 @@
  */
 package chess.logic.movementlogic.piecemovers;
 
+import chess.domain.Coordinates;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
-import chess.domain.board.Square;
 import chess.domain.board.Piece;
 import java.util.HashSet;
 
@@ -31,11 +31,11 @@ public class QueenMover extends PieceMover {
      * @return list containing all squares this queen threatens
      */
     @Override
-    public Set<Square> threatenedSquares(Piece piece, ChessBoard board) {
-        Set<Square> possibilities = new HashSet<>();
-        addDiagonalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()), board, possibilities);
-        addHorizontalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()), board, possibilities);
-        addVerticalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()), board, possibilities);
+    public Set<Coordinates> threatenedSquares(Piece piece, ChessBoard board) {
+        Set<Coordinates> possibilities = new HashSet<>();
+        addDiagonalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()).getLocation(), board, possibilities);
+        addHorizontalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()).getLocation(), board, possibilities);
+        addVerticalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()).getLocation(), board, possibilities);
 
         return possibilities;
     }

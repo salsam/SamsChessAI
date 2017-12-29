@@ -1,5 +1,8 @@
 package chess.domain.board;
 
+import chess.domain.Coordinates;
+import java.util.Objects;
+
 /**
  * Square class is responsible for keeping track of its location and possible
  * piece situated on it.
@@ -8,14 +11,7 @@ package chess.domain.board;
  */
 public class Square {
 
-    /**
-     * Column of this square.
-     */
-    private int column;
-    /**
-     * Row of this square.
-     */
-    private int row;
+    private Coordinates location;
     /**
      * Piece that is situated on this square, null if there's no piece.
      */
@@ -29,16 +25,23 @@ public class Square {
      * @param row row of created square
      */
     public Square(int column, int row) {
-        this.column = column;
-        this.row = row;
+        this.location=new Coordinates(column, row);
+    }
+    
+    public Square(Coordinates location) {
+        this.location=location;
+    }
+    
+    public Coordinates getLocation() {
+        return this.location;
     }
 
     public int getColumn() {
-        return column;
+        return this.location.getColumn();
     }
 
     public int getRow() {
-        return row;
+        return this.location.getRow();
     }
 
     public Piece getPiece() {
@@ -57,22 +60,15 @@ public class Square {
 
         Square square = (Square) obj;
 
-        if (this.column != square.getColumn()) {
-            return false;
-        }
-
-        if (this.row != square.getRow()) {
-            return false;
-        }
+        if (!this.location.equals(square.location)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + this.column;
-        hash = 47 * hash + this.row;
+        int hash = 5;
+        hash = 41 * hash + Objects.hashCode(this.location);
         return hash;
     }
 
@@ -91,7 +87,7 @@ public class Square {
 
     @Override
     public String toString() {
-        return "(" + column + "," + row + ")";
+        return "(" + this.location + ")";
     }
 
     /**
@@ -101,7 +97,7 @@ public class Square {
      */
     @Override
     public Square clone() {
-        Square clone = new Square(this.column, this.row);
+        Square clone = new Square(this.location);
 
         if (this.piece != null) {
             clone.setPiece(this.piece.clone());

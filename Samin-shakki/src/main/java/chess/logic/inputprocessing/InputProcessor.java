@@ -1,5 +1,6 @@
 package chess.logic.inputprocessing;
 
+import chess.domain.Coordinates;
 import chess.domain.Game;
 import chess.domain.board.ChessBoard;
 import chess.domain.board.ChessBoardCopier;
@@ -11,7 +12,8 @@ import chess.domain.board.Klass;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import chess.domain.board.Piece;
-import chess.logic.ailogic.AILogic;
+import chess.logic.ailogic.AI;
+import chess.logic.ailogic.SimpleNegamax;
 import chess.logic.gamelogic.PromotionLogic;
 import java.util.Map;
 import java.util.Set;
@@ -45,9 +47,9 @@ public class InputProcessor {
     /**
      * Squares that chosen piece can move to.
      */
-    private Set<Square> possibilities;
+    private Set<Coordinates> possibilities;
 
-    private AILogic[] ais;
+    private AI[] ais;
 
     private Game game;
 
@@ -55,9 +57,9 @@ public class InputProcessor {
      * Creates a new InputProcessor-object.
      */
     public InputProcessor(Game game) {
-        ais = new AILogic[2];
-        this.ais[0] = new AILogic();
-        this.ais[1] = new AILogic();
+        ais = new AI[2];
+        this.ais[0] = new SimpleNegamax();
+        this.ais[1] = new SimpleNegamax();
         this.game = game;
     }
 
@@ -78,7 +80,7 @@ public class InputProcessor {
     }
 
     public void setAiDifficulty(int whose, long timeLimit) {
-        this.ais[whose].setTimeLimit(timeLimit);
+        //((AILogic)this.ais[whose]).setTimeLimit(timeLimit);
     }
 
     public void setTextArea(JLabel textArea) {
@@ -89,15 +91,15 @@ public class InputProcessor {
         return this.textArea.getText();
     }
 
-    public Set<Square> getPossibilities() {
+    public Set<Coordinates> getPossibilities() {
         return possibilities;
     }
 
-    public void setPossibilities(Set<Square> possibilities) {
+    public void setPossibilities(Set<Coordinates> possibilities) {
         this.possibilities = possibilities;
     }
 
-    public AILogic[] getAis() {
+    public AI[] getAis() {
         return this.ais;
     }
 
@@ -116,7 +118,7 @@ public class InputProcessor {
         if (game.getSituation().getChessBoard().withinTable(column, row)) {
             if (chosen != null && possibilities.contains(game.getSquare(column, row))) {
                 game.addMove(new Move(chosen, column, row, game));
-                moveToTargetLocation(column, row, false);
+                moveToTargetLocation(new Coordinates(column, row), false);
             } else if (game.getSituation().getChecker().checkPlayerOwnsPieceOnTargetSquare(
                     game.getSituation().whoseTurn(), column, row)) {
                 setChosen(game.getSquare(column, row).getPiece());
@@ -133,19 +135,21 @@ public class InputProcessor {
     }
 
     public Move makeBestMoveAccordingToAILogic() {
-        ais[game.getSituation().getTurn() % 2].findBestMoves(game.getSituation());
-        Move move = ais[game.getSituation().getTurn() % 2].getBestMove();
-        move.setFrom(game);
-        setChosen(move.getPiece());
-        moveToTargetLocation(move.getTargetColumn(), move.getTargetRow(), true);
+        //ais[game.getSituation().getTurn() % 2].findBestMoves(game.getSituation());
+        //Move move = ais[game.getSituation().getTurn() % 2].getBestMove();
+        Move move=ais[game.getSituation().getTurn() % 2].findBestMove(game.getSituation());
+        //Might eb broken!
+        //move.setFrom(game);
+        setChosen(game.getSquare(move.getFrom().getColumn(), move.getFrom().getRow()).getPiece());
+        moveToTargetLocation(move.getTarget(), true);
         return move;
     }
 
-    private void moveToTargetLocation(int column, int row, boolean aisTurn) {
+    private void moveToTargetLocation(Coordinates target, boolean aisTurn) {
         ChessBoard backUp = ChessBoardCopier.copy(game.getSituation().getChessBoard());
-        Square target = game.getSquare(column, row);
-        Square from = game.getSquare(chosen.getColumn(), chosen.getRow());
-
+        //Square from = game.getSquare(chosen.getColumn(), chosen.getRow());
+        Coordinates from=chosen.getLocation();
+        
         game.moveOnMainBoard(chosen, target);
         handlePromotion(aisTurn);
 

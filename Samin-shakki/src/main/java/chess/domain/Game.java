@@ -69,12 +69,12 @@ public class Game {
         return situation.getChessBoard().getSquare(column, row);
     }
 
-    public Set<Square> possibleMovesOnMainBoard(Piece piece) {
+    public Set<Coordinates> possibleMovesOnMainBoard(Piece piece) {
         return situation.getChessBoard().getMovementLogic().possibleMoves(piece,
                 situation.getChessBoard());
     }
 
-    public void moveOnMainBoard(Piece piece, Square target) {
+    public void moveOnMainBoard(Piece piece, Coordinates target) {
         situation.getChessBoard().getMovementLogic().move(piece, target, situation);
     }
 

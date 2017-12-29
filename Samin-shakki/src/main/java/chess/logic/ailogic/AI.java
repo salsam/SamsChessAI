@@ -9,4 +9,5 @@ import chess.domain.Move;
  */
 public interface AI {
     public Move findBestMove(GameSituation situation);
+    public void reset();
 }

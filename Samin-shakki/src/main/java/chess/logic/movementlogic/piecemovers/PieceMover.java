@@ -1,5 +1,6 @@
 package chess.logic.movementlogic.piecemovers;
 
+import chess.domain.Coordinates;
 import chess.domain.GameSituation;
 import chess.domain.Move;
 import chess.domain.board.ChessBoard;
@@ -19,54 +20,59 @@ public abstract class PieceMover {
      * @return set containing containing all squares given piece threatens on
      * given chessboard
      */
-    public abstract Set<Square> threatenedSquares(Piece piece, ChessBoard board);
+    public abstract Set<Coordinates> threatenedSquares(Piece piece, ChessBoard board);
 
     /**
-     * Returns a list of squares given piece can legally move to.
+     * Returns a set of squares given piece can legally move to.
      *
      * @param piece given piece
      * @param board ChessBoard on which given piece moves on
      * @return list containing all squares given piece can legally move to
      */
-    public Set<Square> possibleMoves(Piece piece, ChessBoard board) {
-        Set<Square> moves = new HashSet();
+    public Set<Coordinates> possibleMoves(Piece piece, ChessBoard board) {
+        Set<Coordinates> moves = new HashSet();
 
         threatenedSquares(piece, board).stream()
-                .filter((move) -> (legalToMoveTo(piece, move, board)))
-                .forEach((move) -> moves.add(move));
+                .filter((targetSquare) -> (legalToMoveTo(piece, targetSquare, board)))
+                .forEach((targetSquare) -> moves.add(targetSquare));
 
         return moves;
     }
-    
+    /**
+     * Returns set of moves chosen piece can make on board.
+     * @param piece to be moved.
+     * @param board
+     * @return set of moves chosen piece can make on board.
+     */
     public Set<Move> possibleMovements(Piece piece, ChessBoard board) {
         Set<Move> moves = new HashSet();
 
         threatenedSquares(piece, board).stream()
                 .filter((targetSquare) -> (legalToMoveTo(piece, targetSquare, board)))
-                .forEach((targetSquare) -> moves.add(new Move(piece, targetSquare)));
+                .forEach((targetSquare) -> moves.add(new Move(piece, targetSquare, board)));
 
         return moves;
     }
 
-    protected void addDiagonalPossibilities(Square current, ChessBoard board, Set<Square> possibilities) {
+    protected void addDiagonalPossibilities(Coordinates current, ChessBoard board, Set<Coordinates> possibilities) {
         possibilitiesToDirection(current, board, possibilities, 1, 1);
         possibilitiesToDirection(current, board, possibilities, 1, -1);
         possibilitiesToDirection(current, board, possibilities, -1, 1);
         possibilitiesToDirection(current, board, possibilities, -1, -1);
     }
 
-    protected void addHorizontalPossibilities(Square current, ChessBoard board, Set<Square> possibilities) {
+    protected void addHorizontalPossibilities(Coordinates current, ChessBoard board, Set<Coordinates> possibilities) {
         possibilitiesToDirection(current, board, possibilities, 0, 1);
         possibilitiesToDirection(current, board, possibilities, 0, -1);
     }
 
-    protected void addVerticalPossibilities(Square current, ChessBoard board, Set<Square> possibilities) {
+    protected void addVerticalPossibilities(Coordinates current, ChessBoard board, Set<Coordinates> possibilities) {
         possibilitiesToDirection(current, board, possibilities, 1, 0);
         possibilitiesToDirection(current, board, possibilities, -1, 0);
     }
 
-    protected Set<Square> possibilities(Square location, int[] columnChange, int[] rowChange, ChessBoard board) {
-        Set<Square> possibilities = new HashSet();
+    protected Set<Coordinates> possibilities(Coordinates location, int[] columnChange, int[] rowChange, ChessBoard board) {
+        Set<Coordinates> possibilities = new HashSet();
 
         for (int i = 0; i < columnChange.length; i++) {
             int newColumn = location.getColumn() + columnChange[i];
@@ -76,20 +82,18 @@ public abstract class PieceMover {
                 continue;
             }
 
-            Square target = board.getSquare(newColumn, newRow);
+            Coordinates target = board.getSquare(newColumn, newRow).getLocation();
             possibilities.add(target);
         }
 
         return possibilities;
     }
 
-    protected boolean legalToMoveTo(Piece piece, Square target, ChessBoard board) {
-
-        if (!target.containsAPiece()) {
+    protected boolean legalToMoveTo(Piece piece, Coordinates target, ChessBoard board) {
+        if (!board.getSquare(target).containsAPiece()) {
             return true;
         }
-
-        return piece.getOwner() != target.getPiece().getOwner();
+        return piece.getOwner() != board.getSquare(target).getPiece().getOwner();
     }
 
     /**
@@ -100,17 +104,18 @@ public abstract class PieceMover {
      * @param target Square where this piece will be moved.
      * @param sit situation being changed.
      */
-    public void move(Piece piece, Square target, GameSituation sit) {
+    public void move(Piece piece, Coordinates target, GameSituation sit) {
         Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
-        sit.updateHashForMoving(from, target);
+        Square to=sit.getChessBoard().getSquare(target);
+        //sit.updateHashForMoving(from, target);
         sit.decrementMovesTillDraw();
 
         from.setPiece(null);
-        if (target.containsAPiece()) {
+        if (to.containsAPiece()) {
             sit.refresh50MoveRule();
-            target.getPiece().setTaken(true);
+            to.getPiece().setTaken(true);
         }
-        target.setPiece(piece);
+        to.setPiece(piece);
 
         piece.setColumn(target.getColumn());
         piece.setRow(target.getRow());
@@ -126,30 +131,31 @@ public abstract class PieceMover {
      * @param sit situation being changed.
      */
     public void commitMove(Move move, GameSituation sit) {
-        Square from = move.getFrom();
-        sit.updateHashForMoving(from, move.getTarget());
+        Coordinates from = move.getFrom();
+        Coordinates target = move.getTarget();
+        //sit.updateHashForMoving(from, move.getTarget());
         sit.decrementMovesTillDraw();
 
-        from.setPiece(null);
-        if (move.getTarget().containsAPiece()) {
+        sit.getChessBoard().getSquare(from).setPiece(null);
+        if (sit.getChessBoard().getSquare(target).containsAPiece()) {
             sit.refresh50MoveRule();
-            move.getTarget().getPiece().setTaken(true);
+            sit.getChessBoard().getSquare(target).getPiece().setTaken(true);
         }
-        move.getTarget().setPiece(move.getPiece());
+        sit.getChessBoard().getSquare(target).setPiece(move.getPiece());
 
         move.getPiece().setColumn(move.getTargetColumn());
         move.getPiece().setRow(move.getTargetRow());
     }
 
-    private void possibilitiesToDirection(Square current, ChessBoard board, Set<Square> possibilities, int columnChange, int rowChange) {
+    private void possibilitiesToDirection(Coordinates current, ChessBoard board, Set<Coordinates> possibilities, int columnChange, int rowChange) {
         int newColumn = current.getColumn() + columnChange;
         int newRow = current.getRow() + rowChange;
 
         while (board.withinTable(newColumn, newRow)) {
-            Square target = board.getSquare(newColumn, newRow);
+            Coordinates target = board.getSquare(newColumn, newRow).getLocation();
             possibilities.add(target);
 
-            if (target.containsAPiece()) {
+            if (board.getSquare(target).containsAPiece()) {
                 break;
             }
             newColumn = target.getColumn() + columnChange;

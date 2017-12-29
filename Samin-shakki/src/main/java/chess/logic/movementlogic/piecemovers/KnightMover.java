@@ -5,9 +5,9 @@
  */
 package chess.logic.movementlogic.piecemovers;
 
+import chess.domain.Coordinates;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
-import chess.domain.board.Square;
 import chess.domain.board.Piece;
 
 /**
@@ -31,10 +31,10 @@ public class KnightMover extends PieceMover {
      * @return list containing all squares given knight threatens
      */
     @Override
-    public Set<Square> threatenedSquares(Piece piece, ChessBoard board) {
+    public Set<Coordinates> threatenedSquares(Piece piece, ChessBoard board) {
         int[] rowChange = new int[]{-2, -2, -1, -1, 1, 1, 2, 2};
         int[] columnChange = new int[]{1, -1, 2, -2, 2, -2, 1, -1};
 
-        return possibilities(board.getSquare(piece.getColumn(), piece.getRow()), columnChange, rowChange, board);
+        return possibilities(board.getSquare(piece.getColumn(), piece.getRow()).getLocation(), columnChange, rowChange, board);
     }
 }

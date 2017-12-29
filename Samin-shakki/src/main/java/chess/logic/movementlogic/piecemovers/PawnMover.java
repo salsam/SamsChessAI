@@ -1,5 +1,6 @@
 package chess.logic.movementlogic.piecemovers;
 
+import chess.domain.Coordinates;
 import chess.domain.GameSituation;
 import chess.domain.Move;
 import chess.domain.board.ChessBoard;
@@ -25,7 +26,7 @@ public class PawnMover extends PieceMover {
     /**
      * This method moves pawns on board to target square. If pawn moves two
      * squares that is saved to field movedTwoSquaresLastTurn and thus this pawn
-     * will be en passantable on opponent's next turn. Also if movement is en
+     * will be enpassantable on opponent's next turn. Also if movement is en
      * passant, piece in the square one step back from target will be removed.
      * En passant is spotted from target square being empty and in different
      * column as moving pawn.
@@ -34,7 +35,7 @@ public class PawnMover extends PieceMover {
      * @param target square that pawn is moving to.
      */
     @Override
-    public void move(Piece piece, Square target, GameSituation sit) {
+    public void move(Piece piece, Coordinates target, GameSituation sit) {
 
         piece.setHasBeenMoved(true);
 
@@ -42,7 +43,7 @@ public class PawnMover extends PieceMover {
             piece.setMovedTwoSquaresLastTurn(true);
         }
 
-        if (!target.containsAPiece() && target.getColumn() != piece.getColumn()) {
+        if (!sit.getChessBoard().getSquare(target).containsAPiece() && target.getColumn() != piece.getColumn()) {
             Square enPassanted = sit.getChessBoard()
                     .getSquare(target.getColumn(), piece.getRow());
             sit.updateHashForTakingPiece(enPassanted);
@@ -56,7 +57,7 @@ public class PawnMover extends PieceMover {
     /**
      * This method moves pawns on board to target square. If pawn moves two
      * squares that is saved to field movedTwoSquaresLastTurn and thus this pawn
-     * will be en passantable on opponent's next turn. Also if movement is en
+     * will be enpassantable on opponent's next turn. Also if movement is en
      * passant, piece in the square one step back from target will be removed.
      * En passant is spotted from target square being empty and in different
      * column as moving pawn.
@@ -67,12 +68,12 @@ public class PawnMover extends PieceMover {
     public void commitMove(Move move, GameSituation sit) {
 
         move.getPiece().setHasBeenMoved(true);
-
         if (Math.abs(move.getFrom().getRow() - move.getTargetRow()) == 2) {
             move.getPiece().setMovedTwoSquaresLastTurn(true);
         }
-
-        if (!move.getTarget().containsAPiece() && move.getTargetColumn() != move.getFrom().getColumn()) {
+        
+        Square target=sit.getChessBoard().getSquare(move.getTarget());
+        if (!target.containsAPiece() && move.getTargetColumn() != move.getFrom().getColumn()) {
             Square enPassanted = sit.getChessBoard().getSquare(move.getTargetColumn(), move.getFrom().getRow());
             sit.updateHashForTakingPiece(enPassanted);
             enPassanted.getPiece().setTaken(true);
@@ -93,15 +94,15 @@ public class PawnMover extends PieceMover {
      * @return list containing all squares this pawn threatens
      */
     @Override
-    public Set<Square> threatenedSquares(Piece piece, ChessBoard board) {
-        Set<Square> squares = new HashSet();
+    public Set<Coordinates> threatenedSquares(Piece piece, ChessBoard board) {
+        Set<Coordinates> squares = new HashSet();
         int[] columnChange = new int[]{1, -1};
         int column = piece.getColumn();
         int row = piece.getRow() + piece.getOwner().getDirection();
 
         for (int i = 0; i < 2; i++) {
             if (board.withinTable(column + columnChange[i], row)) {
-                Square target = board.getSquare(column + columnChange[i], row);
+                Coordinates target = board.getSquare(column + columnChange[i], row).getLocation();
                 squares.add(target);
             }
         }
@@ -111,7 +112,7 @@ public class PawnMover extends PieceMover {
         return squares;
     }
 
-    private void addPossibleEnPassant(Piece piece, ChessBoard board, Set<Square> squares) {
+    private void addPossibleEnPassant(Piece piece, ChessBoard board, Set<Coordinates> squares) {
         Square target;
         int[] columnChange = new int[]{1, -1};
 
@@ -122,7 +123,7 @@ public class PawnMover extends PieceMover {
                 if (targetContainsAnEnemyPawn(piece, target)) {
                     Piece opposingPawn = target.getPiece();
                     if (opposingPawn.isMovedTwoSquaresLastTurn()) {
-                        squares.add(board.getSquare(target.getColumn(), target.getRow() + piece.getOwner().getDirection()));
+                        squares.add(board.getSquare(target.getColumn(), target.getRow() + piece.getOwner().getDirection()).getLocation());
                     }
                 }
             }
@@ -154,8 +155,8 @@ public class PawnMover extends PieceMover {
      * @return a list containing all squares this pawn can legally move to.
      */
     @Override
-    public Set<Square> possibleMoves(Piece piece, ChessBoard board) {
-        Set<Square> moves = new HashSet<>();
+    public Set<Coordinates> possibleMoves(Piece piece, ChessBoard board) {
+        Set<Coordinates> moves = new HashSet<>();
         int newrow = piece.getRow() + piece.getOwner().getDirection();
 
         if (addSquareIfWithinTableAndEmpty(board, piece.getColumn(), newrow, moves)) {
@@ -170,18 +171,18 @@ public class PawnMover extends PieceMover {
         return moves;
     }
 
-    private void addPossibilitiesToTakeOpposingPieces(Piece piece, ChessBoard board, Set<Square> moves) {
+    private void addPossibilitiesToTakeOpposingPieces(Piece piece, ChessBoard board, Set<Coordinates> moves) {
         threatenedSquares(piece, board).stream().filter(i -> legalToMoveTo(piece, i, board))
-                .filter(i -> i.containsAPiece())
+                .filter(i -> board.getSquare(i).containsAPiece())
                 .forEach(i -> moves.add(i));
         addPossibleEnPassant(piece, board, moves);
     }
 
-    private boolean addSquareIfWithinTableAndEmpty(ChessBoard board, int column, int row, Set<Square> moves) {
+    private boolean addSquareIfWithinTableAndEmpty(ChessBoard board, int column, int row, Set<Coordinates> moves) {
         if (board.withinTable(column, row)) {
-            Square target = board.getSquare(column, row);
+            Coordinates target = board.getSquare(column, row).getLocation();
 
-            if (!target.containsAPiece()) {
+            if (!board.getSquare(target).containsAPiece()) {
                 moves.add(target);
                 return true;
             }

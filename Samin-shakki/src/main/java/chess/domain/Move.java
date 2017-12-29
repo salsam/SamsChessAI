@@ -1,47 +1,53 @@
 package chess.domain;
 
-import chess.domain.board.Square;
+import chess.domain.board.ChessBoard;
 import chess.domain.board.Piece;
 import java.util.Objects;
 
 /**
- * One move made by a player. Knows piece being moved, square that movement starts from as well as the end square.
+ * One move made by a player. Knows piece being moved, square that movement
+ * starts from as well as the end square.
  *
  * @author sami
  */
 public class Move {
 
     private Piece piece;
-    private Square from;
-    private Square target;
+    private Coordinates from;
+    private Coordinates target;
 
-    public Move(Piece piece, Square target) {
+    //Warning! Ensure you know where piece actually is!
+    public Move(Piece piece, Coordinates target) {
         this.piece = piece;
         this.target = target;
+        this.from = piece.getLocation();
     }
 
-    public Move(Piece piece, Square target, Game game) {
+    //Deprecated!
+    public Move(Piece piece, Coordinates target, ChessBoard board) {
         this.piece = piece;
         this.target = target;
-        this.from = game.getSituation().getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+        this.from = piece.getLocation();
+    }
+
+    public Move(Piece piece, Coordinates target, Game game) {
+        this.piece = piece;
+        this.target = target;
+        this.from = piece.getLocation();
     }
 
     public Move(Piece piece, int column, int row, Game game) {
         this.piece = piece;
-        this.from = game.getSituation().getChessBoard().getSquare(piece.getColumn(), piece.getRow());
-        this.target = game.getSituation().getChessBoard().getSquare(column, row);
+        this.from = piece.getLocation();
+        this.target = new Coordinates(column, row);
     }
 
-    public Square getFrom() {
+    public Coordinates getFrom() {
         return from;
     }
 
-    public void setFrom(Square from) {
+    public void setFrom(Coordinates from) {
         this.from = from;
-    }
-
-    public void setFrom(Game game) {
-        this.from = game.getSituation().getChessBoard().getSquare(piece.getColumn(), piece.getRow());
     }
 
     public Piece getPiece() {
@@ -52,11 +58,11 @@ public class Move {
         this.piece = piece;
     }
 
-    public Square getTarget() {
+    public Coordinates getTarget() {
         return target;
     }
 
-    public void setTarget(Square target) {
+    public void setTarget(Coordinates target) {
         this.target = target;
     }
 
@@ -91,7 +97,7 @@ public class Move {
 
     @Override
     public String toString() {
-        return "(" + this.piece + ", " + this.target + ")";
+        return "(" + this.piece + ", from " + this.from + " to " + this.target + ")";
     }
 
 }
