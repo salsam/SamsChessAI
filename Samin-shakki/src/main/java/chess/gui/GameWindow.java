@@ -49,7 +49,7 @@ public class GameWindow extends JFrame {
         textArea.setAlignmentY(TOP_ALIGNMENT);
         game.getInput().setTextArea(textArea);
 
-        cbd = new ChessBoardDrawer(game.getInput(), game.getSituation(), 50);
+        cbd = new ChessBoardDrawer(game, 50);
         cbd.setMaximumSize(new Dimension(400, 400));
         cbd.setAlignmentX(CENTER_ALIGNMENT);
         cbd.setAlignmentY(CENTER_ALIGNMENT);

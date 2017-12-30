@@ -52,6 +52,8 @@ public class InputProcessor {
 
     /**
      * Creates a new InputProcessor-object.
+     *
+     * @param game game of which player input this class processes.
      */
     public InputProcessor(Game game) {
         ais = new AILogic[2];
@@ -128,9 +130,10 @@ public class InputProcessor {
     }
 
     public Move makeBestMoveAccordingToAILogic() {
-        ais[game.getSituation().getTurn() % 2].findBestMoves(game.getSituation());
+        ais[game.getSituation().getTurn() % 2].findBestMoves();
         Move move = ais[game.getSituation().getTurn() % 2].getBestMove();
-        move.setFrom(game);
+        move.updateFrom(game);
+        game.addMove(move);
         setChosen(move.getPiece());
         moveToTargetLocation(move.getTargetColumn(), move.getTargetRow(), true);
         return move;
@@ -141,7 +144,7 @@ public class InputProcessor {
         Square target = game.getSquare(column, row);
         Square from = game.getSquare(chosen.getColumn(), chosen.getRow());
 
-        game.moveOnMainBoard(chosen, target);
+        game.move(chosen, target);
         handlePromotion(aisTurn);
 
         chosen = null;
@@ -149,9 +152,16 @@ public class InputProcessor {
 
         if (game.getSituation().getCheckLogic().checkIfChecked(game.getSituation().whoseTurn())) {
             undoMove(backUp, game.getSituation(), from, target);
+            game.removeLastMove();
+            textArea.setText("Illegal move! Your king is checked!");
             return;
         }
 
+        for (int i = 0; i < 2; i++) {
+            if (game.isAI(i)) {
+                ais[i].commitMove(game.getLastMove());
+            }
+        }
         game.getSituation().nextTurn();
         updateTextArea();
     }
@@ -161,7 +171,7 @@ public class InputProcessor {
             if (aisTurn) {
                 PromotionLogic.promote(game.getSituation(), chosen, QUEEN);
             } else {
-                game.setContinues(false);
+                game.stop();
                 PromotionScreen pr = new PromotionScreen(game, chosen);
             }
         }
@@ -170,29 +180,29 @@ public class InputProcessor {
     public void updateTextArea() {
         textArea.setText(game.getSituation().whoseTurn() + "'s turn.");
         if (game.getSituation().getCountOfCurrentSituation() >= 3) {
-            game.stop();
+            endGame();
             textArea.setText("Third repetition of situation. Game ended as a draw!");
-            frames.get("endingScreen").setVisible(true);
         } else if (game.getSituation().getMovesTillDraw() < 1) {
-            game.stop();
+            endGame();
             textArea.setText("50-move rule reached. Game ended as a draw!");
-            frames.get("endingScreen").setVisible(true);
         } else if (game.getSituation().getCheckLogic().checkIfChecked(game.getSituation().whoseTurn())) {
             textArea.setText(textArea.getText() + " Check!");
             if (game.getSituation().getCheckLogic().checkMate(game.getSituation().whoseTurn())) {
                 textArea.setText("Checkmate! " + getOpponent(game.getSituation().whoseTurn()) + " won!");
-                game.stop();
-                frames.get("endingScreen").setVisible(true);
+                endGame();
             }
         } else if (game.getSituation().getCheckLogic().stalemate(game.getSituation().whoseTurn())) {
-            game.stop();
+            endGame();
             textArea.setText("Stalemate! Game ended as a draw!");
-            frames.get("endingScreen").setVisible(true);
         } else if (game.getSituation().getCheckLogic().insufficientMaterial()) {
-            game.stop();
+            endGame();
             textArea.setText("Insufficient material! Game ended as a draw!");
-            frames.get("endingScreen").setVisible(true);
         }
+    }
+
+    private void endGame() {
+        game.stop();
+        frames.get("endingScreen").setVisible(true);
     }
 
 }

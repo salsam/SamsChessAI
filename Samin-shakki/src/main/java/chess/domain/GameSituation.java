@@ -44,16 +44,6 @@ public class GameSituation {
      * is checked.
      */
     private CheckingLogic checkLogic;
-    /**
-     * continues tells if this game has ended or not.
-     */
-    private boolean continues;
-
-    /**
-     * Keeps track of which players are ais. ais[0] is black and ais[1] is
-     * white. If ais[0]=1, then black is ai etc.
-     */
-    private boolean[] ais;
 
     /**
      * Used to count how many times given situation has occurred on board.
@@ -90,12 +80,10 @@ public class GameSituation {
         legalityChecker = new LegalityChecker(board);
         checkLogic = new CheckingLogic(this);
         chessBoardSituationCounter = new HashMap();
-        continues = true;
         movesTillDraw = 100;
         hasher = new ZobristHasher();
         boardHash = hasher.hash(board);
         incrementCountOfCurrentBoardSituation();
-        ais = new boolean[2];
     }
 
     /**
@@ -111,14 +99,6 @@ public class GameSituation {
         }
     }
 
-    public boolean getContinues() {
-        return continues;
-    }
-
-    public void setContinues(boolean continues) {
-        this.continues = continues;
-    }
-
     public LegalityChecker getChecker() {
         return legalityChecker;
     }
@@ -131,24 +111,12 @@ public class GameSituation {
         return checkLogic;
     }
 
-    public boolean[] getAis() {
-        return this.ais;
-    }
-
     public ZobristHasher getHasher() {
         return hasher;
     }
 
     public int getTurn() {
         return this.turn;
-    }
-
-    public void setBlackAI(boolean isAi) {
-        this.ais[0] = isAi;
-    }
-
-    public void setWhiteAI(boolean isAi) {
-        this.ais[1] = isAi;
     }
 
     public long getBoardHash() {
@@ -306,7 +274,6 @@ public class GameSituation {
      * Resets the game situation to beginning of the game.
      */
     public void reset() {
-        continues = true;
         init.initialize(board);
         chessBoardSituationCounter.clear();
         reHashBoard(true);

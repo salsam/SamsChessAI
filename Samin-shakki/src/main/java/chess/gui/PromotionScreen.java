@@ -45,25 +45,29 @@ public class PromotionScreen extends JFrame {
 
         bishop.addActionListener((ActionEvent ae) -> {
             promote(game.getSituation(), promotee, BISHOP);
-            game.setContinues(true);
+            game.start();
+            game.updateScreen();
             pr.dispose();
         });
 
         knight.addActionListener((ActionEvent ae) -> {
             promote(game.getSituation(), promotee, KNIGHT);
-            game.setContinues(true);
+            game.start();
+            game.updateScreen();
             pr.dispose();
         });
 
         queen.addActionListener((ActionEvent ae) -> {
             promote(game.getSituation(), promotee, QUEEN);
-            game.setContinues(true);
+            game.start();
+            game.updateScreen();
             pr.dispose();
         });
 
         rook.addActionListener((ActionEvent ae) -> {
             promote(game.getSituation(), promotee, ROOK);
-            game.setContinues(true);
+            game.start();
+            game.updateScreen();
             pr.dispose();
         });
 

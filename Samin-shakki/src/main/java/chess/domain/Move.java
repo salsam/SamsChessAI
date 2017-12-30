@@ -40,8 +40,16 @@ public class Move {
         this.from = from;
     }
 
-    public void setFrom(Game game) {
-        this.from = game.getSituation().getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+    public int getFromColumn() {
+        return from.getColumn();
+    }
+
+    public int getFromRow() {
+        return from.getRow();
+    }
+
+    public void updateFrom(Game game) {
+        this.from = game.getSquare(piece.getColumn(), piece.getRow());
     }
 
     public Piece getPiece() {

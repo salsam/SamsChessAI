@@ -85,9 +85,6 @@ public class CheckingLogic {
                 undoMove(backUp, game, from, possibility);
             }
         }
-
-        game.setContinues(false);
-
         return true;
     }
 
@@ -104,7 +101,6 @@ public class CheckingLogic {
                         .possibleMoves(piece, game.getChessBoard()).isEmpty()))) {
             return false;
         }
-        game.setContinues(false);
         return true;
     }
 

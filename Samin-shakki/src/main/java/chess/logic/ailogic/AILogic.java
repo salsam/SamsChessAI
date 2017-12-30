@@ -6,13 +6,14 @@ import static chess.domain.board.ChessBoardCopier.copy;
 import static chess.domain.board.ChessBoardCopier.undoMove;
 import static chess.domain.board.Player.getOpponent;
 import static chess.logic.ailogic.GameSituationEvaluator.evaluateGameSituation;
-import chess.logic.movementlogic.MovementLogic;
 import chess.domain.datastructures.*;
 import chess.domain.board.*;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import static chess.logic.ailogic.GameSituationEvaluator.getValue;
+import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import chess.logic.gamelogic.PromotionLogic;
+import chess.logic.movementlogic.MovementLogic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,7 +43,7 @@ import java.util.Random;
  */
 public class AILogic {
 
-    private GameSituation sit;
+    private GameSituation game;
     private MovementLogic ml;
     private List<Move> bestMoves;
     private int[] bestValues;
@@ -58,12 +59,12 @@ public class AILogic {
     private Move[] killerCandidates;
     private Move[][] killerMoves;
     private TranspositionTable transpositionTable;
-    private long sum = 0;
-    private int count = 0;
 
     public AILogic() {
         bestValues = new int[plies + 1];
         bestMoves = new ArrayList();
+        ml = new MovementLogic();
+        game = new GameSituation(new StandardChessBoardInitializer(), ml);
         killerCandidates = new Move[plies];
         killerMoves = new Move[plies][3];
         lastPlies = 0;
@@ -83,13 +84,13 @@ public class AILogic {
         return killerCandidates;
     }
 
-    public void setSearchDepth(int searchDepth) {
-        this.searchDepth = searchDepth;
+    public void commitMove(Move move) {
+        ml.move(game.getChessBoard().getSquare(move.getFromColumn(), move.getFromRow()).getPiece(),
+                move.getTarget(), game);
     }
 
-    public void setSituation(GameSituation sit) {
-        this.sit = sit;
-        this.ml = sit.getChessBoard().getMovementLogic();
+    public void setSearchDepth(int searchDepth) {
+        this.searchDepth = searchDepth;
     }
 
     public void setStart(long start) {
@@ -165,7 +166,7 @@ public class AILogic {
             return -123456790;
         }
 
-        TranspositionKey key = new TranspositionKey(maxingPlayer, sit.getBoardHash());
+        TranspositionKey key = new TranspositionKey(maxingPlayer, game.getBoardHash());
 
         if (transpositionTable.containsRelevantKey(key, height)) {
             TranspositionEntry entry = transpositionTable.get(key);
@@ -187,8 +188,7 @@ public class AILogic {
             }
         }
         if (height == 0) {
-            int value = evaluateGameSituation(sit, maxingPlayer);
-            sit.setContinues(true);
+            int value = evaluateGameSituation(game, maxingPlayer);
             transpositionTable.put(key, new TranspositionEntry(height, value, Type.EXACT));
             return value;
         }
@@ -218,12 +218,12 @@ public class AILogic {
      */
     public int tryAllPossibleMoves(int height, int ogAlpha, int alpha, Player maxingPlayer, int beta) {
         bestValues[height] = -123456789;
-        ChessBoard backUp = copy(sit.getChessBoard());
+        ChessBoard backUp = copy(game.getChessBoard());
         alpha = testPrincipalMove(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
         alpha = testKillerMoves(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
 
         for (int loopCount = 0; loopCount < 4; loopCount++) {
-            for (Piece piece : sit.getChessBoard().getPieces(maxingPlayer)) {
+            for (Piece piece : game.getChessBoard().getPieces(maxingPlayer)) {
                 if (alpha >= beta || System.currentTimeMillis() - start >= timeLimit) {
                     break;
                 }
@@ -232,7 +232,7 @@ public class AILogic {
                     continue;
                 }
 
-                Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+                Square from = game.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
                 alpha = tryMovingPiece(height, loopCount, piece, from, ogAlpha, alpha, beta, maxingPlayer, backUp);
             }
         }
@@ -261,7 +261,7 @@ public class AILogic {
      */
     public int tryMovingPiece(int height, int loopCount, Piece moved, Square from, int ogAlpha, int alpha, int beta, Player maxingPlayer, ChessBoard backUp) {
 
-        for (Square possibility : ml.possibleMoves(moved, sit.getChessBoard())) {
+        for (Square possibility : ml.possibleMoves(moved, game.getChessBoard())) {
 
             if (System.currentTimeMillis() - start >= timeLimit) {
                 break;
@@ -291,8 +291,8 @@ public class AILogic {
         }
 
         if (loopCount < 3) {
-            int movedVal = getValue(sit, moved);
-            int capVal = getValue(sit, possibility.getPiece());
+            int movedVal = getValue(game, moved);
+            int capVal = getValue(game, possibility.getPiece());
             if ((loopCount == 0 && capVal <= movedVal)
                     || (loopCount == 1 && capVal != movedVal)
                     || (loopCount == 2 && capVal >= movedVal)) {
@@ -323,15 +323,14 @@ public class AILogic {
             return alpha;
         }
 
-        ml.move(piece, possibility, sit);
+        ml.move(piece, possibility, game);
         if (piece.getKlass() == PAWN && piece.isAtOpposingEnd()) {
-            sit.decrementCountOfCurrentBoardSituation();
-            PromotionLogic.promote(sit, piece, QUEEN);
-            sit.incrementCountOfCurrentBoardSituation();
+            game.decrementCountOfCurrentBoardSituation();
+            PromotionLogic.promote(game, piece, QUEEN);
+            game.incrementCountOfCurrentBoardSituation();
         }
         alpha = checkForChange(piece, possibility, height, maxingPlayer, ogAlpha, alpha, beta);
-        undoMove(backUp, sit, from, possibility);
-        sit.setContinues(true);
+        undoMove(backUp, game, from, possibility);
         return alpha;
     }
 
@@ -355,11 +354,11 @@ public class AILogic {
                 continue;
             }
             Piece piece = killer.getPiece();
-            Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+            Square from = game.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
             Square to = killer.getTarget();
 
             if (piece.deepEquals(from.getPiece())) {
-                if (ml.possibleMoves(piece, sit.getChessBoard()).contains(to)) {
+                if (ml.possibleMoves(piece, game.getChessBoard()).contains(to)) {
                     alpha = testAMove(piece, to, from, maxingPlayer, height, ogAlpha, alpha, beta, backUp);
                 }
             }
@@ -384,11 +383,11 @@ public class AILogic {
     private int testPrincipalMove(int height, Player maxingPlayer, int ogAlpha, int alpha, int beta, ChessBoard backUp) {
         if (principalMoves[searchDepth - height] != null) {
             Piece piece = principalMoves[searchDepth - height].getPiece();
-            Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+            Square from = game.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
             Square to = principalMoves[searchDepth - height].getTarget();
 
             if (piece.deepEquals(from.getPiece())) {
-                if (ml.possibleMoves(piece, sit.getChessBoard()).contains(to)) {
+                if (ml.possibleMoves(piece, game.getChessBoard()).contains(to)) {
                     alpha = testAMove(piece, to, from, maxingPlayer, height, ogAlpha, alpha, beta, backUp);
                 }
             }
@@ -455,7 +454,7 @@ public class AILogic {
      */
     public int checkForChange(Piece piece, Square possibility, int height, Player maxingPlayer, int ogAlpha, int alpha, int beta) {
 
-        if (sit.getCheckLogic().checkIfChecked(maxingPlayer)) {
+        if (game.getCheckLogic().checkIfChecked(maxingPlayer)) {
             return alpha;
         }
         int value = -negaMax(height - 1, -beta, -alpha, getOpponent(maxingPlayer));
@@ -473,7 +472,7 @@ public class AILogic {
     }
 
     private void addSituationToTranpositionTable(Player maxingPlayer, int height, int value, int ogAlpha, int beta) {
-        TranspositionKey key = new TranspositionKey(maxingPlayer, sit.getBoardHash());
+        TranspositionKey key = new TranspositionKey(maxingPlayer, game.getBoardHash());
         TranspositionEntry entry = new TranspositionEntry(height, value, Type.ALPHA);
 
         if (bestValues[height] <= ogAlpha) {
@@ -512,18 +511,15 @@ public class AILogic {
      * that either player will inevitably win the game in i moves and thus
      * there's no need to loop further.
      *
-     * @param situation game situation at the beginning of AI's turn.
      */
-    public void findBestMoves(GameSituation situation) {
+    public void findBestMoves() {
         start = System.currentTimeMillis();
-        sit = situation;
         transpositionTable.makePairsUnsaved();
-        ml = sit.getChessBoard().getMovementLogic();
-        salvageLastPrincipalVariation();
+        //salvageLastPrincipalVariation();
         int i = 1;
         for (; i <= plies; i++) {
             searchDepth = i;
-            negaMax(i, -123456789, 123456789, situation.whoseTurn());
+            negaMax(i, -123456789, 123456789, game.whoseTurn());
             lastPlies++;
             if (System.currentTimeMillis() - start >= timeLimit
                     || Math.abs(bestValues[i]) > 20000) {
@@ -532,7 +528,7 @@ public class AILogic {
         }
 //        System.out.println("Recursion depth: " + i);
 
-        lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
+        //lastPrincipalVariation = new Pair(game.getSituation().getTurn(), principalMoves);
     }
 
     /**
@@ -544,7 +540,7 @@ public class AILogic {
      */
     private void salvageLastPrincipalVariation() {
         if (lastPrincipalVariation != null) {
-            int turnsSince = sit.getTurn() - lastPrincipalVariation.getFirst();
+            int turnsSince = game.getTurn() - lastPrincipalVariation.getFirst();
             for (int i = 0; i < plies; i++) {
                 if (turnsSince > 0 && i < lastPlies - turnsSince) {
                     principalMoves[i] = lastPrincipalVariation.getSecond()[i + turnsSince];

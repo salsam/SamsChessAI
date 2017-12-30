@@ -19,10 +19,11 @@ public class Game {
     private GameSituation situation;
     private InputProcessor input;
     private LinkedList<Move> moves;
-    private Thread aiThread;
+    private Thread[] aiThreads;
 
     public Game() {
         this.ais = new boolean[2];
+        aiThreads = new Thread[2];
         this.situation = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
         this.input = new InputProcessor(this);
         this.continues = false;
@@ -41,6 +42,21 @@ public class Game {
         moves.add(move);
     }
 
+    public Move removeLastMove() {
+        if (!moves.isEmpty()) {
+            return moves.removeLast();
+        }
+        return null;
+    }
+
+    public Move getLastMove() {
+        if (moves.isEmpty()) {
+            return null;
+        }
+
+        return moves.getLast();
+    }
+
     public GameSituation getSituation() {
         return situation;
     }
@@ -51,6 +67,10 @@ public class Game {
 
     public boolean isAIsTurn() {
         return ais[situation.getTurn() % 2];
+    }
+
+    public boolean isAI(int i) {
+        return ais[i];
     }
 
     public void setWhiteAI(boolean ai) {
@@ -74,17 +94,30 @@ public class Game {
                 situation.getChessBoard());
     }
 
-    public void moveOnMainBoard(Piece piece, Square target) {
+    public void move(Piece piece, Square target) {
         situation.getChessBoard().getMovementLogic().move(piece, target, situation);
+    }
+
+    public void updateScreen() {
+        input.getFrames().get("game").repaint();
     }
 
     public void start() {
         this.continues = true;
 
-        aiThread = new Thread() {
+        for (int i = 0; i < 2; i++) {
+            if (ais[i]) {
+                createThread(i);
+                aiThreads[i].start();
+            }
+        }
+    }
+
+    private void createThread(int i) {
+        aiThreads[i] = new Thread() {
             public void run() {
                 while (continues && !interrupted()) {
-                    if (isAIsTurn()) {
+                    if (situation.getTurn() % 2 == i) {
                         moves.add(input.makeBestMoveAccordingToAILogic());
                         input.getFrames().get("game").repaint();
                     } else {
@@ -96,12 +129,15 @@ public class Game {
                 }
             }
         };
-        aiThread.start();
     }
 
     public void stop() {
         continues = false;
-        aiThread.interrupt();
+        for (int i = 0; i < 2; i++) {
+            if (ais[i]) {
+                aiThreads[i].interrupt();
+            }
+        }
     }
 
     public void restart() {
