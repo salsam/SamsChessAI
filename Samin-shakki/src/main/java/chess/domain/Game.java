@@ -40,6 +40,12 @@ public class Game {
     public void addMove(Move move) {
         moves.add(move);
     }
+    
+    public void cancelLastMove() {
+        if (!moves.isEmpty()) {
+            moves.removeLast();
+        } 
+    }
 
     public GameSituation getSituation() {
         return situation;

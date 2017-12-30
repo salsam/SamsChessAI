@@ -115,7 +115,7 @@ public class InputProcessor {
 
         if (game.getSituation().getChessBoard().withinTable(column, row)) {
             if (chosen != null && possibilities.contains(new Square(column, row))) {
-                game.addMove(new Move(chosen, column, row, game));
+                game.addMove(new Move(chosen, column, row));
                 moveToTargetLocation(column, row, false);
             } else if (game.getSituation().getChecker().checkPlayerOwnsPieceOnTargetSquare(
                     game.getSituation().whoseTurn(), column, row)) {
@@ -153,6 +153,7 @@ public class InputProcessor {
 
         if (game.getSituation().getCheckLogic().checkIfChecked(game.getSituation().whoseTurn())) {
             undoMove(backUp, game.getSituation(), from, target);
+            game.cancelLastMove();
             return;
         }
 

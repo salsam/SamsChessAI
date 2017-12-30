@@ -223,7 +223,7 @@ public class AILogicTest {
         ai.getBestValues()[1] = -100;
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis());
-        int newAlpha = ai.checkForChange(wp, new Square(1, 4), 1, Player.WHITE, -123456789, -123456789, 123456789);
+        int newAlpha = ai.checkForChange(wp, wp.getLocation(), new Square(1, 4), 1, Player.WHITE, -123456789, -123456789, 123456789);
         assertEquals(evaluateGameSituation(sit, Player.WHITE), newAlpha);
         assertEquals(evaluateGameSituation(sit, Player.WHITE), ai.getBestValues()[1]);
     }
@@ -240,7 +240,7 @@ public class AILogicTest {
         ai.getBestValues()[1] = 100;
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis());
-        int newAlpha = ai.checkForChange(wp, new Square(1, 4), 1, Player.WHITE, 100, 100, 123456789);
+        int newAlpha = ai.checkForChange(wp, wp.getLocation(), new Square(1, 4), 1, Player.WHITE, 100, 100, 123456789);
         assertEquals(100, newAlpha);
         assertEquals(100, ai.getBestValues()[1]);
     }
@@ -261,7 +261,7 @@ public class AILogicTest {
         ai.setSituation(sit);
         ai.getBestValues()[1] = -250;
         ai.setStart(System.currentTimeMillis());
-        int newAlpha = ai.checkForChange(wb, new Square(1, 4), 1, Player.WHITE, -250, -250, 123456789);
+        int newAlpha = ai.checkForChange(wb, new Square(1, 4), new Square(1, 4), 1, Player.WHITE, -250, -250, 123456789);
         assertEquals(-250, newAlpha);
         assertEquals(-250, ai.getBestValues()[1]);
     }

@@ -5,7 +5,8 @@ import chess.domain.board.Piece;
 import java.util.Objects;
 
 /**
- * One move made by a player. Knows piece being moved, square that movement starts from as well as the end square.
+ * One move made by a player. Knows piece being moved, square that movement
+ * starts from as well as the end square.
  *
  * @author sami
  */
@@ -17,19 +18,20 @@ public class Move {
 
     public Move(Piece piece, Square target) {
         this.piece = piece;
+        this.from = piece.getLocation();
         this.target = target;
     }
 
-    public Move(Piece piece, Square target, Game game) {
+    public Move(Piece piece, int column, int row) {
         this.piece = piece;
-        this.target = target;
-        this.from = new Square(piece.getColumn(), piece.getRow());
-    }
-
-    public Move(Piece piece, int column, int row, Game game) {
-        this.piece = piece;
-        this.from = new Square(piece.getColumn(), piece.getRow());
+        this.from = piece.getLocation();
         this.target = new Square(column, row);
+    }
+    
+    public Move(Piece piece, Square from, Square target) {
+        this.from=from;
+        this.piece=piece;
+        this.target=target;
     }
 
     public Square getFrom() {

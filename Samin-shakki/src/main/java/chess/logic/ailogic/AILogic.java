@@ -233,7 +233,7 @@ public class AILogic implements AI {
                     continue;
                 }
 
-                Square from = new Square(piece.getColumn(), piece.getRow());
+                Square from = piece.getLocation();
                 alpha = tryMovingPiece(height, loopCount, piece, from, ogAlpha, alpha, beta, maxingPlayer, backUp);
             }
         }
@@ -337,7 +337,7 @@ public class AILogic implements AI {
             PromotionLogic.promote(sit, piece, QUEEN);
             sit.incrementCountOfCurrentBoardSituation();
         }
-        alpha = checkForChange(piece, possibility, height, maxingPlayer, ogAlpha, alpha, beta);
+        alpha = checkForChange(piece, from, possibility, height, maxingPlayer, ogAlpha, alpha, beta);
         undoMove(backUp, sit, from, possibility);
         sit.setContinues(true);
         return alpha;
@@ -461,7 +461,7 @@ public class AILogic implements AI {
      * @param possibility square that piece was moved to.
      * @return new alpha value.
      */
-    public int checkForChange(Piece piece, Square possibility, int height, Player maxingPlayer, int ogAlpha, int alpha, int beta) {
+    public int checkForChange(Piece piece, Square from, Square possibility, int height, Player maxingPlayer, int ogAlpha, int alpha, int beta) {
 
         if (sit.getCheckLogic().checkIfChecked(maxingPlayer)) {
             return alpha;
@@ -470,12 +470,12 @@ public class AILogic implements AI {
         addSituationToTranpositionTable(maxingPlayer, height, value, ogAlpha, beta);
 
         if (value >= bestValues[height]) {
-            keepTrackOfBestMoves(height, value, piece, possibility);
+            keepTrackOfBestMoves(height, value, piece, from, possibility);
             bestValues[height] = value;
         }
         if (value > alpha) {
             alpha = value;
-            principalMoves[searchDepth - height] = new Move(piece, possibility);
+            principalMoves[searchDepth - height] = new Move(piece, from, possibility);
         }
         return alpha;
     }
@@ -503,12 +503,12 @@ public class AILogic implements AI {
      * @param piece piece that was moved.
      * @param possibility square piece was moved to.
      */
-    private void keepTrackOfBestMoves(int height, int value, Piece piece, Square possibility) {
+    private void keepTrackOfBestMoves(int height, int value, Piece piece, Square from, Square possibility) {
         if (height == searchDepth) {
             if (value > bestValues[height]) {
                 bestMoves.clear();
             }
-            bestMoves.add(new Move(piece, possibility));
+            bestMoves.add(new Move(piece, from, possibility));
         }
     }
 
