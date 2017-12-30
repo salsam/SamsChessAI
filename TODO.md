@@ -10,8 +10,3 @@
 * Is there sitll problems with Zobrist hashing causing hash collisions? Recheck that is functions as it should, if necessary consider alternatives.
 * MovementLogic should be game specific not chessboard specific!
 * More testing for classes. Will be easier after refactorization.
-* Evaluating should not stop game!
-
-
-
-* At the moment hashing disabled

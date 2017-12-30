@@ -1,6 +1,5 @@
 package chess.domain.board;
 
-import chess.domain.Coordinates;
 import chess.logic.movementlogic.MovementLogic;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,8 +21,6 @@ public class ChessBoard {
      * Table containing all the squares on the game table
      */
     private Square[][] table;
-    
-    private Piece[][] realTable;
     /**
      * List of all pieces that white owns.
      */
@@ -35,11 +32,11 @@ public class ChessBoard {
     /**
      * Set containing all squares that black threatens.
      */
-    private Set<Coordinates> squaresThreatenedByBlack;
+    private Set<Square> squaresThreatenedByBlack;
     /**
      * Set containing all squares that white threatens.
      */
-    private Set<Coordinates> squaresThreatenedByWhite;
+    private Set<Square> squaresThreatenedByWhite;
     /**
      * MovementLogic used to see which moves are legal on this ChessBoard.
      */
@@ -155,10 +152,6 @@ public class ChessBoard {
     public Square getSquare(int column, int row) {
         return table[column][row];
     }
-    
-    public Square getSquare(Coordinates coords) {
-        return table[coords.getColumn()][coords.getRow()];
-    }
 
     /**
      * Checks if the given location is on the chessboard.
@@ -180,7 +173,7 @@ public class ChessBoard {
      * @param player Player
      * @return set containing all squares player threatens
      */
-    public Set<Coordinates> threatenedSquares(Player player) {
+    public Set<Square> threatenedSquares(Player player) {
         if (player == Player.WHITE) {
             return squaresThreatenedByWhite;
         } else {

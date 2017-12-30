@@ -1,6 +1,5 @@
 package chess.domain.board;
 
-import chess.domain.Coordinates;
 import static chess.domain.board.Player.BLACK;
 import java.util.Objects;
 
@@ -12,7 +11,8 @@ import java.util.Objects;
 public class Piece {
 
     private Klass klass;
-    private Coordinates location;
+    private int column;
+    private int row;
     private String pieceCode;
     private Player owner;
     private boolean taken;
@@ -21,14 +21,8 @@ public class Piece {
 
     public Piece(Klass klass, int column, int row, Player owner, String pieceCode) {
         this.klass = klass;
-        this.location = new Coordinates(column, row);
-        this.pieceCode = pieceCode;
-        this.owner = owner;
-    }
-
-    public Piece(Klass klass, Coordinates coords, Player owner, String pieceCode) {
-        this.klass = klass;
-        this.location = coords;
+        this.column = column;
+        this.row = row;
         this.pieceCode = pieceCode;
         this.owner = owner;
     }
@@ -57,6 +51,22 @@ public class Piece {
         this.movedTwoSquaresLastTurn = movedTwoSquaresLastTurn;
     }
 
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
     public String getPieceCode() {
         return pieceCode;
     }
@@ -81,34 +91,10 @@ public class Piece {
         this.taken = taken;
     }
 
-    public int getColumn() {
-        return this.location.getColumn();
-    }
-    
-    public void setColumn(int column) {
-        this.location.setColumn(column);
-    }
-
-    public int getRow() {
-        return this.location.getRow();
-    }
-    
-    public void setRow(int row) {
-        this.location.setRow(row);
-    }
-
-    public Coordinates getLocation() {
-        return location;
-    }
-
-    public void setLocation(Coordinates location) {
-        this.location = location;
-    }
-
     /**
      * Tests if this chess piece is deeply equal to the one given as parameter.
      *
-     * @param other chess piece compared to.
+     * @param other chess peice compared to.
      * @return true if this piece is deeply equal to other one. Else false.
      */
     public boolean deepEquals(Piece other) {
@@ -123,7 +109,10 @@ public class Piece {
             return false;
         }
 
-        if (!this.location.equals(other.location)) {
+        if (this.column != other.getColumn()) {
+            return false;
+        }
+        if (this.row != other.getRow()) {
             return false;
         }
 
@@ -150,7 +139,8 @@ public class Piece {
      */
     public void makeDeeplyEqualTo(Piece other) {
         klass = other.getKlass();
-        location = other.location.clone();
+        column = other.getColumn();
+        row = other.getRow();
         owner = other.getOwner();
         taken = other.isTaken();
         hasBeenMoved = other.isHasBeenMoved();
@@ -185,7 +175,7 @@ public class Piece {
 
     @Override
     public Piece clone() {
-        Piece ret = new Piece(klass, location.clone(), owner, pieceCode);
+        Piece ret = new Piece(klass, column, row, owner, pieceCode);
         ret.setTaken(taken);
         ret.setHasBeenMoved(hasBeenMoved);
         ret.setMovedTwoSquaresLastTurn(movedTwoSquaresLastTurn);
@@ -200,15 +190,15 @@ public class Piece {
      */
     public boolean isAtOpposingEnd() {
         if (owner == BLACK) {
-            return location.getRow() == 7;
+            return row == 7;
         }
-        return location.getRow() == 0;
+        return row == 0;
     }
 
     @Override
     public String toString() {
         return "piececode: " + pieceCode + " class: " + klass + " location: ("
-                + location + ") owner: " + owner + " taken: " + taken
+                + column + "," + row + ") owner: " + owner + " taken: " + taken
                 + " hasbeenmoved: " + hasBeenMoved + " moved2squares: " + movedTwoSquaresLastTurn;
     }
 

@@ -5,9 +5,9 @@
  */
 package chess.logic.movementlogic.piecemovers;
 
-import chess.domain.Coordinates;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
+import chess.domain.board.Square;
 import chess.domain.board.Piece;
 import java.util.HashSet;
 
@@ -33,9 +33,10 @@ public class BishopMover extends PieceMover {
      * @return list containing all squares this bishop threatens
      */
     @Override
-    public Set<Coordinates> threatenedSquares(Piece bishop, ChessBoard board) {
-        Set<Coordinates> possibilities = new HashSet<>();
-        addDiagonalPossibilities(bishop.getLocation(), board, possibilities);
+    public Set<Square> threatenedSquares(Piece bishop, ChessBoard board) {
+        Set<Square> possibilities = new HashSet<>();
+        addDiagonalPossibilities(board.getSquare(bishop.getColumn(), bishop.getRow()), board, possibilities);
+
         return possibilities;
     }
 

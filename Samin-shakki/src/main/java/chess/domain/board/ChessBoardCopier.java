@@ -1,6 +1,5 @@
 package chess.domain.board;
 
-import chess.domain.Coordinates;
 import chess.domain.GameSituation;
 import static chess.domain.board.Klass.KING;
 import static chess.domain.board.Klass.PAWN;
@@ -100,36 +99,36 @@ public class ChessBoardCopier {
      * @param from square that moved piece moved from.
      * @param to square that moved piece moved to.
      */
-    public static void undoMove(ChessBoard backUp, GameSituation sit, Coordinates from, Coordinates to) {
-        Piece old = backUp.getSquare(from).getPiece();
+    public static void undoMove(ChessBoard backUp, GameSituation sit, Square from, Square to) {
+        Piece old = backUp.getSquare(from.getColumn(), from.getRow()).getPiece();
         sit.decrementCountOfCurrentBoardSituation();
-        if (old.getKlass() != sit.getChessBoard().getSquare(to).getPiece().getKlass()) {
-            //sit.updateHashForUndoingPromotion(to);
+        if (old.getKlass() != to.getPiece().getKlass()) {
+            sit.updateHashForUndoingPromotion(to);
         }
-        //sit.updateHashForUndoingMove(backUp, from, to);
+        sit.updateHashForUndoingMove(backUp, from, to);
 
-        sit.getChessBoard().getSquare(from).setPiece(sit.getChessBoard().getSquare(to).getPiece());
-        sit.getChessBoard().getSquare(from).getPiece().makeDeeplyEqualTo(old);
+        from.setPiece(to.getPiece());
+        from.getPiece().makeDeeplyEqualTo(old);
 
         handleDestination(backUp, to, sit, from);
     }
 
-    private static void handleDestination(ChessBoard backUp, Coordinates to, GameSituation sit, Coordinates from) {
-        Piece taken = backUp.getSquare(to).getPiece();
+    private static void handleDestination(ChessBoard backUp, Square to, GameSituation sit, Square from) {
+        Piece taken = backUp.getSquare(to.getColumn(), to.getRow()).getPiece();
         if (taken != null) {
             putTakenPieceBackOnBoard(sit.getChessBoard(), taken, to);
         } else {
-            sit.getChessBoard().getSquare(to).setPiece(null);
+            to.setPiece(null);
             handleCastling(from, to, sit, backUp);
             handleEnPassant(from, to, sit, backUp);
         }
     }
 
-    private static void putTakenPieceBackOnBoard(ChessBoard board, Piece taken, Coordinates to) {
+    private static void putTakenPieceBackOnBoard(ChessBoard board, Piece taken, Square to) {
         for (Piece piece : board.getPieces(taken.getOwner())) {
             if (piece.getPieceCode().equals(taken.getPieceCode())) {
                 piece.makeDeeplyEqualTo(taken);
-                board.getSquare(to).setPiece(piece);
+                board.getSquare(taken.getColumn(), taken.getRow()).setPiece(piece);
                 break;
             }
         }
@@ -143,9 +142,9 @@ public class ChessBoardCopier {
      * @param sit current game situation.
      * @param backUp backup of chessboard before move.
      */
-    private static void handleEnPassant(Coordinates from, Coordinates to, GameSituation sit, ChessBoard backUp) {
-        if (sit.getChessBoard().getSquare(from).getPiece().getKlass() == PAWN && from.getColumn() != to.getColumn()) {
-            Coordinates to2 = sit.getChessBoard().getSquare(to.getColumn(), from.getRow()).getLocation();
+    private static void handleEnPassant(Square from, Square to, GameSituation sit, ChessBoard backUp) {
+        if (from.getPiece().getKlass() == PAWN && from.getColumn() != to.getColumn()) {
+            Square to2 = sit.getChessBoard().getSquare(to.getColumn(), from.getRow());
             Piece taken = backUp.getSquare(to2.getColumn(), to2.getRow()).getPiece();
             putTakenPieceBackOnBoard(sit.getChessBoard(), taken, to2);
             sit.reHashBoard(false);
@@ -163,16 +162,16 @@ public class ChessBoardCopier {
      * @param sit current game situation.
      * @param backUp backup of situation before move.
      */
-    private static void handleCastling(Coordinates from, Coordinates to, GameSituation sit, ChessBoard backUp) {
-        if (sit.getChessBoard().getSquare(from).getPiece().getKlass() == KING) {
+    private static void handleCastling(Square from, Square to, GameSituation sit, ChessBoard backUp) {
+        if (from.getPiece().getKlass() == KING) {
             if (from.getColumn() - to.getColumn() == -2) {
-                Coordinates from2 = sit.getChessBoard().getSquare(7, from.getRow()).getLocation();
-                Coordinates to2 = sit.getChessBoard().getSquare(to.getColumn() - 1, to.getRow()).getLocation();
+                Square from2 = sit.getChessBoard().getSquare(7, from.getRow());
+                Square to2 = sit.getChessBoard().getSquare(to.getColumn() - 1, to.getRow());
                 sit.incrementCountOfCurrentBoardSituation();
                 undoMove(backUp, sit, from2, to2);
             } else if (from.getColumn() - to.getColumn() == 2) {
-                Coordinates from2 = sit.getChessBoard().getSquare(0, from.getRow()).getLocation();
-                Coordinates to2 = sit.getChessBoard().getSquare(to.getColumn() + 1, to.getRow()).getLocation();
+                Square from2 = sit.getChessBoard().getSquare(0, from.getRow());
+                Square to2 = sit.getChessBoard().getSquare(to.getColumn() + 1, to.getRow());
                 sit.incrementCountOfCurrentBoardSituation();
                 undoMove(backUp, sit, from2, to2);
             }

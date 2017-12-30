@@ -5,13 +5,13 @@
  */
 package chess.logic.movementlogic.piecemovers;
 
-import chess.domain.Coordinates;
 import chess.domain.GameSituation;
 import chess.domain.Move;
 import chess.domain.board.ChessBoard;
 import java.util.Set;
 import chess.domain.board.Player;
 import static chess.domain.board.Player.getOpponent;
+import chess.domain.board.Square;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.ROOK;
 import java.util.HashSet;
@@ -39,7 +39,7 @@ public class KingMover extends PieceMover {
      * @param sit situation being changed.
      */
     @Override
-    public void move(Piece piece, Coordinates target, GameSituation sit) {
+    public void move(Piece piece, Square target, GameSituation sit) {
 
         piece.setHasBeenMoved(true);
         RookMover rookMover = new RookMover();
@@ -68,18 +68,18 @@ public class KingMover extends PieceMover {
         super.commitMove(move, sit);
     }
 
-    private void castleIfChosen(Piece king, Coordinates target, GameSituation sit, RookMover rookMover) {
+    private void castleIfChosen(Piece king, Square target, GameSituation sit, RookMover rookMover) {
         if (king.getColumn() - target.getColumn() == 2) {
             sit.decrementCountOfCurrentBoardSituation();
             Piece rook = sit.getChessBoard().getSquare(0, king.getRow()).getPiece();
             rookMover.move(rook,
-                    sit.getChessBoard().getSquare(target.getColumn() + 1, target.getRow()).getLocation(), sit);
+                    sit.getChessBoard().getSquare(target.getColumn() + 1, target.getRow()), sit);
             sit.reHashBoard(true);
         } else if (king.getColumn() - target.getColumn() == -2) {
             sit.decrementCountOfCurrentBoardSituation();
             Piece rook = sit.getChessBoard().getSquare(7, king.getRow()).getPiece();
             rookMover.move(rook,
-                    sit.getChessBoard().getSquare(target.getColumn() - 1, target.getRow()).getLocation(), sit);
+                    sit.getChessBoard().getSquare(target.getColumn() - 1, target.getRow()), sit);
             sit.reHashBoard(true);
         }
     }
@@ -92,16 +92,16 @@ public class KingMover extends PieceMover {
      * @return list containing all squares target king threatens
      */
     @Override
-    public Set<Coordinates> threatenedSquares(Piece piece, ChessBoard board) {
+    public Set<Square> threatenedSquares(Piece piece, ChessBoard board) {
         int[] columnChange = new int[]{-1, 0, 1, -1, 1, -1, 0, 1};
         int[] rowChange = new int[]{1, 1, 1, 0, 0, -1, -1, -1};
 
-        return possibilities(board.getSquare(piece.getColumn(), piece.getRow()).getLocation(), columnChange, rowChange, board);
+        return possibilities(board.getSquare(piece.getColumn(), piece.getRow()), columnChange, rowChange, board);
     }
 
     /**
      * Returns a list containing all squares chosen king can legally move to.
-     * That means all neighbor squares of kings location that aren't threatened
+     * That means all neighbor squares of king's location that aren't threatened
      * by opponent or contain player's own piece.
      *
      * @param piece target king
@@ -109,8 +109,8 @@ public class KingMover extends PieceMover {
      * @return a list containing all squares target king can legally move to.
      */
     @Override
-    public Set<Coordinates> possibleMoves(Piece piece, ChessBoard board) {
-        Set<Coordinates> moves = new HashSet<>();
+    public Set<Square> possibleMoves(Piece piece, ChessBoard board) {
+        Set<Square> moves = new HashSet<>();
         board.updateThreatenedSquares(getOpponent(piece.getOwner()));
 
         threatenedSquares(piece, board).stream()
@@ -124,11 +124,11 @@ public class KingMover extends PieceMover {
         return moves;
     }
 
-    private boolean isThreatenedByOpponent(Player player, Coordinates target, ChessBoard board) {
+    private boolean isThreatenedByOpponent(Player player, Square target, ChessBoard board) {
         return board.threatenedSquares(getOpponent(player)).contains(target);
     }
 
-    private void addCastling(Piece king, ChessBoard board, Set<Coordinates> possibilities) {
+    private void addCastling(Piece king, ChessBoard board, Set<Square> possibilities) {
         int[] cols = new int[]{0, 7};
         if (!king.isHasBeenMoved()) {
             for (int i = 0; i < 2; i++) {
@@ -142,7 +142,7 @@ public class KingMover extends PieceMover {
         }
     }
 
-    private void addCastlingIfPossible(Piece king, Piece rook, ChessBoard board, Set<Coordinates> possibilities) {
+    private void addCastlingIfPossible(Piece king, Piece rook, ChessBoard board, Set<Square> possibilities) {
         if (!rook.isHasBeenMoved()) {
             if (rook.getColumn() < king.getColumn()) {
                 addPossibilityToCastleRight(king, rook, board, possibilities);
@@ -152,26 +152,26 @@ public class KingMover extends PieceMover {
         }
     }
 
-    private void addPossibilityToCastleLeft(Piece king, Piece rook, ChessBoard board, Set<Coordinates> possibilities) {
+    private void addPossibilityToCastleLeft(Piece king, Piece rook, ChessBoard board, Set<Square> possibilities) {
         if (squaresAreAllEmpty(board, king.getColumn(), rook.getColumn(), king.getRow())) {
             if (squaresAreAllUnthreatened(board, getOpponent(king.getOwner()), king.getColumn(), king.getColumn() + 2, king.getRow())) {
-                possibilities.add(board.getSquare(king.getColumn() + 2, king.getRow()).getLocation());
+                possibilities.add(board.getSquare(king.getColumn() + 2, king.getRow()));
             }
         }
     }
 
-    private void addPossibilityToCastleRight(Piece king, Piece rook, ChessBoard board, Set<Coordinates> possibilities) {
+    private void addPossibilityToCastleRight(Piece king, Piece rook, ChessBoard board, Set<Square> possibilities) {
         if (squaresAreAllEmpty(board, rook.getColumn(), king.getColumn(), king.getRow())) {
             if (squaresAreAllUnthreatened(board, getOpponent(king.getOwner()), king.getColumn() - 2, king.getColumn(), king.getRow())) {
-                possibilities.add(board.getSquare(king.getColumn() - 2, king.getRow()).getLocation());
+                possibilities.add(board.getSquare(king.getColumn() - 2, king.getRow()));
             }
         }
     }
 
     private boolean squaresAreAllUnthreatened(ChessBoard board, Player opponent, int minCol, int maxCol, int row) {
-        Set<Coordinates> threatenedSquares = board.threatenedSquares(opponent);
+        Set<Square> threatenedSquares = board.threatenedSquares(opponent);
         for (int col = minCol; col < maxCol + 1; col++) {
-            if (threatenedSquares.contains(board.getSquare(col, row).getLocation())) {
+            if (threatenedSquares.contains(board.getSquare(col, row))) {
                 return false;
             }
         }

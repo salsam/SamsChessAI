@@ -1,6 +1,5 @@
 package chess.logic.gamelogic;
 
-import chess.domain.Coordinates;
 import chess.domain.GameSituation;
 import chess.domain.board.ChessBoard;
 import chess.domain.board.Player;
@@ -74,10 +73,9 @@ public class CheckingLogic {
                 continue;
             }
 
-            //Square from = game.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
-            Coordinates from=piece.getLocation();
+            Square from = game.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
             game.getChessBoard().updateThreatenedSquares(getOpponent(player));
-            for (Coordinates possibility : game.getChessBoard().getMovementLogic().possibleMoves(piece, game.getChessBoard())) {
+            for (Square possibility : game.getChessBoard().getMovementLogic().possibleMoves(piece, game.getChessBoard())) {
                 game.getChessBoard().getMovementLogic().move(piece, possibility, game);
                 game.getChessBoard().updateThreatenedSquares(getOpponent(player));
                 if (!checkIfChecked(player)) {

@@ -1,12 +1,12 @@
 package chess.logic.movementlogic;
 
-import chess.domain.Coordinates;
 import chess.domain.board.Piece;
 import chess.domain.GameSituation;
 import chess.domain.Move;
 import chess.logic.movementlogic.piecemovers.*;
 import chess.domain.board.ChessBoard;
 import chess.domain.board.Player;
+import chess.domain.board.Square;
 import static chess.domain.board.Klass.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -67,7 +67,7 @@ public class MovementLogic {
      * @param board board on which piece is placed
      * @return a set containing all squares given piece threatens on given board
      */
-    public Set<Coordinates> threatenedSquares(Piece piece, ChessBoard board) {
+    public Set<Square> threatenedSquares(Piece piece, ChessBoard board) {
         switch (piece.getKlass()) {
             case BISHOP:
                 return bishopMover.threatenedSquares(piece, board);
@@ -96,7 +96,7 @@ public class MovementLogic {
      * @return a set containing all squares given piece can move to on given
      * board
      */
-    public Set<Coordinates> possibleMoves(Piece piece, ChessBoard board) {
+    public Set<Square> possibleMoves(Piece piece, ChessBoard board) {
         switch (piece.getKlass()) {
             case BISHOP:
                 return bishopMover.possibleMoves(piece, board);
@@ -117,7 +117,7 @@ public class MovementLogic {
     }
 
     /**
-     * Uses corresponding mover to return a set containing all movements
+     * Uses corresponding mover to return a set containing all moevements
      * possible.
      *
      * @param piece piece of which possible moves are being checked
@@ -153,7 +153,7 @@ public class MovementLogic {
      * @param target square where piece will be moved to.
      * @param sit situation before move.
      */
-    public void move(Piece piece, Coordinates target, GameSituation sit) {
+    public void move(Piece piece, Square target, GameSituation sit) {
 
         switch (piece.getKlass()) {
             case BISHOP:
@@ -182,7 +182,7 @@ public class MovementLogic {
     /*
     *Commit selected move by moving specified piece from selected square to target square.
      */
-    public void commitMove(Move move, GameSituation sit) {
+    public void commitAMove(Move move, GameSituation sit) {
         switch (move.getPiece().getKlass()) {
             case BISHOP:
                 bishopMover.commitMove(move, sit);
@@ -215,8 +215,8 @@ public class MovementLogic {
      * @param board given chessboard
      * @return set containing all squares that given player's pieces threaten
      */
-    public Set<Coordinates> squaresThreatenedByPlayer(Player player, ChessBoard board) {
-        Set<Coordinates> threatenedSquares = new HashSet();
+    public Set<Square> squaresThreatenedByPlayer(Player player, ChessBoard board) {
+        Set<Square> threatenedSquares = new HashSet();
         board.getPieces(player).stream()
                 .filter(owned -> !owned.isTaken())
                 .forEach(piece -> {
@@ -233,8 +233,8 @@ public class MovementLogic {
      * @param board given chessboard
      * @return set containing all squares that given player's pieces can move to
      */
-    public Set<Coordinates> possibleMovesByPlayer(Player player, ChessBoard board) {
-        Set<Coordinates> possibleMoves = new HashSet();
+    public Set<Square> possibleMovesByPlayer(Player player, ChessBoard board) {
+        Set<Square> possibleMoves = new HashSet();
         board.getPieces(player).stream()
                 .filter(owned -> !owned.isTaken())
                 .forEach(piece -> {
