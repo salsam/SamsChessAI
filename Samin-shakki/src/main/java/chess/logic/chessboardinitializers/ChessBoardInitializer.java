@@ -29,9 +29,10 @@ public abstract class ChessBoardInitializer {
      * @param target Square
      * @param chessBoard ChessBoard to which piece will be added
      */
+    
     public static void addPieceToOwner(Square target, ChessBoard chessBoard) {
-        if (target.getPiece() != null) {
-            Piece piece = target.getPiece();
+        if (chessBoard.getPiece(target) != null) {
+            Piece piece = chessBoard.getPiece(target);
             if (piece.getKlass() == KING) {
                 chessBoard.getKings().put(piece.getOwner(), piece);
             }
@@ -52,7 +53,7 @@ public abstract class ChessBoardInitializer {
     protected void clearBoard(ChessBoard board) {
         for (int i = 0; i < board.getTable().length; i++) {
             for (int j = 0; j < board.getTable()[0].length; j++) {
-                if (board.getSquare(i, j).getPiece() != null) {
+                if (board.getPiece(i,j) != null) {
                     removePieceFromOwner(board.getSquare(i, j).getPiece(), board);
                     board.getSquare(i, j).setPiece(null);
                 }

@@ -51,7 +51,7 @@ public class ChessBoardDrawer extends JPanel {
                 graphics.drawRect(sideLength * i, sideLength * j, sideLength, sideLength);
 
                 if (game.getChessBoard().getSquare(i, j).containsAPiece()) {
-                    pieceDrawer.draw(game.getChessBoard().getSquare(i, j).getPiece(), graphics, sideLength);
+                    pieceDrawer.draw(game.getChessBoard().getPiece(i,j), graphics, sideLength);
                 }
             }
         }

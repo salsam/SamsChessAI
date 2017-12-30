@@ -21,6 +21,8 @@ public class ChessBoard {
      * Table containing all the squares on the game table
      */
     private Square[][] table;
+
+    private Piece[][] rTable;
     /**
      * List of all pieces that white owns.
      */
@@ -82,6 +84,10 @@ public class ChessBoard {
         return table;
     }
 
+    public Piece[][] getrTable() {
+        return rTable;
+    }
+
     public MovementLogic getMovementLogic() {
         return movementLogic;
     }
@@ -93,6 +99,10 @@ public class ChessBoard {
      */
     public void setTable(Square[][] newBoard) {
         this.table = newBoard;
+    }
+
+    public void setrTable(Piece[][] newBoard) {
+        this.rTable = newBoard;
     }
 
     /**
@@ -153,6 +163,16 @@ public class ChessBoard {
         return table[column][row];
     }
 
+    public Piece getPiece(int column, int row) {
+        return table[column][row].getPiece();
+        //return rTable[column][row];
+    }
+
+    public Piece getPiece(Square square) {
+        return table[square.getColumn()][square.getRow()].getPiece();
+        //return rTable[square.getColumn()][square.getRow()];
+    }
+
     /**
      * Checks if the given location is on the chessboard.
      *
@@ -188,6 +208,19 @@ public class ChessBoard {
                     System.out.print("NU");
                 } else {
                     System.out.print(table[j][i].getPiece().getKlass().toString().substring(0, 2));
+                }
+            }
+            System.out.println("");
+        }
+    }
+
+    public void printrTable() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (rTable[j][i] == null) {
+                    System.out.print("NU");
+                } else {
+                    System.out.print(rTable[j][i].getKlass().toString().substring(0, 2));
                 }
             }
             System.out.println("");
