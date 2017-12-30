@@ -1,5 +1,6 @@
 package chess.gui.boarddrawing;
 
+import chess.domain.Game;
 import chess.domain.GameSituation;
 import chess.domain.board.Square;
 import chess.logic.inputprocessing.InputProcessor;
@@ -13,12 +14,12 @@ import javax.swing.JPanel;
  */
 public class ChessBoardDrawer extends JPanel {
 
-    private GameSituation game;
+    private Game game;
     private InputProcessor guiLogic;
     private int sideLength;
     private PieceDrawer pieceDrawer;
 
-    public ChessBoardDrawer(InputProcessor guiLogic, GameSituation game, int sideLength) {
+    public ChessBoardDrawer(InputProcessor guiLogic, Game game, int sideLength) {
         this.game = game;
         this.guiLogic = guiLogic;
         this.sideLength = sideLength;
@@ -27,10 +28,10 @@ public class ChessBoardDrawer extends JPanel {
     }
 
     public GameSituation getGame() {
-        return game;
+        return game.getSituation();
     }
 
-    public void setGame(GameSituation game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 
@@ -38,10 +39,13 @@ public class ChessBoardDrawer extends JPanel {
     protected void paintComponent(Graphics graphics) {
         super.paintComponents(graphics);
 
-        for (int i = 0; i < game.getChessBoard().columnAmount; i++) {
-            for (int j = 0; j < game.getChessBoard().rowAmount; j++) {
+        for (int i = 0; i < game.getSituation().getChessBoard().columnAmount; i++) {
+            for (int j = 0; j < game.getSituation().getChessBoard().rowAmount; j++) {
                 if (guiLogic.getPossibilities() != null && guiLogic.getPossibilities().contains(new Square(i, j))) {
                     graphics.setColor(Color.red);
+                } else if (game.lastMove() != null && (game.lastMove().getFrom().equals(new Square(i, j))
+                        || game.lastMove().getTarget().equals(new Square(i, j)))) {
+                    graphics.setColor(Color.blue);
                 } else if ((i + j) % 2 == 0) {
                     graphics.setColor(Color.LIGHT_GRAY);
                 } else {
@@ -51,8 +55,8 @@ public class ChessBoardDrawer extends JPanel {
                 graphics.setColor(Color.BLACK);
                 graphics.drawRect(sideLength * i, sideLength * j, sideLength, sideLength);
 
-                if (game.getChessBoard().squareIsOccupied(i, j)) {
-                    pieceDrawer.draw(game.getChessBoard().getPiece(i,j), graphics, sideLength);
+                if (game.getSituation().getChessBoard().squareIsOccupied(i, j)) {
+                    pieceDrawer.draw(game.getSituation().getChessBoard().getPiece(i, j), graphics, sideLength);
                 }
             }
         }

@@ -68,7 +68,7 @@ public class GameWindow extends JFrame {
             
         };
 
-        cbd = new ChessBoardDrawer(game.getInput(), game.getSituation(), 50);
+        cbd = new ChessBoardDrawer(game.getInput(), game, 50);
         cbd.setMaximumSize(new Dimension(400, 400));
         cbd.setAlignmentX(CENTER_ALIGNMENT);
         cbd.setAlignmentY(CENTER_ALIGNMENT);

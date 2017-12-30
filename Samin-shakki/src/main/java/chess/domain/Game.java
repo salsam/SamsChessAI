@@ -62,6 +62,9 @@ public class Game {
     }
 
     public Move lastMove() {
+        if (moves.isEmpty()) {
+            return null;
+        }
         return moves.getLast();
     }
 
@@ -81,10 +84,11 @@ public class Game {
             @Override
             public void run() {
                 while (continues && !interrupted()) {
-                    while(!isAIsTurn()) {
+                    while (!isAIsTurn()) {
                         try {
                             wait();
-                        } catch (Exception e) {};
+                        } catch (Exception e) {
+                        };
                     }
                     if (isAIsTurn()) {
                         moves.add(input.makeBestMoveAccordingToAILogic());
