@@ -1,8 +1,7 @@
 package chess.domain.board;
 
 /**
- * Square class is responsible for keeping track of its location and possible
- * piece situated on it.
+ * Square class is responsible for keeping track of its location.
  *
  * @author samisalo
  */
@@ -16,10 +15,6 @@ public class Square {
      * Row of this square.
      */
     private int row;
-    /**
-     * Piece that is situated on this square, null if there's no piece.
-     */
-    private Piece piece;
 
     /**
      * Creates a new square with given row and column.Field piece will be null
@@ -39,14 +34,6 @@ public class Square {
 
     public int getRow() {
         return row;
-    }
-
-    public Piece getPiece() {
-        return piece;
-    }
-
-    public void setPiece(Piece piece) {
-        this.piece = piece;
     }
 
     @Override
@@ -76,19 +63,6 @@ public class Square {
         return hash;
     }
 
-    /**
-     * Returns true if Square contains a piece. Square contains a piece if field
-     * piece doesn't refer to null or taken piece.
-     *
-     * @return true if Square contains a piece
-     */
-    public boolean containsAPiece() {
-        if (piece == null) {
-            return false;
-        }
-        return !piece.isTaken();
-    }
-
     @Override
     public String toString() {
         return "(" + column + "," + row + ")";
@@ -101,13 +75,7 @@ public class Square {
      */
     @Override
     public Square clone() {
-        Square clone = new Square(this.column, this.row);
-
-        if (this.piece != null) {
-            clone.setPiece(this.piece.clone());
-        }
-
-        return clone;
+        return new Square(this.column, this.row);
     }
 
 }

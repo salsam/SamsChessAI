@@ -292,8 +292,8 @@ public class AILogic implements AI {
      */
     private boolean handledOnThisLoopThrough(int loopCount, Square possibility, int height,
             Piece moved, ChessBoard board) {
-        if ((loopCount < 3 && !possibility.containsAPiece())
-                || (loopCount == 3 && possibility.containsAPiece())
+        if ((loopCount < 3 && !board.squareIsOccupied(possibility))
+                || (loopCount == 3 && board.squareIsOccupied(possibility))
                 || moveHasBeenTestedAlready(height, moved, possibility)) {
             return false;
         }
