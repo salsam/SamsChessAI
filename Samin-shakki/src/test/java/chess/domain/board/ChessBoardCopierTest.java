@@ -95,8 +95,8 @@ public class ChessBoardCopierTest {
         assertFalse(copy.getSquare(4, 4).containsAPiece());
 
         sit.getChessBoard().getMovementLogic().move(queen, sit.getChessBoard().getSquare(4, 6), sit);
-        assertEquals(Player.BLACK, sit.getChessBoard().getSquare(4, 6).getPiece().getOwner());
-        assertEquals(Player.WHITE, copy.getSquare(4, 6).getPiece().getOwner());
+        assertEquals(Player.BLACK, sit.getChessBoard().getPiece(4, 6).getOwner());
+        assertEquals(Player.WHITE, copy.getPiece(4, 6).getOwner());
     }
 
     @Test
@@ -106,10 +106,10 @@ public class ChessBoardCopierTest {
         MovementLogic ml = cb.getMovementLogic();
         Square from = cb.getSquare(1, 0);
         Square to = cb.getSquare(2, 2);
-        ml.move(from.getPiece(), to, sit);
+        ml.move(cb.getPiece(from), to, sit);
         assertFalse(from.containsAPiece());
         assertTrue(to.containsAPiece());
-        assertTrue(backup.getSquare(from.getColumn(), from.getRow()).containsAPiece());
+        assertTrue(backup.squareIsOccupied(from));
         ChessBoardCopier.undoMove(backup, sit, from, to);
         assertTrue(ChessBoardCopier.chessBoardsAreDeeplyEqual(backup, cb));
     }
@@ -122,7 +122,7 @@ public class ChessBoardCopierTest {
         MovementLogic ml = cb.getMovementLogic();
         Square from = cb.getSquare(1, 0);
         Square to = cb.getSquare(2, 2);
-        ml.move(from.getPiece(), to, sit);
+        ml.move(cb.getPiece(from), to, sit);
         assertNotEquals(oldHash, sit.getBoardHash());
         ChessBoardCopier.undoMove(backup, sit, from, to);
         assertEquals(oldHash, sit.getBoardHash());
@@ -144,7 +144,7 @@ public class ChessBoardCopierTest {
         MovementLogic ml = cb.getMovementLogic();
         Square from = cb.getSquare(3, 0);
         Square to = cb.getSquare(1, 0);
-        ml.move(from.getPiece(), to, sit);
+        ml.move(cb.getPiece(from), to, sit);
         ChessBoardCopier.undoMove(backup, sit, from, to);
         assertTrue(ChessBoardCopier.chessBoardsAreDeeplyEqual(backup, cb));
     }
@@ -166,7 +166,7 @@ public class ChessBoardCopierTest {
         MovementLogic ml = cb.getMovementLogic();
         Square from = cb.getSquare(3, 0);
         Square to = cb.getSquare(1, 0);
-        ml.move(from.getPiece(), to, sit);
+        ml.move(cb.getPiece(from), to, sit);
         assertNotEquals(oldHash, sit.getBoardHash());
         ChessBoardCopier.undoMove(backup, sit, from, to);
         assertEquals(sit.getHasher().hash(cb), sit.getBoardHash());
@@ -229,7 +229,7 @@ public class ChessBoardCopierTest {
         ml.move(pawn, cb.getSquare(2, 0), sit);
         ChessBoardCopier.undoMove(backup, sit, cb.getSquare(2, 1), cb.getSquare(2, 0));
         assertTrue(cb.getSquare(2, 1).containsAPiece());
-        assertEquals(PAWN, cb.getSquare(2, 1).getPiece().getKlass());
+        assertEquals(PAWN, cb.getPiece(2, 1).getKlass());
         for (Piece p : cb.getPieces(Player.WHITE)) {
             assertNotEquals(QUEEN, p.getKlass());
         }

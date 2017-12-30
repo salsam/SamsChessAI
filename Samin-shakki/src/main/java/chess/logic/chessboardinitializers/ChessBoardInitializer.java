@@ -54,8 +54,8 @@ public abstract class ChessBoardInitializer {
         for (int i = 0; i < board.getTable().length; i++) {
             for (int j = 0; j < board.getTable()[0].length; j++) {
                 if (board.getPiece(i,j) != null) {
-                    removePieceFromOwner(board.getSquare(i, j).getPiece(), board);
-                    board.getSquare(i, j).setPiece(null);
+                    removePieceFromOwner(board.getPiece(i, j), board);
+                    board.setPiece(i,j, null);
                 }
             }
         }

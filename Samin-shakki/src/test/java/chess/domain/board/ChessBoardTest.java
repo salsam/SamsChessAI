@@ -153,7 +153,7 @@ public class ChessBoardTest {
     public void whiteThreatenedSquaresWorksInMoreComplexSituation() {
         init.initialize(board);
         putPieceOnBoard(board, new Piece(QUEEN, 4, 4, Player.WHITE, "wq1"));
-        Piece q = board.getSquare(4, 4).getPiece();
+        Piece q = board.getPiece(4, 4);
         board.updateThreatenedSquares(Player.WHITE);
         for (Square sq : board.getMovementLogic().threatenedSquares(q, board)) {
             assertTrue(board.threatenedSquares(Player.WHITE).contains(sq));

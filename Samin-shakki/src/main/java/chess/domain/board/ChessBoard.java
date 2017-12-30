@@ -167,6 +167,10 @@ public class ChessBoard {
         return table[column][row].getPiece();
         //return rTable[column][row];
     }
+    
+    public boolean squareIsOccupied(Square square) {
+        return getPiece(square)!=null && !getPiece(square).isTaken();
+    }
 
     public Piece getPiece(Square square) {
         return table[square.getColumn()][square.getRow()].getPiece();
@@ -176,6 +180,11 @@ public class ChessBoard {
     public void setPiece(Square coords, Piece piece) {
         table[coords.getColumn()][coords.getRow()].setPiece(piece);
         //rTable[coords.getColumn()][coords.getRow()]=piece;
+    }
+    
+    public void setPiece(int col, int row, Piece piece) {
+        table[col][row].setPiece(piece);
+        //rTabel[col][row]=piece;
     }
 
     /**

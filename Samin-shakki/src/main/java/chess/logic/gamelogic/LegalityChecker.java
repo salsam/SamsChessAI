@@ -48,12 +48,15 @@ public class LegalityChecker {
      * string
      */
     public Boolean checkPlayerOwnsPieceOnTargetSquare(Player player, int column, int row) {
-
-        if (!board.getSquare(column, row).containsAPiece()) {
+        if (board.getPiece(column, row) == null) {
             return false;
         }
 
-        if (board.getSquare(column, row).getPiece().getOwner() != player) {
+        if (board.getPiece(column, row).isTaken()) {
+            return false;
+        }
+
+        if (board.getPiece(column, row).getOwner() != player) {
             return false;
         }
         return true;

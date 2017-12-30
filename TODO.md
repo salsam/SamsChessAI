@@ -10,3 +10,5 @@
 * Is there sitll problems with Zobrist hashing causing hash collisions? Recheck that is functions as it should, if necessary consider alternatives.
 * MovementLogic should be game specific not chessboard specific!
 * More testing for classes. Will be easier after refactorization.
+* Refactor usage of Square.containsAPiece to usage of ChessBoard.squareOccupied
+* Is it really good idea to have each piece know it's location? Is this necessary? Main benefit is easy looping through piece list.

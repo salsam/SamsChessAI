@@ -115,7 +115,7 @@ public class AILogicTest {
         sit = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
         MovementLogic ml = sit.getChessBoard().getMovementLogic();
         ChessBoard cb = sit.getChessBoard();
-        ml.move(cb.getSquare(1, 1).getPiece(), cb.getSquare(1, 3), sit);
+        ml.move(cb.getPiece(1, 1), cb.getSquare(1, 3), sit);
         ChessBoard backUp = copy(sit.getChessBoard());
         ai.findBestMoves(sit);
 
@@ -342,7 +342,7 @@ public class AILogicTest {
         ChessBoard backUp = copy(cb);
         ai.testAMove(wp, cb.getSquare(1, 7), cb.getSquare(1, 6), Player.WHITE, 1, -12345, -12345, 1234567, backUp);
         assertTrue(ChessBoardCopier.chessBoardsAreDeeplyEqual(cb, backUp));
-        assertEquals(PAWN, cb.getSquare(1, 6).getPiece().getKlass());
+        assertEquals(PAWN, cb.getPiece(1, 6).getKlass());
     }
 
     @Test
@@ -359,7 +359,7 @@ public class AILogicTest {
         ChessBoard backUp = copy(cb);
         ai.testAMove(wp, cb.getSquare(1, 7), cb.getSquare(1, 6), Player.WHITE, 2, -12345, -12345, 1234567, backUp);
         assertTrue(ChessBoardCopier.chessBoardsAreDeeplyEqual(cb, backUp));
-        assertEquals(PAWN, cb.getSquare(1, 6).getPiece().getKlass());
+        assertEquals(PAWN, cb.getPiece(1, 6).getKlass());
     }
 
     @Test

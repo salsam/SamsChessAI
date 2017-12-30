@@ -86,11 +86,11 @@ public class CheckingLogicTest {
         stdinit.initialize(game.getChessBoard());
         MovementLogic mvl = game.getChessBoard().getMovementLogic();
 
-        mvl.move(game.getChessBoard().getSquare(4, 6).getPiece(), game.getChessBoard().getSquare(4, 5), game);
-        mvl.move(game.getChessBoard().getSquare(5, 1).getPiece(), game.getChessBoard().getSquare(5, 3), game);
-        mvl.move(game.getChessBoard().getSquare(1, 6).getPiece(), game.getChessBoard().getSquare(1, 5), game);
-        mvl.move(game.getChessBoard().getSquare(6, 1).getPiece(), game.getChessBoard().getSquare(6, 3), game);
-        mvl.move(game.getChessBoard().getSquare(3, 7).getPiece(), game.getChessBoard().getSquare(7, 3), game);
+        mvl.move(game.getChessBoard().getPiece(4, 6), game.getChessBoard().getSquare(4, 5), game);
+        mvl.move(game.getChessBoard().getPiece(5, 1), game.getChessBoard().getSquare(5, 3), game);
+        mvl.move(game.getChessBoard().getPiece(1, 6), game.getChessBoard().getSquare(1, 5), game);
+        mvl.move(game.getChessBoard().getPiece(6, 1), game.getChessBoard().getSquare(6, 3), game);
+        mvl.move(game.getChessBoard().getPiece(3, 7), game.getChessBoard().getSquare(7, 3), game);
         game.getChessBoard().updateThreatenedSquares(Player.WHITE);
         ChessBoard backUp = ChessBoardCopier.copy(game.getChessBoard());
         assertTrue(cl.checkMate(Player.BLACK));
@@ -118,9 +118,9 @@ public class CheckingLogicTest {
     public void checkMateFalseInComplexSituationWhereKingThreatenedByProtectedPieceButCanBeAvoided() {
         game = new GameSituation(new StandardChessBoardInitializer(), ml);
         Piece whiteKing = game.getChessBoard().getKings().get(Player.WHITE);
-        Piece whitePawn = game.getChessBoard().getSquare(5, 1).getPiece();
-        Piece blackPawn1 = game.getChessBoard().getSquare(5, 6).getPiece();
-        Piece blackPawn2 = game.getChessBoard().getSquare(4, 6).getPiece();
+        Piece whitePawn =  game.getChessBoard().getPiece(5, 1);
+        Piece blackPawn1 = game.getChessBoard().getPiece(5, 6);
+        Piece blackPawn2 = game.getChessBoard().getPiece(4, 6);
 
         ml.move(whitePawn, game.getChessBoard().getSquare(5, 2), game);
         ml.move(blackPawn1, game.getChessBoard().getSquare(5, 4), game);

@@ -58,7 +58,7 @@ public class InputProcessorTest {
     @Test
     public void ifNoPieceIsChosenSelectPieceOnTargetSquare() {
         inputProcessor.processClick(1, 6);
-        assertEquals(game.getSituation().getChessBoard().getSquare(1, 6).getPiece(), inputProcessor.getChosen());
+        assertEquals(game.getSituation().getChessBoard().getPiece(1, 6), inputProcessor.getChosen());
     }
 
     @Test
@@ -90,11 +90,11 @@ public class InputProcessorTest {
     @Test
     public void ifPieceIsChosenAndThenAPossibilityIsClickedMoveToThatSquare() {
         inputProcessor.processClick(1, 6);
-        Piece piece = game.getSituation().getChessBoard().getSquare(1, 6).getPiece();
+        Piece piece = game.getSituation().getChessBoard().getPiece(1, 6);
         inputProcessor.processClick(1, 5);
         assertFalse(game.getSituation().getChessBoard().getSquare(1, 6).containsAPiece());
         assertTrue(game.getSituation().getChessBoard().getSquare(1, 5).containsAPiece());
-        assertEquals(piece, game.getSituation().getChessBoard().getSquare(1, 5).getPiece());
+        assertEquals(piece, game.getSituation().getChessBoard().getPiece(1, 5));
     }
 
     @Test

@@ -7,6 +7,7 @@ import java.util.Set;
 import chess.domain.board.Square;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.PAWN;
+import chess.domain.board.Player;
 import java.util.HashSet;
 
 /**
@@ -46,13 +47,13 @@ public class PawnMover extends PieceMover {
             Square enPassanted = sit.getChessBoard()
                     .getSquare(target.getColumn(), piece.getRow());
             sit.updateHashForTakingPiece(enPassanted);
-            enPassanted.getPiece().setTaken(true);
+            sit.getChessBoard().getPiece(enPassanted).setTaken(true);
         }
 
         super.move(piece, target, sit);
         sit.refresh50MoveRule();
     }
-    
+
     /**
      * This method moves pawns on board to target square. If pawn moves two
      * squares that is saved to field movedTwoSquaresLastTurn and thus this pawn
@@ -75,7 +76,7 @@ public class PawnMover extends PieceMover {
         if (!move.getTarget().containsAPiece() && move.getTargetColumn() != move.getFrom().getColumn()) {
             Square enPassanted = sit.getChessBoard().getSquare(move.getTargetColumn(), move.getFrom().getRow());
             sit.updateHashForTakingPiece(enPassanted);
-            enPassanted.getPiece().setTaken(true);
+            sit.getChessBoard().getPiece(enPassanted).setTaken(true);
         }
 
         super.commitMove(move, sit);
@@ -119,8 +120,8 @@ public class PawnMover extends PieceMover {
             if (board.withinTable(piece.getColumn() + columnChange[i], piece.getRow())) {
                 target = board.getSquare(piece.getColumn() + columnChange[i], piece.getRow());
 
-                if (targetContainsAnEnemyPawn(piece, target)) {
-                    Piece opposingPawn = target.getPiece();
+                if (targetContainsAnEnemyPawn(piece.getOwner(), target, board)) {
+                    Piece opposingPawn = board.getPiece(target);
                     if (opposingPawn.isMovedTwoSquaresLastTurn()) {
                         squares.add(board.getSquare(target.getColumn(), target.getRow() + piece.getOwner().getDirection()));
                     }
@@ -129,16 +130,20 @@ public class PawnMover extends PieceMover {
         }
     }
 
-    private boolean targetContainsAnEnemyPawn(Piece chosen, Square target) {
-        if (!target.containsAPiece()) {
+    private boolean targetContainsAnEnemyPawn(Player player, Square target, ChessBoard board) {
+        if (board.getPiece(target) == null) {
             return false;
         }
 
-        if (target.getPiece().getOwner() == chosen.getOwner()) {
+        if (board.getPiece(target).isTaken()) {
             return false;
         }
 
-        return target.getPiece().getKlass() == PAWN;
+        if (board.getPiece(target).getOwner() == player) {
+            return false;
+        }
+
+        return board.getPiece(target).getKlass() == PAWN;
     }
 
     /**

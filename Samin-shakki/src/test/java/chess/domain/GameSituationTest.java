@@ -182,7 +182,7 @@ public class GameSituationTest {
         game.updateHashForMoving(from, to);
         long updatedHash = game.getBoardHash();
         MovementLogic ml = game.getChessBoard().getMovementLogic();
-        Piece wk = from.getPiece();
+        Piece wk = game.getChessBoard().getPiece(from);
         ml.move(wk, to, game);
         game.reHashBoard(true);
         assertEquals(game.getBoardHash(), updatedHash);
@@ -196,7 +196,7 @@ public class GameSituationTest {
         MovementLogic ml = cb.getMovementLogic();
 
         long oldHash = game.getBoardHash();
-        ml.move(cb.getSquare(1, 6).getPiece(), cb.getSquare(1, 4), game);
+        ml.move(cb.getPiece(1, 6), cb.getSquare(1, 4), game);
         game.reset();
 
         assertTrue(chessBoardsAreDeeplyEqual(game.getChessBoard(), bu));

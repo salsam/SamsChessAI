@@ -85,11 +85,11 @@ public abstract class PieceMover {
 
     protected boolean legalToMoveTo(Piece piece, Square target, ChessBoard board) {
 
-        if (!target.containsAPiece()) {
+        if (!board.squareIsOccupied(target)) {
             return true;
         }
 
-        return piece.getOwner() != target.getPiece().getOwner();
+        return piece.getOwner() != board.getPiece(target).getOwner();
     }
 
     /**
@@ -105,12 +105,12 @@ public abstract class PieceMover {
         sit.updateHashForMoving(from, target);
         sit.decrementMovesTillDraw();
 
-        from.setPiece(null);
-        if (target.containsAPiece()) {
+        sit.getChessBoard().setPiece(from, null);
+        if (sit.getChessBoard().squareIsOccupied(target)) {
             sit.refresh50MoveRule();
-            target.getPiece().setTaken(true);
+            sit.getChessBoard().getPiece(target).setTaken(true);
         }
-        target.setPiece(piece);
+        sit.getChessBoard().setPiece(target, piece);
 
         piece.setColumn(target.getColumn());
         piece.setRow(target.getRow());
@@ -130,12 +130,12 @@ public abstract class PieceMover {
         sit.updateHashForMoving(from, move.getTarget());
         sit.decrementMovesTillDraw();
 
-        from.setPiece(null);
-        if (move.getTarget().containsAPiece()) {
+        sit.getChessBoard().setPiece(from, null);
+        if (sit.getChessBoard().squareIsOccupied(move.getTarget())) {
             sit.refresh50MoveRule();
-            move.getTarget().getPiece().setTaken(true);
+            sit.getChessBoard().getPiece(move.getTarget()).setTaken(true);
         }
-        move.getTarget().setPiece(move.getPiece());
+        sit.getChessBoard().setPiece(move.getTarget(), move.getPiece());
 
         move.getPiece().setColumn(move.getTargetColumn());
         move.getPiece().setRow(move.getTargetRow());

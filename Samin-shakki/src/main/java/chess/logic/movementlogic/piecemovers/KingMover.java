@@ -71,13 +71,13 @@ public class KingMover extends PieceMover {
     private void castleIfChosen(Piece king, Square target, GameSituation sit, RookMover rookMover) {
         if (king.getColumn() - target.getColumn() == 2) {
             sit.decrementCountOfCurrentBoardSituation();
-            Piece rook = sit.getChessBoard().getSquare(0, king.getRow()).getPiece();
+            Piece rook = sit.getChessBoard().getPiece(0, king.getRow());
             rookMover.move(rook,
                     sit.getChessBoard().getSquare(target.getColumn() + 1, target.getRow()), sit);
             sit.reHashBoard(true);
         } else if (king.getColumn() - target.getColumn() == -2) {
             sit.decrementCountOfCurrentBoardSituation();
-            Piece rook = sit.getChessBoard().getSquare(7, king.getRow()).getPiece();
+            Piece rook = sit.getChessBoard().getPiece(7, king.getRow());
             rookMover.move(rook,
                     sit.getChessBoard().getSquare(target.getColumn() - 1, target.getRow()), sit);
             sit.reHashBoard(true);
@@ -133,7 +133,7 @@ public class KingMover extends PieceMover {
         if (!king.isHasBeenMoved()) {
             for (int i = 0; i < 2; i++) {
                 if (board.getSquare(cols[i], king.getRow()).containsAPiece()) {
-                    Piece rook = board.getSquare(cols[i], king.getRow()).getPiece();
+                    Piece rook = board.getPiece(cols[i], king.getRow());
                     if (rook.getKlass() == ROOK && rook.getOwner() == king.getOwner()) {
                         addCastlingIfPossible(king, rook, board, possibilities);
                     }

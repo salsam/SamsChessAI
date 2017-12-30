@@ -85,7 +85,7 @@ public class StandardChessBoardInitializerTest {
     private void testThatSquaresHavePieceOfCorrectClass(int[] rows, int[] columns, Piece piece) {
         for (int i = 0; i < rows.length; i++) {
             for (int j = 0; j < columns.length; j++) {
-                assertEquals(piece.getClass(), board.getSquare(columns[i], rows[i]).getPiece().getClass());
+                assertEquals(piece.getClass(), board.getPiece(columns[i], rows[i]).getClass());
             }
         }
     }
@@ -100,7 +100,7 @@ public class StandardChessBoardInitializerTest {
             }
 
             for (int j = 0; j < board.getTable()[0].length; j++) {
-                assertEquals(owner, board.getSquare(j, i).getPiece().getOwner());
+                assertEquals(owner, board.getPiece(j, i).getOwner());
             }
         }
     }
@@ -117,7 +117,7 @@ public class StandardChessBoardInitializerTest {
         Piece pawn = new Piece(PAWN, 5, 4, Player.WHITE, "wp");
         putPieceOnBoard(board, pawn);
         assertTrue(board.getSquare(5, 4).containsAPiece());
-        assertEquals(PAWN, board.getSquare(5, 4).getPiece().getKlass());
-        assertEquals(Player.WHITE, board.getSquare(5, 4).getPiece().getOwner());
+        assertEquals(PAWN, board.getPiece(5, 4).getKlass());
+        assertEquals(Player.WHITE, board.getPiece(5, 4).getOwner());
     }
 }

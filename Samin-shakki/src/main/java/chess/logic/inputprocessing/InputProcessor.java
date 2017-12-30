@@ -119,7 +119,7 @@ public class InputProcessor {
                 moveToTargetLocation(column, row, false);
             } else if (game.getSituation().getChecker().checkPlayerOwnsPieceOnTargetSquare(
                     game.getSituation().whoseTurn(), column, row)) {
-                setChosen(game.getSquare(column, row).getPiece());
+                setChosen(game.getSituation().getChessBoard().getPiece(column, row));
             }
             if (chosen != null) {
                 possibilities = game.possibleMovesOnMainBoard(chosen);

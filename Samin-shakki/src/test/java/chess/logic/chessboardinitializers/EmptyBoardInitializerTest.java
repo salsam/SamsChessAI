@@ -32,13 +32,13 @@ public class EmptyBoardInitializerTest {
 
         for (int i = 0; i < board.getTable().length; i++) {
             for (int j = 0; j < board.getTable()[0].length; j++) {
-                assertTrue(board.getSquare(i, j).getPiece() == null);
+                assertTrue(board.getPiece(i, j) == null);
             }
         }
     }
 
     @Test
-    public void initializerClearsAllPiecesFromPlayersToo() {
+    public void initializerClearsAllPiecesFromPlayers() {
         ChessBoard board = new ChessBoard(new MovementLogic());
         ChessBoardInitializer stdinit = new StandardChessBoardInitializer();
         stdinit.initialize(board);

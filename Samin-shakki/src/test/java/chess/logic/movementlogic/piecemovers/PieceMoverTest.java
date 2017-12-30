@@ -67,13 +67,13 @@ public class PieceMoverTest {
     @Test
     public void movingRemovesPieceFromPreviousSquare() {
         board.getMovementLogic().move(piece, board.getSquare(3, 5), sit);
-        assertEquals(null, board.getSquare(3, 4).getPiece());
+        assertEquals(null, board.getPiece(3, 4));
     }
 
     @Test
     public void movingAddsPieceToTargetSquare() {
         board.getMovementLogic().move(piece, board.getSquare(3, 5), sit);
-        assertEquals(piece, board.getSquare(3, 5).getPiece());
+        assertEquals(piece, board.getPiece(3, 5));
     }
 
     @Test
