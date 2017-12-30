@@ -47,6 +47,9 @@ public class ChessBoard {
      * Map containing positions of both kings.
      */
     private Map<Player, Piece> kings;
+    
+    public final int columnAmount=8;
+    public final int rowAmount=8;
 
     /**
      * Creates a new chessboard with given movement logic.
@@ -73,6 +76,7 @@ public class ChessBoard {
                 this.table[i][j] = new Square(i, j);
             }
         }
+        rTable= new Piece[8][8];
     }
 
     /**

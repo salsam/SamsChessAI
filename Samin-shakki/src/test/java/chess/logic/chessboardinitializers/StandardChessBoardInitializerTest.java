@@ -92,14 +92,14 @@ public class StandardChessBoardInitializerTest {
 
     public void testThatSquaresHavePieceOfCorrectOwner() {
         Player owner = Player.WHITE;
-        for (int i = 0; i < board.getTable().length; i++) {
+        for (int i = 0; i < board.rowAmount; i++) {
             if (i == 2) {
                 i = 5;
                 owner = Player.BLACK;
                 continue;
             }
 
-            for (int j = 0; j < board.getTable()[0].length; j++) {
+            for (int j = 0; j < board.columnAmount; j++) {
                 assertEquals(owner, board.getPiece(j, i).getOwner());
             }
         }

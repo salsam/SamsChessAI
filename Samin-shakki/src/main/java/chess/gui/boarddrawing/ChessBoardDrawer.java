@@ -37,8 +37,8 @@ public class ChessBoardDrawer extends JPanel {
     protected void paintComponent(Graphics graphics) {
         super.paintComponents(graphics);
 
-        for (int i = 0; i < game.getChessBoard().getTable().length; i++) {
-            for (int j = 0; j < game.getChessBoard().getTable()[0].length; j++) {
+        for (int i = 0; i < game.getChessBoard().columnAmount; i++) {
+            for (int j = 0; j < game.getChessBoard().rowAmount; j++) {
                 if (guiLogic.getPossibilities() != null && guiLogic.getPossibilities().contains(game.getChessBoard().getSquare(i, j))) {
                     graphics.setColor(Color.red);
                 } else if ((i + j) % 2 == 0) {

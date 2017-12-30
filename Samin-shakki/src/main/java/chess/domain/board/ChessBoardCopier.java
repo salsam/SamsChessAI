@@ -31,6 +31,7 @@ public class ChessBoardCopier {
     public static ChessBoard copy(ChessBoard board) {
         ChessBoard copy = new ChessBoard(board.getMovementLogic());
         copy.setTable(copyTable(board.getTable()));
+        copy.setrTable(copyPieceTable(board.getrTable()));
         setPieces(copy);
 
         return copy;
@@ -46,13 +47,25 @@ public class ChessBoardCopier {
         return copyTable;
     }
 
+    private static Piece[][] copyPieceTable(Piece[][] table) {
+        Piece[][] copyTable = new Piece[table.length][table[0].length];
+        for (int i = 0; i < table.length; i++) {
+            for (int j = 0; j < table[0].length; j++) {
+                if (table[i][j] != null) {
+                    copyTable[i][j] = table[i][j].clone();
+                }
+            }
+        }
+        return copyTable;
+    }
+
     private static void setPieces(ChessBoard board) {
         board.setBlackPieces(new ArrayList());
         board.setWhitePieces(new ArrayList());
 
-        for (int i = 0; i < board.getTable().length; i++) {
-            for (int j = 0; j < board.getTable()[0].length; j++) {
-                addPieceToOwner(board.getTable()[i][j], board);
+        for (int i = 0; i < board.columnAmount; i++) {
+            for (int j = 0; j < board.rowAmount; j++) {
+                addPieceToOwner(board.getSquare(i, j), board);
             }
         }
     }
@@ -67,10 +80,10 @@ public class ChessBoardCopier {
      */
     public static void revertOldSituation(ChessBoard board, ChessBoard chessboard) {
         clearBoardOfPieces(board);
-        makePieceListsEqual(board, chessboard);
+        copyPieceList(board, chessboard);
     }
 
-    private static void makePieceListsEqual(ChessBoard board, ChessBoard chessboard) {
+    private static void copyPieceList(ChessBoard board, ChessBoard chessboard) {
         for (Player player : Player.values()) {
             board.getPieces(player).clear();
             for (Piece playersPiece : chessboard.getPieces(player)) {
@@ -82,7 +95,7 @@ public class ChessBoardCopier {
     private static void clearBoardOfPieces(ChessBoard board) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                board.getTable()[i][j].setPiece(null);
+                board.setPiece(i,j, null);
             }
 
         }
@@ -128,7 +141,7 @@ public class ChessBoardCopier {
         for (Piece piece : board.getPieces(taken.getOwner())) {
             if (piece.getPieceCode().equals(taken.getPieceCode())) {
                 piece.makeDeeplyEqualTo(taken);
-                board.setPiece(to,piece);
+                board.setPiece(to, piece);
                 break;
             }
         }

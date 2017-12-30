@@ -32,7 +32,7 @@ public class ChessBoardTest {
 
     @Test
     public void getBoardReturnsBoard() {
-        Square[][] emptyBoard = new Square[board.getTable().length][board.getTable()[0].length];
+        Square[][] emptyBoard = new Square[board.columnAmount][board.rowAmount];
 
         for (int i = 0; i < emptyBoard.length; i++) {
             for (int j = 0; j < emptyBoard[0].length; j++) {
