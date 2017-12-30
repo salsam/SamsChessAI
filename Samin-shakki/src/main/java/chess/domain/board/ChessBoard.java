@@ -172,6 +172,11 @@ public class ChessBoard {
         return table[square.getColumn()][square.getRow()].getPiece();
         //return rTable[square.getColumn()][square.getRow()];
     }
+    
+    public void setPiece(Square coords, Piece piece) {
+        table[coords.getColumn()][coords.getRow()].setPiece(piece);
+        //rTable[coords.getColumn()][coords.getRow()]=piece;
+    }
 
     /**
      * Checks if the given location is on the chessboard.
