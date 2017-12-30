@@ -5,12 +5,14 @@ import chess.domain.board.Klass;
 import chess.domain.board.Player;
 import chess.domain.board.Square;
 import static chess.domain.board.Klass.*;
+import chess.domain.board.Piece;
 import java.util.Random;
 import java.util.Set;
 
 /**
  * This class is used to hash chessboard situations by Zobrist-hashing. Hashes
- * will then be used for transformation tables to speed up negamax.
+ * will then be used for transformation tables to speed up negamax as well as saving
+ * previous chessboard situations in compressed form.
  *
  * @author sami
  */
@@ -46,19 +48,19 @@ public class ZobristHasher {
      * @return index of piece placed on this square.
      */
     private int indexOfPieceAtSquare(ChessBoard board, Square square) {
-        Square sq = board.getSquare(square.getColumn(), square.getRow());
-        if (!sq.containsAPiece()) {
+        Piece piece =board.getPiece(square);
+        if (piece==null || piece.isTaken()) {
             return 0;
         }
         int ret = 0;
 
-        ret += indexOf(sq.getPiece().getKlass());
+        ret += indexOf(piece.getKlass());
 
-        if (ret == 6 && kingCanCastle(board, sq)) {
+        if (ret == 6 && kingCanCastle(board, square)) {
             return 13;
         }
 
-        if (sq.getPiece().getOwner() == Player.BLACK) {
+        if (piece.getOwner() == Player.BLACK) {
             ret += 6;
         }
 
@@ -85,7 +87,7 @@ public class ZobristHasher {
     }
 
     private boolean kingCanCastle(ChessBoard board, Square sq) {
-        Set kingPossibleMoves = board.getMovementLogic().possibleMoves(sq.getPiece(), board);
+        Set kingPossibleMoves = board.getMovementLogic().possibleMoves(board.getPiece(sq), board);
 
         if (sq.getColumn() == 4) {
             if (kingPossibleMoves.contains(board.getSquare(sq.getColumn() - 2, sq.getRow()))) {
