@@ -44,18 +44,6 @@ public class SquareTest {
     }
 
     @Test
-    public void pieceNullIfNoPieceOnThisSquare() {
-        assertEquals(null, square.getPiece());
-    }
-
-    @Test
-    public void pieceCorrectIfNotNull() {
-        Piece pawn = new Piece(PAWN, 2, 1, Player.WHITE, "wp");
-        square.setPiece(pawn);
-        assertEquals(pawn, square.getPiece());
-    }
-
-    @Test
     public void twoSquaresAreEqualIfSameColumnAndRow() {
         assertTrue(square.equals(new Square(2, 3)));
     }
