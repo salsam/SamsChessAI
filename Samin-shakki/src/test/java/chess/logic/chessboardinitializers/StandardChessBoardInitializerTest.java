@@ -108,7 +108,7 @@ public class StandardChessBoardInitializerTest {
     public void testThatThereIsNoPiecesBetweenrowsTwoAndFive() {
         for (int i = 2; i < 6; i++) {
             for (int j = 0; j < 8; j++) {
-                assertFalse(board.getSquare(j, i).containsAPiece());
+                assertFalse(board.squareIsOccupied(j, i));
             }
         }
     }
@@ -116,7 +116,7 @@ public class StandardChessBoardInitializerTest {
     public void putPieceOnBoardPutsCorrectPieceInCorrectSpot() {
         Piece pawn = new Piece(PAWN, 5, 4, Player.WHITE, "wp");
         putPieceOnBoard(board, pawn);
-        assertTrue(board.getSquare(5, 4).containsAPiece());
+        assertTrue(board.squareIsOccupied(5, 4));
         assertEquals(PAWN, board.getPiece(5, 4).getKlass());
         assertEquals(Player.WHITE, board.getPiece(5, 4).getOwner());
     }

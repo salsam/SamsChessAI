@@ -106,7 +106,7 @@ public class GameSituationTest {
     @Test
     public void resetResetsSituationOnBoard() {
         game.reset();
-        assertFalse(game.getChessBoard().getSquare(0, 0).containsAPiece());
+        assertFalse(game.getChessBoard().squareIsOccupied(0, 0));
     }
 
     @Test

@@ -132,7 +132,7 @@ public class KingMover extends PieceMover {
         int[] cols = new int[]{0, 7};
         if (!king.isHasBeenMoved()) {
             for (int i = 0; i < 2; i++) {
-                if (board.getSquare(cols[i], king.getRow()).containsAPiece()) {
+                if (board.squareIsOccupied(cols[i], king.getRow())) {
                     Piece rook = board.getPiece(cols[i], king.getRow());
                     if (rook.getKlass() == ROOK && rook.getOwner() == king.getOwner()) {
                         addCastlingIfPossible(king, rook, board, possibilities);
@@ -180,7 +180,7 @@ public class KingMover extends PieceMover {
 
     private boolean squaresAreAllEmpty(ChessBoard board, int minCol, int maxCol, int row) {
         for (int col = minCol + 1; col < maxCol; col++) {
-            if (board.getSquare(col, row).containsAPiece()) {
+            if (board.squareIsOccupied(col, row)) {
                 return false;
             }
         }

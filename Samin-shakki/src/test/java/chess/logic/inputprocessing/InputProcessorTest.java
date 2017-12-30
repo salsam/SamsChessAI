@@ -92,8 +92,8 @@ public class InputProcessorTest {
         inputProcessor.processClick(1, 6);
         Piece piece = game.getSituation().getChessBoard().getPiece(1, 6);
         inputProcessor.processClick(1, 5);
-        assertFalse(game.getSituation().getChessBoard().getSquare(1, 6).containsAPiece());
-        assertTrue(game.getSituation().getChessBoard().getSquare(1, 5).containsAPiece());
+        assertFalse(game.getSituation().getChessBoard().squareIsOccupied(1, 6));
+        assertTrue(game.getSituation().getChessBoard().squareIsOccupied(1, 5));
         assertEquals(piece, game.getSituation().getChessBoard().getPiece(1, 5));
     }
 

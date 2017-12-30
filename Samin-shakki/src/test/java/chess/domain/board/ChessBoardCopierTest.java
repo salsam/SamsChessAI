@@ -91,8 +91,8 @@ public class ChessBoardCopierTest {
         Piece queen = new Piece(QUEEN, 4, 4, Player.BLACK, "bp1");
         putPieceOnBoard(sit.getChessBoard(), queen);
 
-        assertTrue(sit.getChessBoard().getSquare(4, 4).containsAPiece());
-        assertFalse(copy.getSquare(4, 4).containsAPiece());
+        assertTrue(sit.getChessBoard().squareIsOccupied(4, 4));
+        assertFalse(copy.squareIsOccupied(4, 4));
 
         sit.getChessBoard().getMovementLogic().move(queen, sit.getChessBoard().getSquare(4, 6), sit);
         assertEquals(Player.BLACK, sit.getChessBoard().getPiece(4, 6).getOwner());
@@ -107,8 +107,8 @@ public class ChessBoardCopierTest {
         Square from = cb.getSquare(1, 0);
         Square to = cb.getSquare(2, 2);
         ml.move(cb.getPiece(from), to, sit);
-        assertFalse(from.containsAPiece());
-        assertTrue(to.containsAPiece());
+        assertFalse(cb.squareIsOccupied(from));
+        assertTrue(cb.squareIsOccupied(to));
         assertTrue(backup.squareIsOccupied(from));
         ChessBoardCopier.undoMove(backup, sit, from, to);
         assertTrue(ChessBoardCopier.chessBoardsAreDeeplyEqual(backup, cb));
@@ -228,7 +228,7 @@ public class ChessBoardCopierTest {
         ChessBoard backup = ChessBoardCopier.copy(cb);
         ml.move(pawn, cb.getSquare(2, 0), sit);
         ChessBoardCopier.undoMove(backup, sit, cb.getSquare(2, 1), cb.getSquare(2, 0));
-        assertTrue(cb.getSquare(2, 1).containsAPiece());
+        assertTrue(cb.squareIsOccupied(2, 1));
         assertEquals(PAWN, cb.getPiece(2, 1).getKlass());
         for (Piece p : cb.getPieces(Player.WHITE)) {
             assertNotEquals(QUEEN, p.getKlass());

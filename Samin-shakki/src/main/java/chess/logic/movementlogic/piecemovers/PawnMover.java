@@ -43,7 +43,7 @@ public class PawnMover extends PieceMover {
             piece.setMovedTwoSquaresLastTurn(true);
         }
 
-        if (!target.containsAPiece() && target.getColumn() != piece.getColumn()) {
+        if (!sit.getChessBoard().squareIsOccupied(target) && target.getColumn() != piece.getColumn()) {
             Square enPassanted = sit.getChessBoard()
                     .getSquare(target.getColumn(), piece.getRow());
             sit.updateHashForTakingPiece(enPassanted);
@@ -73,7 +73,7 @@ public class PawnMover extends PieceMover {
             move.getPiece().setMovedTwoSquaresLastTurn(true);
         }
 
-        if (!move.getTarget().containsAPiece() && move.getTargetColumn() != move.getFrom().getColumn()) {
+        if (!sit.getChessBoard().squareIsOccupied(move.getTarget()) && move.getTargetColumn() != move.getFrom().getColumn()) {
             Square enPassanted = sit.getChessBoard().getSquare(move.getTargetColumn(), move.getFrom().getRow());
             sit.updateHashForTakingPiece(enPassanted);
             sit.getChessBoard().getPiece(enPassanted).setTaken(true);
@@ -177,7 +177,7 @@ public class PawnMover extends PieceMover {
 
     private void addPossibilitiesToTakeOpposingPieces(Piece piece, ChessBoard board, Set<Square> moves) {
         threatenedSquares(piece, board).stream().filter(i -> legalToMoveTo(piece, i, board))
-                .filter(i -> i.containsAPiece())
+                .filter(i -> board.squareIsOccupied(i))
                 .forEach(i -> moves.add(i));
         addPossibleEnPassant(piece, board, moves);
     }
@@ -186,7 +186,7 @@ public class PawnMover extends PieceMover {
         if (board.withinTable(column, row)) {
             Square target = board.getSquare(column, row);
 
-            if (!target.containsAPiece()) {
+            if (!board.squareIsOccupied(target)) {
                 moves.add(target);
                 return true;
             }

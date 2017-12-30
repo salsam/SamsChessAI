@@ -50,7 +50,7 @@ public class ChessBoardDrawer extends JPanel {
                 graphics.setColor(Color.BLACK);
                 graphics.drawRect(sideLength * i, sideLength * j, sideLength, sideLength);
 
-                if (game.getChessBoard().getSquare(i, j).containsAPiece()) {
+                if (game.getChessBoard().squareIsOccupied(i, j)) {
                     pieceDrawer.draw(game.getChessBoard().getPiece(i,j), graphics, sideLength);
                 }
             }

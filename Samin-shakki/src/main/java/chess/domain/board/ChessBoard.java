@@ -171,6 +171,10 @@ public class ChessBoard {
     public boolean squareIsOccupied(Square square) {
         return getPiece(square)!=null && !getPiece(square).isTaken();
     }
+    
+    public boolean squareIsOccupied(int col, int row) {
+        return getPiece(col, row)!=null && !getPiece(col, row).isTaken();
+    }
 
     public Piece getPiece(Square square) {
         return table[square.getColumn()][square.getRow()].getPiece();

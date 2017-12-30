@@ -124,7 +124,7 @@ public class PawnMoverTest {
         putPieceOnBoard(board, opposingPawn);
         pawnMover.move(opposingPawn, board.getSquare(3, 6), sit);
         pawnMover.move(pawn, board.getSquare(3, 5), sit);
-        assertFalse(board.getSquare(3, 6).containsAPiece());
+        assertFalse(board.squareIsOccupied(3, 6));
     }
 
     @Test

@@ -149,7 +149,7 @@ public abstract class PieceMover {
             Square target = board.getSquare(newColumn, newRow);
             possibilities.add(target);
 
-            if (target.containsAPiece()) {
+            if (board.squareIsOccupied(target)) {
                 break;
             }
             newColumn = target.getColumn() + columnChange;
