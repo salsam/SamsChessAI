@@ -11,7 +11,9 @@ import chess.domain.board.Klass;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import chess.domain.board.Piece;
+import chess.logic.ailogic.AI;
 import chess.logic.ailogic.AILogic;
+import chess.logic.ailogic.SimpleNegamax;
 import chess.logic.gamelogic.PromotionLogic;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +49,7 @@ public class InputProcessor {
      */
     private Set<Square> possibilities;
 
-    private AILogic[] ais;
+    private AI[] ais;
 
     private Game game;
 
@@ -55,8 +57,8 @@ public class InputProcessor {
      * Creates a new InputProcessor-object.
      */
     public InputProcessor(Game game) {
-        ais = new AILogic[2];
-        this.ais[0] = new AILogic();
+        ais = new AI[2];
+        this.ais[0] = new SimpleNegamax();
         this.ais[1] = new AILogic();
         this.game = game;
     }
@@ -97,7 +99,7 @@ public class InputProcessor {
         this.possibilities = possibilities;
     }
 
-    public AILogic[] getAis() {
+    public AI[] getAis() {
         return this.ais;
     }
 
@@ -109,7 +111,7 @@ public class InputProcessor {
      * @param row row that was clicked
      */
     public void processClick(int column, int row) {
-        if (!game.getContinues() || game.isAIsTurn()) {
+        if (!game.getContinues() || game.isAIsTurn() || game.getAIisComputing()) {
             return;
         }
 
@@ -123,9 +125,9 @@ public class InputProcessor {
             }
             if (chosen != null) {
                 possibilities = game.possibleMovesOnMainBoard(chosen);
+                updateScreen();
             }
         }
-        updateScreen();
     }
 
     public void updateScreen() {
@@ -133,8 +135,7 @@ public class InputProcessor {
     }
 
     public Move makeBestMoveAccordingToAILogic() {
-        ais[game.getSituation().getTurn() % 2].findBestMoves(game.getSituation());
-        Move move = ais[game.getSituation().getTurn() % 2].getBestMove();
+        Move move = ais[game.getSituation().getTurn() % 2].findBestMove(game.getSituation());
         setChosen(move.getPiece());
         moveToTargetLocation(move.getTargetColumn(), move.getTargetRow(), true);
         return move;
@@ -143,7 +144,7 @@ public class InputProcessor {
     private void moveToTargetLocation(int column, int row, boolean aisTurn) {
         ChessBoard backUp = ChessBoardCopier.copy(game.getSituation().getChessBoard());
         Square target = new Square(column, row);
-        Square from = new Square(chosen.getColumn(), chosen.getRow());
+        Square from = chosen.getLocation();
 
         game.moveOnMainBoard(chosen, target);
         handlePromotion(aisTurn);
@@ -156,8 +157,15 @@ public class InputProcessor {
             game.cancelLastMove();
             return;
         }
-
+        
+        if (!game.isAIsTurn()) {
+            updateScreen();
+        }
+        
         game.getSituation().nextTurn();
+        if (!game.isAIsTurn()) {
+            updateScreen();
+        }
         updateTextArea();
     }
 
@@ -179,7 +187,7 @@ public class InputProcessor {
                         null,
                         options,
                         options[2]);
-                Klass[] klasses= {Klass.BISHOP, Klass.KNIGHT, Klass.QUEEN, Klass.ROOK};
+                Klass[] klasses = {Klass.BISHOP, Klass.KNIGHT, Klass.QUEEN, Klass.ROOK};
                 PromotionLogic.promote(game.getSituation(), chosen, klasses[n]);
             }
         }
@@ -195,7 +203,8 @@ public class InputProcessor {
             game.stop();
             textArea.setText("Third repetition of situation. Game ended as a draw!");
             ended = true;
-        } else if (game.getSituation().getMovesTillDraw() < 1) {
+        } else if (game.getSituation().getMovesTillDraw() < -10) {
+            //Disabled, set condition to < 1 when fixing
             game.stop();
             textArea.setText("50-move rule reached. Game ended as a draw!");
             ended = true;

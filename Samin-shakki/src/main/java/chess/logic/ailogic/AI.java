@@ -9,4 +9,6 @@ import chess.domain.Move;
  */
 public interface AI {
     public Move findBestMove(GameSituation situation);
+    public void setTimeLimit(long time);
+    public void reset();
 }

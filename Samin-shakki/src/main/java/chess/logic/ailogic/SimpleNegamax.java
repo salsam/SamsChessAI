@@ -32,7 +32,8 @@ public class SimpleNegamax implements AI {
         ChessBoard backUp=ChessBoardCopier.copy(sit.getChessBoard());
         
         for (Move m:sit.getChessBoard().getMovementLogic().possibleMovementsByPlayer(player, sit.getChessBoard())) {
-            sit.getChessBoard().getMovementLogic().commitAMove(m, sit);
+            //sit.getChessBoard().getMovementLogic().commitMove(m, sit);
+            sit.getChessBoard().getMovementLogic().move(m.getPiece(), m.getTarget(), sit);
             if (m.getPiece().getKlass()==PAWN && m.getPiece().isAtOpposingEnd()) {
                 PromotionLogic.promote(sit, m.getPiece(), QUEEN);
             }
@@ -51,5 +52,13 @@ public class SimpleNegamax implements AI {
         this.sit=sit;
         negaMax(searchDepth, sit.whoseTurn());
         return bestMove;
+    }
+
+    @Override
+    public void setTimeLimit(long time) {
+    }
+
+    @Override
+    public void reset() {
     }
 }

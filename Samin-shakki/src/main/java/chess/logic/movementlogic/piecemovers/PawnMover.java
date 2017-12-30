@@ -46,6 +46,11 @@ public class PawnMover extends PieceMover {
         if (!sit.getChessBoard().squareIsOccupied(target) && target.getColumn() != piece.getColumn()) {
             Square enPassanted = new Square(target.getColumn(), piece.getRow());
             sit.updateHashForTakingPiece(enPassanted);
+            if (sit.getChessBoard().getPiece(enPassanted) == null) {
+                System.out.println(enPassanted);
+                System.out.println(piece);
+                System.out.println(target);
+            }
             sit.getChessBoard().getPiece(enPassanted).setTaken(true);
         }
 
@@ -129,6 +134,26 @@ public class PawnMover extends PieceMover {
         }
     }
 
+    private void addEnPassant(Piece piece, ChessBoard board, Set<Move> moves) {
+        Square target;
+        int[] columnChange = new int[]{1, -1};
+
+        for (int i = 0; i < 2; i++) {
+            if (board.withinTable(piece.getColumn() + columnChange[i], piece.getRow())) {
+                target = new Square(piece.getColumn() + columnChange[i], piece.getRow());
+
+                if (targetContainsAnEnemyPawn(piece.getOwner(), target, board)) {
+                    Piece opposingPawn = board.getPiece(target);
+                    if (opposingPawn.isMovedTwoSquaresLastTurn()) {
+                        moves.add(new Move(piece,
+                                new Square(target.getColumn(),
+                                        target.getRow() + piece.getOwner().getDirection())));
+                    }
+                }
+            }
+        }
+    }
+
     private boolean targetContainsAnEnemyPawn(Player player, Square target, ChessBoard board) {
         if (board.getPiece(target) == null) {
             return false;
@@ -174,11 +199,35 @@ public class PawnMover extends PieceMover {
         return moves;
     }
 
+    @Override
+    public Set<Move> possibleMovements(Piece piece, ChessBoard board) {
+        Set<Move> moves = new HashSet<>();
+        int newrow = piece.getRow() + piece.getOwner().getDirection();
+
+        if (addMoveIfWithinTableAndEmpty(board, piece, piece.getColumn(), newrow, moves)) {
+            if (!piece.isHasBeenMoved()) {
+                newrow += piece.getOwner().getDirection();
+                addMoveIfWithinTableAndEmpty(board, piece, piece.getColumn(), newrow, moves);
+            }
+        }
+
+        addMovesToTakeOpposingPieces(piece, board, moves);
+
+        return moves;
+    }
+
     private void addPossibilitiesToTakeOpposingPieces(Piece piece, ChessBoard board, Set<Square> moves) {
         threatenedSquares(piece, board).stream().filter(i -> legalToMoveTo(piece, i, board))
                 .filter(i -> board.squareIsOccupied(i))
                 .forEach(i -> moves.add(i));
         addPossibleEnPassant(piece, board, moves);
+    }
+
+    private void addMovesToTakeOpposingPieces(Piece piece, ChessBoard board, Set<Move> moves) {
+        threatenedSquares(piece, board).stream().filter(i -> legalToMoveTo(piece, i, board))
+                .filter(to -> board.squareIsOccupied(to))
+                .forEach(to -> moves.add(new Move(piece, to)));
+        addEnPassant(piece, board, moves);
     }
 
     private boolean addSquareIfWithinTableAndEmpty(ChessBoard board, int column, int row, Set<Square> moves) {
@@ -187,6 +236,18 @@ public class PawnMover extends PieceMover {
 
             if (!board.squareIsOccupied(target)) {
                 moves.add(target);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean addMoveIfWithinTableAndEmpty(ChessBoard board, Piece piece, int column, int row, Set<Move> moves) {
+        if (board.withinTable(column, row)) {
+            Square target = new Square(column, row);
+
+            if (!board.squareIsOccupied(target)) {
+                moves.add(new Move(piece, target));
                 return true;
             }
         }

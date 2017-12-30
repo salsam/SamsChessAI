@@ -44,7 +44,7 @@ public class PieceDrawer {
      *
      * @param piece piece to be drawn.
      * @param graphics Graphics object used to draw the image.
-     * @param sideLength length of each square's sides.
+     * @param sideLength length of each squares sides.
      */
     public void draw(Piece piece, Graphics graphics, int sideLength) {
         int x = piece.getColumn() * sideLength;

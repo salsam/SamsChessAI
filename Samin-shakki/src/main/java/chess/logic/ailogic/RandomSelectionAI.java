@@ -2,12 +2,8 @@ package chess.logic.ailogic;
 
 import chess.domain.GameSituation;
 import chess.domain.Move;
-import chess.domain.board.ChessBoard;
-import chess.domain.board.Piece;
 import chess.domain.board.Player;
-import chess.domain.board.Square;
 import chess.logic.movementlogic.MovementLogic;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -17,7 +13,6 @@ import java.util.Set;
  */
 public class RandomSelectionAI implements AI {
 
-    private Move bestMove;
     private MovementLogic movementLogic;
     private Random random;
 
@@ -39,5 +34,13 @@ public class RandomSelectionAI implements AI {
             j++;
         }
         return null;
+    }
+
+    @Override
+    public void setTimeLimit(long time) {
+    }
+
+    @Override
+    public void reset() {
     }
 }

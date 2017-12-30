@@ -6,6 +6,7 @@ import chess.domain.board.ChessBoard;
 import java.util.Set;
 import chess.domain.board.Square;
 import chess.domain.board.Piece;
+import chess.domain.board.Player;
 import java.util.HashSet;
 
 public abstract class PieceMover {
@@ -90,6 +91,14 @@ public abstract class PieceMover {
         }
 
         return piece.getOwner() != board.getPiece(target).getOwner();
+    }
+    
+    protected boolean legalToMoveTo(Player player, Square target, ChessBoard board) {
+        if (!board.squareIsOccupied(target)) {
+            return true;
+        }
+
+        return player != board.getPiece(target).getOwner();
     }
 
     /**

@@ -154,7 +154,6 @@ public class MovementLogic {
      * @param sit situation before move.
      */
     public void move(Piece piece, Square target, GameSituation sit) {
-
         switch (piece.getKlass()) {
             case BISHOP:
                 bishopMover.move(piece, target, sit);
@@ -182,7 +181,7 @@ public class MovementLogic {
     /*
     *Commit selected move by moving specified piece from selected square to target square.
      */
-    public void commitAMove(Move move, GameSituation sit) {
+    public void commitMove(Move move, GameSituation sit) {
         switch (move.getPiece().getKlass()) {
             case BISHOP:
                 bishopMover.commitMove(move, sit);
