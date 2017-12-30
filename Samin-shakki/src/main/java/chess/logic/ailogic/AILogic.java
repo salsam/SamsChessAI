@@ -206,9 +206,9 @@ public class AILogic implements AI {
      * If tested move doesn't produce beta-cutoff, move is saved as candidate
      * for being killer move. If beta-cutoff was reached, last killer candidate
      * will be saved as new killer move assuming such exists.
-     * 
-     * LoopCount keeps track of which of 4 loopthroughs is happening.
-     * First loop through only considers winning captures.
+     *
+     * LoopCount keeps track of which of 4 loopthroughs is happening. First loop
+     * through only considers winning captures.
      *
      * @param height recursion depth left (height from leaves).
      * @param ogAlpha original alpha value at this height.
@@ -233,7 +233,7 @@ public class AILogic implements AI {
                     continue;
                 }
 
-                Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+                Square from = new Square(piece.getColumn(), piece.getRow());
                 alpha = tryMovingPiece(height, loopCount, piece, from, ogAlpha, alpha, beta, maxingPlayer, backUp);
             }
         }
@@ -268,7 +268,7 @@ public class AILogic implements AI {
                 break;
             }
 
-            if (!handledOnThisLoopThrough(loopCount, possibility, height, moved)) {
+            if (!handledOnThisLoopThrough(loopCount, possibility, height, moved, sit.getChessBoard())) {
                 continue;
             }
 
@@ -283,15 +283,15 @@ public class AILogic implements AI {
 
         return alpha;
     }
-    
+
     /*
     *First loop handles winning captures.
     *Second handles neutral captures.
     *Third considers losing captures.
     *Last considers positional moves.
-    */
-
-    private boolean handledOnThisLoopThrough(int loopCount, Square possibility, int height, Piece moved) {
+     */
+    private boolean handledOnThisLoopThrough(int loopCount, Square possibility, int height,
+            Piece moved, ChessBoard board) {
         if ((loopCount < 3 && !possibility.containsAPiece())
                 || (loopCount == 3 && possibility.containsAPiece())
                 || moveHasBeenTestedAlready(height, moved, possibility)) {
@@ -300,7 +300,7 @@ public class AILogic implements AI {
 
         if (loopCount < 3) {
             int movedVal = getValue(sit, moved);
-            int capVal = getValue(sit, possibility.getPiece());
+            int capVal = getValue(sit, board.getPiece(possibility));
             if ((loopCount == 0 && capVal <= movedVal)
                     || (loopCount == 1 && capVal != movedVal)
                     || (loopCount == 2 && capVal >= movedVal)) {
@@ -363,10 +363,10 @@ public class AILogic implements AI {
                 continue;
             }
             Piece piece = killer.getPiece();
-            Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+            Square from = new Square(piece.getColumn(), piece.getRow());
             Square to = killer.getTarget();
 
-            if (piece.deepEquals(from.getPiece())) {
+            if (piece.deepEquals(sit.getChessBoard().getPiece(from))) {
                 if (ml.possibleMoves(piece, sit.getChessBoard()).contains(to)) {
                     alpha = testAMove(piece, to, from, maxingPlayer, height, ogAlpha, alpha, beta, backUp);
                 }
@@ -392,10 +392,10 @@ public class AILogic implements AI {
     private int testPrincipalMove(int height, Player maxingPlayer, int ogAlpha, int alpha, int beta, ChessBoard backUp) {
         if (principalMoves[searchDepth - height] != null) {
             Piece piece = principalMoves[searchDepth - height].getPiece();
-            Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+            Square from = new Square(piece.getColumn(), piece.getRow());
             Square to = principalMoves[searchDepth - height].getTarget();
 
-            if (piece.deepEquals(from.getPiece())) {
+            if (piece.deepEquals(sit.getChessBoard().getPiece(from))) {
                 if (ml.possibleMoves(piece, sit.getChessBoard()).contains(to)) {
                     alpha = testAMove(piece, to, from, maxingPlayer, height, ogAlpha, alpha, beta, backUp);
                 }
@@ -542,10 +542,10 @@ public class AILogic implements AI {
 
         lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
     }
-    
+
     /*
     Find best move for current player in this game situation.
-    */
+     */
     public Move findBestMove(GameSituation situation) {
         findBestMoves(situation);
         return getBestMove();

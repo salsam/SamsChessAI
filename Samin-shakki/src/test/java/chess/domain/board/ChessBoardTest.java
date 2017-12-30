@@ -31,18 +31,6 @@ public class ChessBoardTest {
     }
 
     @Test
-    public void getBoardReturnsBoard() {
-        Square[][] emptyBoard = new Square[board.columnAmount][board.rowAmount];
-
-        for (int i = 0; i < emptyBoard.length; i++) {
-            for (int j = 0; j < emptyBoard[0].length; j++) {
-                emptyBoard[i][j] = new Square(i, j);
-            }
-        }
-        Assert.assertArrayEquals(emptyBoard, board.getTable());
-    }
-
-    @Test
     public void withinTableReturnTrueIfSquareWithinTable() {
         assertTrue(board.withinTable(3, 6));
     }
@@ -65,12 +53,12 @@ public class ChessBoardTest {
         int[] cols = new int[]{1, 2, 3, 4, 5, 6};
 
         for (int i = 0; i < cols.length; i++) {
-            correct.add(board.getSquare(cols[i], rows[i]));
+            correct.add(new Square(cols[i], rows[i]));
         }
 
         for (int i = 1; i < 3; i++) {
             for (int j = 0; j < 8; j++) {
-                correct.add(board.getSquare(j, i));
+                correct.add(new Square(j, i));
             }
         }
 
@@ -88,12 +76,12 @@ public class ChessBoardTest {
         int[] rows = new int[]{0, 0};
 
         for (int i = 0; i < cols.length; i++) {
-            wrong.add(board.getSquare(cols[i], rows[i]));
+            wrong.add(new Square(cols[i], rows[i]));
         }
 
         for (int i = 3; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                wrong.add(board.getSquare(j, i));
+                wrong.add(new Square(j, i));
             }
         }
 
@@ -111,12 +99,12 @@ public class ChessBoardTest {
         int[] cols = new int[]{1, 2, 3, 4, 5, 6};
 
         for (int i = 0; i < cols.length; i++) {
-            correct.add(board.getSquare(cols[i], rows[i]));
+            correct.add(new Square(cols[i], rows[i]));
         }
 
         for (int i = 5; i < 7; i++) {
             for (int j = 0; j < 8; j++) {
-                correct.add(board.getSquare(j, i));
+                correct.add(new Square(j, i));
             }
         }
 
@@ -134,12 +122,12 @@ public class ChessBoardTest {
         int[] rows = new int[]{7, 7};
 
         for (int i = 0; i < cols.length; i++) {
-            wrong.add(board.getSquare(cols[i], rows[i]));
+            wrong.add(new Square(cols[i], rows[i]));
         }
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 8; j++) {
-                wrong.add(board.getSquare(j, i));
+                wrong.add(new Square(j, i));
             }
         }
 
@@ -165,7 +153,7 @@ public class ChessBoardTest {
         init.initialize(board);
         Piece whiteKing = board.getKings().get(Player.WHITE);
         Piece blackKing = board.getKings().get(Player.BLACK);
-        assertEquals(board.getSquare(4, 7), board.getSquare(whiteKing.getColumn(), whiteKing.getRow()));
-        assertEquals(board.getSquare(4, 0), board.getSquare(blackKing.getColumn(), blackKing.getRow()));
+        assertEquals(new Square(4, 7), whiteKing.getLocation());
+        assertEquals(new Square(4, 0), blackKing.getLocation());
     }
 }

@@ -67,6 +67,10 @@ public class Piece {
         this.row = row;
     }
 
+    public Square getLocation() {
+        return new Square(column, row);
+    }
+
     public String getPieceCode() {
         return pieceCode;
     }

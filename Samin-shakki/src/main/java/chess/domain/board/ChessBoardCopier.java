@@ -30,21 +30,10 @@ public class ChessBoardCopier {
      */
     public static ChessBoard copy(ChessBoard board) {
         ChessBoard copy = new ChessBoard(board.getMovementLogic());
-        copy.setTable(copyTable(board.getTable()));
-        copy.setrTable(copyPieceTable(board.getrTable()));
+        copy.setTable(copyPieceTable(board.getTable()));
         setPieces(copy);
 
         return copy;
-    }
-
-    private static Square[][] copyTable(Square[][] table) {
-        Square[][] copyTable = new Square[table.length][table[0].length];
-        for (int i = 0; i < table.length; i++) {
-            for (int j = 0; j < table[0].length; j++) {
-                copyTable[i][j] = table[i][j].clone();
-            }
-        }
-        return copyTable;
     }
 
     private static Piece[][] copyPieceTable(Piece[][] table) {
@@ -65,7 +54,7 @@ public class ChessBoardCopier {
 
         for (int i = 0; i < board.columnAmount; i++) {
             for (int j = 0; j < board.rowAmount; j++) {
-                addPieceToOwner(board.getSquare(i, j), board);
+                addPieceToOwner(new Square(i, j), board);
             }
         }
     }
@@ -156,8 +145,8 @@ public class ChessBoardCopier {
      * @param backUp backup of chessboard before move.
      */
     private static void handleEnPassant(Square from, Square to, GameSituation sit, ChessBoard backUp) {
-        if (from.getPiece().getKlass() == PAWN && from.getColumn() != to.getColumn()) {
-            Square enpassanted = sit.getChessBoard().getSquare(to.getColumn(), from.getRow());
+        if (sit.getChessBoard().getPiece(from).getKlass() == PAWN && from.getColumn() != to.getColumn()) {
+            Square enpassanted = new Square(to.getColumn(), from.getRow());
             Piece taken = backUp.getPiece(enpassanted);
             putTakenPieceBackOnBoard(sit.getChessBoard(), taken, enpassanted);
             sit.reHashBoard(false);
@@ -176,15 +165,15 @@ public class ChessBoardCopier {
      * @param backUp backup of situation before move.
      */
     private static void handleCastling(Square from, Square to, GameSituation sit, ChessBoard backUp) {
-        if (from.getPiece().getKlass() == KING) {
+        if (sit.getChessBoard().getPiece(from).getKlass() == KING) {
             if (from.getColumn() - to.getColumn() == -2) {
-                Square rookFrom = sit.getChessBoard().getSquare(7, from.getRow());
-                Square rookTo = sit.getChessBoard().getSquare(to.getColumn() - 1, to.getRow());
+                Square rookFrom = new Square(7, from.getRow());
+                Square rookTo = new Square(to.getColumn() - 1, to.getRow());
                 sit.incrementCountOfCurrentBoardSituation();
                 undoMove(backUp, sit, rookFrom, rookTo);
             } else if (from.getColumn() - to.getColumn() == 2) {
-                Square rookFrom = sit.getChessBoard().getSquare(0, from.getRow());
-                Square rookTo = sit.getChessBoard().getSquare(to.getColumn() + 1, to.getRow());
+                Square rookFrom = new Square(0, from.getRow());
+                Square rookTo = new Square(to.getColumn() + 1, to.getRow());
                 sit.incrementCountOfCurrentBoardSituation();
                 undoMove(backUp, sit, rookFrom, rookTo);
             }

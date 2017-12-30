@@ -76,7 +76,7 @@ public abstract class PieceMover {
                 continue;
             }
 
-            Square target = board.getSquare(newColumn, newRow);
+            Square target = new Square(newColumn, newRow);
             possibilities.add(target);
         }
 
@@ -101,7 +101,7 @@ public abstract class PieceMover {
      * @param sit situation being changed.
      */
     public void move(Piece piece, Square target, GameSituation sit) {
-        Square from = sit.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+        Square from = piece.getLocation();
         sit.updateHashForMoving(from, target);
         sit.decrementMovesTillDraw();
 
@@ -146,7 +146,7 @@ public abstract class PieceMover {
         int newRow = current.getRow() + rowChange;
 
         while (board.withinTable(newColumn, newRow)) {
-            Square target = board.getSquare(newColumn, newRow);
+            Square target = new Square(newColumn, newRow);
             possibilities.add(target);
 
             if (board.squareIsOccupied(target)) {

@@ -110,7 +110,7 @@ public class KingMoverTest {
     public void kingCanTakeOpposingUnprotectedPieceThatChecksIt() {
         putPieceOnBoard(board, new Piece(QUEEN, 2, 4, Player.BLACK, "bq"));
         board.updateThreatenedSquares(Player.BLACK);
-        assertTrue(kingMover.possibleMoves(king, board).contains(board.getSquare(2, 4)));
+        assertTrue(kingMover.possibleMoves(king, board).contains(new Square(2, 4)));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class KingMoverTest {
         putPieceOnBoard(board, new Piece(BISHOP, 3, 5, Player.BLACK, "bb"));
         board.updateThreatenedSquares(Player.BLACK);
 
-        assertFalse(kingMover.possibleMoves(king, board).contains(board.getSquare(2, 4)));
+        assertFalse(kingMover.possibleMoves(king, board).contains(new Square(2, 4)));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class KingMoverTest {
         Piece blackKing = new Piece(KING, 4, 7, Player.BLACK, "bk");
         putPieceOnBoard(board, blackKing);
         putPieceOnBoard(board, new Piece(ROOK, 7, 7, Player.BLACK, "br"));
-        assertTrue(kingMover.possibleMoves(blackKing, board).contains(board.getSquare(6, 7)));
+        assertTrue(kingMover.possibleMoves(blackKing, board).contains(new Square(6, 7)));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class KingMoverTest {
         Piece blackKing = new Piece(KING, 4, 7, Player.BLACK, "bk");
         putPieceOnBoard(board, blackKing);
         putPieceOnBoard(board, new Piece(ROOK, 0, 7, Player.BLACK, "br"));
-        assertTrue(kingMover.possibleMoves(blackKing, board).contains(board.getSquare(2, 7)));
+        assertTrue(kingMover.possibleMoves(blackKing, board).contains(new Square(2, 7)));
     }
 
     @Test
@@ -144,8 +144,8 @@ public class KingMoverTest {
         Piece blackRook = new Piece(ROOK, 7, 7, Player.BLACK, "br");
         putPieceOnBoard(board, blackKing);
         putPieceOnBoard(board, blackRook);
-        kingMover.move(blackKing, board.getSquare(6, 7), sit);
-        assertEquals(board.getSquare(5, 7), board.getSquare(blackRook.getColumn(), blackRook.getRow()));
+        kingMover.move(blackKing, new Square(6, 7), sit);
+        assertEquals(new Square(5, 7), blackRook.getLocation());
     }
 
     @Test
@@ -154,8 +154,8 @@ public class KingMoverTest {
         Piece blackRook = new Piece(ROOK, 0, 7, Player.BLACK, "br");
         putPieceOnBoard(board, blackKing);
         putPieceOnBoard(board, blackRook);
-        kingMover.move(blackKing, board.getSquare(2, 7), sit);
-        assertEquals(board.getSquare(3, 7), board.getSquare(blackRook.getColumn(), blackRook.getRow()));
+        kingMover.move(blackKing, new Square(2, 7), sit);
+        assertEquals(new Square(3, 7), blackRook.getLocation());
     }
 
     @Test
@@ -167,7 +167,7 @@ public class KingMoverTest {
         putPieceOnBoard(board, wr);
 
         sit.reHashBoard(true);
-        kingMover.move(wk, board.getSquare(1, 0), sit);
+        kingMover.move(wk, new Square(1, 0), sit);
         assertEquals(sit.getHasher().hash(board), sit.getBoardHash());
     }
 }

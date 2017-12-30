@@ -53,8 +53,8 @@ public class ZobristHasherTest {
     @Test
     public void updateHashDoesNothingIfNeitherSquareHasAPiece() {
         long oldHash = zb.hash(cb);
-        Square from = cb.getSquare(0, 0);
-        Square to = cb.getSquare(1, 1);
+        Square from = new Square(0, 0);
+        Square to = new Square(1, 1);
         assertEquals(oldHash, zb.getHashAfterMove(oldHash, cb, from, to));
     }
 
@@ -72,7 +72,7 @@ public class ZobristHasherTest {
         long oldHash = zb.hash(cb);
         assertNotEquals(oldHash,
                 zb.getHashAfterMove(oldHash, sit.getChessBoard(),
-                        cb.getSquare(1, 1), cb.getSquare(1, 2)));
+                        new Square(1, 1), new Square(1, 2)));
     }
 
     @Test
@@ -88,8 +88,8 @@ public class ZobristHasherTest {
     public void hashCorrectAfterAMoveIsMade() {
         Piece wn = new Piece(KNIGHT, 1, 0, Player.WHITE, "wn");
         ChessBoardInitializer.putPieceOnBoard(cb, wn);
-        Square from = cb.getSquare(1, 0);
-        Square to = cb.getSquare(2, 2);
+        Square from = new Square(1, 0);
+        Square to = new Square(2, 2);
         long hash = zb.getHashAfterMove(zb.hash(cb), cb, from, to);
         ml.move(wn, to, sit);
         assertEquals(zb.hash(cb), hash);
@@ -101,8 +101,8 @@ public class ZobristHasherTest {
         ChessBoardInitializer.putPieceOnBoard(cb, wn);
         ChessBoard backup = copy(cb);
         long before = zb.hash(cb);
-        Square from = cb.getSquare(1, 0);
-        Square to = cb.getSquare(2, 2);
+        Square from = new Square(1, 0);
+        Square to = new Square(2, 2);
         ml.move(wn, to, sit);
         long hash = zb.getHashBeforeMove(zb.hash(cb), cb, backup, from, to);
         assertEquals(before, hash);
@@ -114,8 +114,8 @@ public class ZobristHasherTest {
         ChessBoardInitializer.putPieceOnBoard(cb, wn);
         ChessBoard backup = copy(cb);
         long oldHash = zb.hash(cb);
-        Square from = cb.getSquare(1, 0);
-        Square to = cb.getSquare(2, 2);
+        Square from = new Square(1, 0);
+        Square to = new Square(2, 2);
         long after = zb.getHashAfterMove(oldHash, cb, from, to);
         ml.move(wn, to, sit);
         long before = zb.getHashBeforeMove(after, cb, backup, from, to);

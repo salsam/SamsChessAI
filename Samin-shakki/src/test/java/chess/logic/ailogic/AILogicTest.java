@@ -58,8 +58,8 @@ public class AILogicTest {
         putPieceOnBoard(sit.getChessBoard(), pawn);
         sit.reHashBoard(true);
         ai.findBestMoves(sit);
-        assertTrue(ai.getBestMove().getTarget().equals(sit.getChessBoard().getSquare(0, 6))
-                || ai.getBestMove().getTarget().equals(sit.getChessBoard().getSquare(0, 5)));
+        assertTrue(ai.getBestMove().getTarget().equals(new Square(0, 6))
+                || ai.getBestMove().getTarget().equals(new Square(0, 5)));
         assertEquals(pawn, ai.getBestMove().getPiece());
     }
 
@@ -78,7 +78,7 @@ public class AILogicTest {
         sit.reHashBoard(true);
 
         ai.findBestMoves(sit);
-        assertEquals(new Move(wq, sit.getChessBoard().getSquare(1, 6)), ai.getBestMove());
+        assertEquals(new Move(wq, new Square(1, 6)), ai.getBestMove());
     }
 
     @Test
@@ -115,7 +115,7 @@ public class AILogicTest {
         sit = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
         MovementLogic ml = sit.getChessBoard().getMovementLogic();
         ChessBoard cb = sit.getChessBoard();
-        ml.move(cb.getPiece(1, 1), cb.getSquare(1, 3), sit);
+        ml.move(cb.getPiece(1, 1), new Square(1, 3), sit);
         ChessBoard backUp = copy(sit.getChessBoard());
         ai.findBestMoves(sit);
 
@@ -137,7 +137,7 @@ public class AILogicTest {
         Piece wp = new Piece(PAWN, 1, 4, Player.WHITE, "wp");
         putPieceOnBoard(cb, wp);
         MovementLogic ml = cb.getMovementLogic();
-        ml.move(wp, cb.getSquare(1, 5), sit);
+        ml.move(wp, new Square(1, 5), sit);
         ChessBoard backUp = copy(sit.getChessBoard());
         ai.findBestMoves(sit);
 
@@ -223,7 +223,7 @@ public class AILogicTest {
         ai.getBestValues()[1] = -100;
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis());
-        int newAlpha = ai.checkForChange(wp, cb.getSquare(1, 4), 1, Player.WHITE, -123456789, -123456789, 123456789);
+        int newAlpha = ai.checkForChange(wp, new Square(1, 4), 1, Player.WHITE, -123456789, -123456789, 123456789);
         assertEquals(evaluateGameSituation(sit, Player.WHITE), newAlpha);
         assertEquals(evaluateGameSituation(sit, Player.WHITE), ai.getBestValues()[1]);
     }
@@ -240,7 +240,7 @@ public class AILogicTest {
         ai.getBestValues()[1] = 100;
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis());
-        int newAlpha = ai.checkForChange(wp, cb.getSquare(1, 4), 1, Player.WHITE, 100, 100, 123456789);
+        int newAlpha = ai.checkForChange(wp, new Square(1, 4), 1, Player.WHITE, 100, 100, 123456789);
         assertEquals(100, newAlpha);
         assertEquals(100, ai.getBestValues()[1]);
     }
@@ -256,12 +256,12 @@ public class AILogicTest {
         putPieceOnBoard(cb, wb);
         putPieceOnBoard(cb, br);
         sit.reHashBoard(true);
-        ml.move(wb, cb.getSquare(2, 3), sit);
+        ml.move(wb, new Square(2, 3), sit);
 
         ai.setSituation(sit);
         ai.getBestValues()[1] = -250;
         ai.setStart(System.currentTimeMillis());
-        int newAlpha = ai.checkForChange(wb, cb.getSquare(1, 4), 1, Player.WHITE, -250, -250, 123456789);
+        int newAlpha = ai.checkForChange(wb, new Square(1, 4), 1, Player.WHITE, -250, -250, 123456789);
         assertEquals(-250, newAlpha);
         assertEquals(-250, ai.getBestValues()[1]);
     }
@@ -279,7 +279,7 @@ public class AILogicTest {
 //        ai.setStart(System.currentTimeMillis());
 //        ai.getTranspositionTable().clear();
 //        assertTrue(ai.getTranspositionTable().isEmpty());
-//        ai.checkForChange(Player.WHITE, 1, -123456789, 123456789, wp, cb.getSquare(1, 3));
+//        ai.checkForChange(Player.WHITE, 1, -123456789, 123456789, wp, new Square(1, 3));
 //        TranspositionKey key = new TranspositionKey(1, Player.WHITE, situation.getBoardHash());
 //        assertFalse(ai.getTranspositionTable().isEmpty());
 //        assertTrue(ai.getTranspositionTable().containsKey(key));
@@ -296,7 +296,7 @@ public class AILogicTest {
         ChessBoard backUp = copy(cb);
         ai.setTimeLimit(1000);
         ai.setStart(System.currentTimeMillis() - 1000);
-        assertEquals(-12345, ai.testAMove(wr, cb.getSquare(1, 6), cb.getSquare(1, 4), Player.WHITE, 1, -12345, -12345, 123456789, backUp));
+        assertEquals(-12345, ai.testAMove(wr, new Square(1, 6), new Square(1, 4), Player.WHITE, 1, -12345, -12345, 123456789, backUp));
         assertTrue(ChessBoardCopier.chessBoardsAreDeeplyEqual(cb, backUp));
     }
 
@@ -311,7 +311,7 @@ public class AILogicTest {
         ChessBoard backUp = copy(cb);
         ai.setStart(System.currentTimeMillis());
         ai.setSituation(sit);
-        ai.testAMove(wr, cb.getSquare(1, 6), cb.getSquare(1, 4), Player.WHITE, 1, -12345, -12345, 1234567, backUp);
+        ai.testAMove(wr, new Square(1, 6), new Square(1, 4), Player.WHITE, 1, -12345, -12345, 1234567, backUp);
         assertTrue(ChessBoardCopier.chessBoardsAreDeeplyEqual(cb, backUp));
     }
 
@@ -326,7 +326,7 @@ public class AILogicTest {
         ChessBoard backUp = copy(cb);
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis());
-        assertEquals(470, ai.testAMove(wr, cb.getSquare(1, 6), cb.getSquare(1, 4), Player.WHITE, 1, -12345, -12345, 1234567, backUp));
+        assertEquals(470, ai.testAMove(wr, new Square(1, 6), new Square(1, 4), Player.WHITE, 1, -12345, -12345, 1234567, backUp));
     }
 
     @Test
@@ -340,7 +340,7 @@ public class AILogicTest {
         ai.setStart(System.currentTimeMillis());
         ai.setSituation(sit);
         ChessBoard backUp = copy(cb);
-        ai.testAMove(wp, cb.getSquare(1, 7), cb.getSquare(1, 6), Player.WHITE, 1, -12345, -12345, 1234567, backUp);
+        ai.testAMove(wp, new Square(1, 7), new Square(1, 6), Player.WHITE, 1, -12345, -12345, 1234567, backUp);
         assertTrue(ChessBoardCopier.chessBoardsAreDeeplyEqual(cb, backUp));
         assertEquals(PAWN, cb.getPiece(1, 6).getKlass());
     }
@@ -357,7 +357,7 @@ public class AILogicTest {
         ai.setSituation(sit);
         ai.setSearchDepth(2);
         ChessBoard backUp = copy(cb);
-        ai.testAMove(wp, cb.getSquare(1, 7), cb.getSquare(1, 6), Player.WHITE, 2, -12345, -12345, 1234567, backUp);
+        ai.testAMove(wp, new Square(1, 7), new Square(1, 6), Player.WHITE, 2, -12345, -12345, 1234567, backUp);
         assertTrue(ChessBoardCopier.chessBoardsAreDeeplyEqual(cb, backUp));
         assertEquals(PAWN, cb.getPiece(1, 6).getKlass());
     }
@@ -373,7 +373,7 @@ public class AILogicTest {
         ChessBoard backUp = copy(cb);
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis() - 1000);
-        assertEquals(-12345, ai.tryMovingPiece(1, 1, wr, cb.getSquare(1, 4),
+        assertEquals(-12345, ai.tryMovingPiece(1, 1, wr, new Square(1, 4),
                 -12345, -12345, 123456, Player.WHITE, backUp));
     }
 
@@ -388,7 +388,7 @@ public class AILogicTest {
         ChessBoard backUp = copy(cb);
         ai.setSituation(sit);
         ai.setStart(System.currentTimeMillis());
-        assertEquals(500, ai.tryMovingPiece(1, 3, wr, cb.getSquare(1, 4),
+        assertEquals(500, ai.tryMovingPiece(1, 3, wr, new Square(1, 4),
                 -12345, -12345, 123456, Player.WHITE, backUp));
     }
 
@@ -407,7 +407,7 @@ public class AILogicTest {
         ai.getKillerCandidates()[0] = null;
 
         ai.setStart(System.currentTimeMillis());
-        ai.tryMovingPiece(1, 3, wp, cb.getSquare(1, 6), -12345, -12345, 123456, Player.WHITE, backUp);
+        ai.tryMovingPiece(1, 3, wp, new Square(1, 6), -12345, -12345, 123456, Player.WHITE, backUp);
         assertNotEquals(null, ai.getKillerCandidates()[0]);
     }
 
@@ -425,7 +425,7 @@ public class AILogicTest {
         ai.getKillerCandidates()[0] = null;
 
         ai.setStart(System.currentTimeMillis());
-        ai.tryMovingPiece(1, 1, wp, cb.getSquare(1, 2), -12345, -12345, 0, Player.WHITE, backUp);
+        ai.tryMovingPiece(1, 1, wp, new Square(1, 2), -12345, -12345, 0, Player.WHITE, backUp);
         assertEquals(null, ai.getKillerCandidates()[0]);
     }
 

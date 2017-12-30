@@ -1,6 +1,7 @@
 package chess.gui.boarddrawing;
 
 import chess.domain.GameSituation;
+import chess.domain.board.Square;
 import chess.logic.inputprocessing.InputProcessor;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -39,7 +40,7 @@ public class ChessBoardDrawer extends JPanel {
 
         for (int i = 0; i < game.getChessBoard().columnAmount; i++) {
             for (int j = 0; j < game.getChessBoard().rowAmount; j++) {
-                if (guiLogic.getPossibilities() != null && guiLogic.getPossibilities().contains(game.getChessBoard().getSquare(i, j))) {
+                if (guiLogic.getPossibilities() != null && guiLogic.getPossibilities().contains(new Square(i, j))) {
                     graphics.setColor(Color.red);
                 } else if ((i + j) % 2 == 0) {
                     graphics.setColor(Color.LIGHT_GRAY);

@@ -23,13 +23,13 @@ public class Move {
     public Move(Piece piece, Square target, Game game) {
         this.piece = piece;
         this.target = target;
-        this.from = game.getSituation().getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+        this.from = new Square(piece.getColumn(), piece.getRow());
     }
 
     public Move(Piece piece, int column, int row, Game game) {
         this.piece = piece;
-        this.from = game.getSituation().getChessBoard().getSquare(piece.getColumn(), piece.getRow());
-        this.target = game.getSituation().getChessBoard().getSquare(column, row);
+        this.from = new Square(piece.getColumn(), piece.getRow());
+        this.target = new Square(column, row);
     }
 
     public Square getFrom() {
@@ -38,10 +38,6 @@ public class Move {
 
     public void setFrom(Square from) {
         this.from = from;
-    }
-
-    public void setFrom(Game game) {
-        this.from = game.getSituation().getChessBoard().getSquare(piece.getColumn(), piece.getRow());
     }
 
     public Piece getPiece() {

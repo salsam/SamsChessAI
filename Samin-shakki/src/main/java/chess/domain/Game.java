@@ -65,10 +65,6 @@ public class Game {
         return moves.getLast();
     }
 
-    public Square getSquare(int column, int row) {
-        return situation.getChessBoard().getSquare(column, row);
-    }
-
     public Set<Square> possibleMovesOnMainBoard(Piece piece) {
         return situation.getChessBoard().getMovementLogic().possibleMoves(piece,
                 situation.getChessBoard());

@@ -9,6 +9,7 @@ import static chess.domain.board.Klass.KING;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import static chess.domain.board.Klass.ROOK;
+import chess.domain.board.Square;
 import chess.logic.chessboardinitializers.*;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
 import chess.logic.movementlogic.MovementLogic;
@@ -86,11 +87,11 @@ public class CheckingLogicTest {
         stdinit.initialize(game.getChessBoard());
         MovementLogic mvl = game.getChessBoard().getMovementLogic();
 
-        mvl.move(game.getChessBoard().getPiece(4, 6), game.getChessBoard().getSquare(4, 5), game);
-        mvl.move(game.getChessBoard().getPiece(5, 1), game.getChessBoard().getSquare(5, 3), game);
-        mvl.move(game.getChessBoard().getPiece(1, 6), game.getChessBoard().getSquare(1, 5), game);
-        mvl.move(game.getChessBoard().getPiece(6, 1), game.getChessBoard().getSquare(6, 3), game);
-        mvl.move(game.getChessBoard().getPiece(3, 7), game.getChessBoard().getSquare(7, 3), game);
+        mvl.move(game.getChessBoard().getPiece(4, 6), new Square(4, 5), game);
+        mvl.move(game.getChessBoard().getPiece(5, 1), new Square(5, 3), game);
+        mvl.move(game.getChessBoard().getPiece(1, 6), new Square(1, 5), game);
+        mvl.move(game.getChessBoard().getPiece(6, 1), new Square(6, 3), game);
+        mvl.move(game.getChessBoard().getPiece(3, 7), new Square(7, 3), game);
         game.getChessBoard().updateThreatenedSquares(Player.WHITE);
         ChessBoard backUp = ChessBoardCopier.copy(game.getChessBoard());
         assertTrue(cl.checkMate(Player.BLACK));
@@ -122,12 +123,12 @@ public class CheckingLogicTest {
         Piece blackPawn1 = game.getChessBoard().getPiece(5, 6);
         Piece blackPawn2 = game.getChessBoard().getPiece(4, 6);
 
-        ml.move(whitePawn, game.getChessBoard().getSquare(5, 2), game);
-        ml.move(blackPawn1, game.getChessBoard().getSquare(5, 4), game);
-        ml.move(whiteKing, game.getChessBoard().getSquare(5, 1), game);
-        ml.move(blackPawn2, game.getChessBoard().getSquare(4, 4), game);
-        ml.move(whiteKing, game.getChessBoard().getSquare(6, 2), game);
-        ml.move(blackPawn1, game.getChessBoard().getSquare(5, 3), game);
+        ml.move(whitePawn, new Square(5, 2), game);
+        ml.move(blackPawn1, new Square(5, 4), game);
+        ml.move(whiteKing, new Square(5, 1), game);
+        ml.move(blackPawn2, new Square(4, 4), game);
+        ml.move(whiteKing, new Square(6, 2), game);
+        ml.move(blackPawn1, new Square(5, 3), game);
         assertFalse(cl.checkMate(Player.WHITE));
         game = new GameSituation(emptyinit, ml);
     }

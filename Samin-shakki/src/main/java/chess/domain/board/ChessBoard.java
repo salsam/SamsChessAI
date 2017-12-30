@@ -18,11 +18,9 @@ import java.util.Set;
 public class ChessBoard {
 
     /**
-     * Table containing all the squares on the game table
+     * Table containing all the pieces on the game table
      */
-    private Square[][] table;
-
-    private Piece[][] rTable;
+    private Piece[][] table;
     /**
      * List of all pieces that white owns.
      */
@@ -70,26 +68,11 @@ public class ChessBoard {
      * Initializes a new 8x8 board.
      */
     private void initializeBoard() {
-        table = new Square[8][8];
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                this.table[i][j] = new Square(i, j);
-            }
-        }
-        rTable= new Piece[8][8];
+        table= new Piece[8][8];
     }
 
-    /**
-     * Returns the Square[][] saved to field board.
-     *
-     * @return Reference to Square[][] that is saved to field board.
-     */
-    public Square[][] getTable() {
+    public Piece[][] getTable() {
         return table;
-    }
-
-    public Piece[][] getrTable() {
-        return rTable;
     }
 
     public MovementLogic getMovementLogic() {
@@ -101,12 +84,8 @@ public class ChessBoard {
      *
      * @param newBoard Square[][] to be saved to field board.
      */
-    public void setTable(Square[][] newBoard) {
+    public void setTable(Piece[][] newBoard) {
         this.table = newBoard;
-    }
-
-    public void setrTable(Piece[][] newBoard) {
-        this.rTable = newBoard;
     }
 
     /**
@@ -155,22 +134,6 @@ public class ChessBoard {
     public void setWhitePieces(List<Piece> whitePieces) {
         this.whitePieces = whitePieces;
     }
-
-    /**
-     * Returns the Square at given location on board.
-     *
-     * @param column Column of the Square you want.
-     * @param row Row of the Square you want.
-     * @return Square at given location.
-     */
-    public Square getSquare(int column, int row) {
-        return table[column][row];
-    }
-
-    public Piece getPiece(int column, int row) {
-        return table[column][row].getPiece();
-        //return rTable[column][row];
-    }
     
     public boolean squareIsOccupied(Square square) {
         return getPiece(square)!=null && !getPiece(square).isTaken();
@@ -181,18 +144,19 @@ public class ChessBoard {
     }
 
     public Piece getPiece(Square square) {
-        return table[square.getColumn()][square.getRow()].getPiece();
-        //return rTable[square.getColumn()][square.getRow()];
+        return table[square.getColumn()][square.getRow()];
+    }
+    
+    public Piece getPiece(int column, int row) {
+        return table[column][row];
     }
     
     public void setPiece(Square coords, Piece piece) {
-        table[coords.getColumn()][coords.getRow()].setPiece(piece);
-        //rTable[coords.getColumn()][coords.getRow()]=piece;
+        table[coords.getColumn()][coords.getRow()]=piece;
     }
     
     public void setPiece(int col, int row, Piece piece) {
-        table[col][row].setPiece(piece);
-        //rTabel[col][row]=piece;
+        table[col][row]=piece;
     }
 
     /**
@@ -203,10 +167,10 @@ public class ChessBoard {
      * @return true if given coordinates are within the table.
      */
     public boolean withinTable(int column, int row) {
-        if (column < 0 || column >= table.length) {
+        if (column < 0 || column >= columnAmount) {
             return false;
         }
-        return !(row < 0 || row >= table[0].length);
+        return !(row < 0 || row >= rowAmount);
     }
 
     /**
@@ -226,23 +190,10 @@ public class ChessBoard {
     public void printTable() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (table[j][i].getPiece() == null) {
+                if (table[j][i] == null) {
                     System.out.print("NU");
                 } else {
-                    System.out.print(table[j][i].getPiece().getKlass().toString().substring(0, 2));
-                }
-            }
-            System.out.println("");
-        }
-    }
-
-    public void printrTable() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (rTable[j][i] == null) {
-                    System.out.print("NU");
-                } else {
-                    System.out.print(rTable[j][i].getKlass().toString().substring(0, 2));
+                    System.out.print(table[j][i].getKlass().toString().substring(0, 2));
                 }
             }
             System.out.println("");

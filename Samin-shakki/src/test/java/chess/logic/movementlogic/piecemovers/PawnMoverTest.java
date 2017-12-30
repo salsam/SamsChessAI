@@ -78,7 +78,7 @@ public class PawnMoverTest {
     @Test
     public void pawnCannotMoveTwoStepsAfterMovingOnce() {
         pawn = new Piece(PAWN, 2, 6, Player.WHITE, "wp");
-        pawnMover.move(pawn, board.getSquare(2, 5), sit);
+        pawnMover.move(pawn, new Square(2, 5), sit);
         assertFalse(pawnMover.possibleMoves(pawn, board).contains(new Square(2, 3)));
     }
 
@@ -114,7 +114,7 @@ public class PawnMoverTest {
     public void pawnCanEnPassantOpposingPawnThatMovedTwoSquaresLastTurn() {
         Piece opposingPawn = new Piece(PAWN, 3, 4, Player.BLACK, "op");
         putPieceOnBoard(board, opposingPawn);
-        pawnMover.move(opposingPawn, board.getSquare(3, 6), sit);
+        pawnMover.move(opposingPawn, new Square(3, 6), sit);
         assertTrue(pawnMover.possibleMoves(pawn, board).contains(new Square(3, 5)));
     }
 
@@ -122,8 +122,8 @@ public class PawnMoverTest {
     public void whenEnPassantingOpposingPawnIsRemovedFromBoard() {
         Piece opposingPawn = new Piece(PAWN, 3, 4, Player.BLACK, "op");
         putPieceOnBoard(board, opposingPawn);
-        pawnMover.move(opposingPawn, board.getSquare(3, 6), sit);
-        pawnMover.move(pawn, board.getSquare(3, 5), sit);
+        pawnMover.move(opposingPawn, new Square(3, 6), sit);
+        pawnMover.move(pawn, new Square(3, 5), sit);
         assertFalse(board.squareIsOccupied(3, 6));
     }
 
@@ -132,8 +132,8 @@ public class PawnMoverTest {
         Piece opposingPawn = new Piece(PAWN, 3, 4, Player.BLACK, "op");
         putPieceOnBoard(board, opposingPawn);
         sit.reHashBoard(true);
-        pawnMover.move(opposingPawn, board.getSquare(3, 6), sit);
-        pawnMover.move(pawn, board.getSquare(3, 5), sit);
+        pawnMover.move(opposingPawn, new Square(3, 6), sit);
+        pawnMover.move(pawn, new Square(3, 5), sit);
         assertEquals(sit.getHasher().hash(board), sit.getBoardHash());
     }
 }

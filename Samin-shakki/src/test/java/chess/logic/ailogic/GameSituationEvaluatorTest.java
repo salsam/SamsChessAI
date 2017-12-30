@@ -5,6 +5,7 @@ import chess.domain.board.ChessBoard;
 import chess.domain.board.Player;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.*;
+import chess.domain.board.Square;
 import static chess.logic.ailogic.GameSituationEvaluator.evaluateGameSituation;
 import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
@@ -91,7 +92,7 @@ public class GameSituationEvaluatorTest {
         putPieceOnBoard(situation.getChessBoard(), bqueen);
 
         situation.getChessBoard().getMovementLogic()
-                .move(wpawn, situation.getChessBoard().getSquare(2, 6), situation);
+                .move(wpawn, new Square(2, 6), situation);
         assertEquals(-530, evaluateGameSituation(situation, Player.WHITE));
     }
 
@@ -108,7 +109,7 @@ public class GameSituationEvaluatorTest {
         putPieceOnBoard(cb, bq);
         situation.reHashBoard(true);
 
-        ml.move(bq, cb.getSquare(1, 6), situation);
+        ml.move(bq, new Square(1, 6), situation);
 
         assertEquals(-100000000, evaluateGameSituation(situation, Player.WHITE));
     }
@@ -126,11 +127,11 @@ public class GameSituationEvaluatorTest {
         putPieceOnBoard(cb, bq);
         situation.reHashBoard(true);
 
-        ml.move(bq, cb.getSquare(1, 6), situation);
-        ml.move(bq, cb.getSquare(1, 2), situation);
-        ml.move(bq, cb.getSquare(1, 6), situation);
-        ml.move(bq, cb.getSquare(1, 2), situation);
-        ml.move(bq, cb.getSquare(1, 6), situation);
+        ml.move(bq, new Square(1, 6), situation);
+        ml.move(bq, new Square(1, 2), situation);
+        ml.move(bq, new Square(1, 6), situation);
+        ml.move(bq, new Square(1, 2), situation);
+        ml.move(bq, new Square(1, 6), situation);
 
         assertEquals(0, evaluateGameSituation(situation, Player.WHITE));
     }
@@ -142,10 +143,10 @@ public class GameSituationEvaluatorTest {
         situation.reHashBoard(true);
         ChessBoard cb = situation.getChessBoard();
         MovementLogic ml = cb.getMovementLogic();
-        ml.move(wr, cb.getSquare(0, 6), situation);
-        ml.move(wr, cb.getSquare(0, 7), situation);
-        ml.move(wr, cb.getSquare(0, 6), situation);
-        ml.move(wr, cb.getSquare(0, 7), situation);
+        ml.move(wr, new Square(0, 6), situation);
+        ml.move(wr, new Square(0, 7), situation);
+        ml.move(wr, new Square(0, 6), situation);
+        ml.move(wr, new Square(0, 7), situation);
 
         assertEquals(0, evaluateGameSituation(situation, Player.WHITE));
     }
@@ -156,7 +157,7 @@ public class GameSituationEvaluatorTest {
         ChessBoard cb = situation.getChessBoard();
         putPieceOnBoard(cb, wpawn);
         assertEquals(20, GameSituationEvaluator.mobilityValue(situation, Player.WHITE));
-        cb.getMovementLogic().move(wpawn, cb.getSquare(1, 6), situation);
+        cb.getMovementLogic().move(wpawn, new Square(1, 6), situation);
         assertEquals(10, GameSituationEvaluator.mobilityValue(situation, Player.WHITE));
     }
 }

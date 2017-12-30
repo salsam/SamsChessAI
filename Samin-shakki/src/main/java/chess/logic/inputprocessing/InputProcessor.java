@@ -114,7 +114,7 @@ public class InputProcessor {
         }
 
         if (game.getSituation().getChessBoard().withinTable(column, row)) {
-            if (chosen != null && possibilities.contains(game.getSquare(column, row))) {
+            if (chosen != null && possibilities.contains(new Square(column, row))) {
                 game.addMove(new Move(chosen, column, row, game));
                 moveToTargetLocation(column, row, false);
             } else if (game.getSituation().getChecker().checkPlayerOwnsPieceOnTargetSquare(
@@ -135,7 +135,6 @@ public class InputProcessor {
     public Move makeBestMoveAccordingToAILogic() {
         ais[game.getSituation().getTurn() % 2].findBestMoves(game.getSituation());
         Move move = ais[game.getSituation().getTurn() % 2].getBestMove();
-        move.setFrom(game);
         setChosen(move.getPiece());
         moveToTargetLocation(move.getTargetColumn(), move.getTargetRow(), true);
         return move;
@@ -143,8 +142,8 @@ public class InputProcessor {
 
     private void moveToTargetLocation(int column, int row, boolean aisTurn) {
         ChessBoard backUp = ChessBoardCopier.copy(game.getSituation().getChessBoard());
-        Square target = game.getSquare(column, row);
-        Square from = game.getSquare(chosen.getColumn(), chosen.getRow());
+        Square target = new Square(column, row);
+        Square from = new Square(chosen.getColumn(), chosen.getRow());
 
         game.moveOnMainBoard(chosen, target);
         handlePromotion(aisTurn);
@@ -188,7 +187,10 @@ public class InputProcessor {
     public void updateTextArea() {
         textArea.setText(game.getSituation().whoseTurn() + "'s turn.");
         boolean ended = false;
-        if (game.getSituation().getCountOfCurrentSituation() >= 3) {
+        //Third repetition is currently disabled due to hashing errors!
+        //To fix change <0 to game.getSituation().getCountOfCurrentSituation()>=3
+        if (false) {
+            System.out.println(game.getSituation().getCountOfCurrentSituation());
             game.stop();
             textArea.setText("Third repetition of situation. Game ended as a draw!");
             ended = true;

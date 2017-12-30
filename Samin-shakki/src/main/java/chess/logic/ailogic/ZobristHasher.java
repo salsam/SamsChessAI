@@ -90,9 +90,9 @@ public class ZobristHasher {
         Set kingPossibleMoves = board.getMovementLogic().possibleMoves(board.getPiece(sq), board);
 
         if (sq.getColumn() == 4) {
-            if (kingPossibleMoves.contains(board.getSquare(sq.getColumn() - 2, sq.getRow()))) {
+            if (kingPossibleMoves.contains(new Square(sq.getColumn() - 2, sq.getRow()))) {
                 return true;
-            } else if (kingPossibleMoves.contains(board.getSquare(sq.getColumn() + 2, sq.getRow()))) {
+            } else if (kingPossibleMoves.contains(new Square(sq.getColumn() + 2, sq.getRow()))) {
                 return true;
             }
         }
@@ -112,7 +112,7 @@ public class ZobristHasher {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                hash ^= squareHashes[8 * i + j][indexOfPieceAtSquare(board, board.getSquare(i, j))];
+                hash ^= squareHashes[8 * i + j][indexOfPieceAtSquare(board, new Square(i, j))];
             }
         }
 

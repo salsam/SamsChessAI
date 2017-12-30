@@ -57,7 +57,7 @@ public class CheckingLogic {
             return false;
         }
         game.getChessBoard().updateThreatenedSquares(getOpponent(player));
-        return game.getChessBoard().threatenedSquares(getOpponent(player)).contains(game.getChessBoard().getSquare(playersKing.getColumn(), playersKing.getRow()));
+        return game.getChessBoard().threatenedSquares(getOpponent(player)).contains(playersKing.getLocation());
     }
 
     /**
@@ -73,7 +73,7 @@ public class CheckingLogic {
                 continue;
             }
 
-            Square from = game.getChessBoard().getSquare(piece.getColumn(), piece.getRow());
+            Square from = piece.getLocation();
             game.getChessBoard().updateThreatenedSquares(getOpponent(player));
             for (Square possibility : game.getChessBoard().getMovementLogic().possibleMoves(piece, game.getChessBoard())) {
                 game.getChessBoard().getMovementLogic().move(piece, possibility, game);

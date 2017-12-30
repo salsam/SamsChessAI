@@ -57,8 +57,8 @@ public class RookMover extends PieceMover {
     @Override
     public Set<Square> threatenedSquares(Piece piece, ChessBoard board) {
         Set<Square> possibilities = new HashSet<>();
-        addHorizontalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()), board, possibilities);
-        addVerticalPossibilities(board.getSquare(piece.getColumn(), piece.getRow()), board, possibilities);
+        addHorizontalPossibilities(piece.getLocation(), board, possibilities);
+        addVerticalPossibilities(piece.getLocation(), board, possibilities);
 
         return possibilities;
     }

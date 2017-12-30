@@ -6,6 +6,7 @@ import chess.domain.board.Player;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
+import chess.domain.board.Square;
 import chess.logic.chessboardinitializers.ChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
 import chess.logic.movementlogic.MovementLogic;
@@ -55,30 +56,30 @@ public class PieceMoverTest {
 
     @Test
     public void locationCorrectAfterCreation() {
-        assertEquals(board.getSquare(3, 4), board.getSquare(piece.getColumn(), piece.getRow()));
+        assertEquals(new Square(3, 4), piece.getLocation());
     }
 
     @Test
     public void movingChangesLocationCorrectly() {
-        board.getMovementLogic().move(piece, board.getSquare(3, 5), sit);
-        assertEquals(board.getSquare(3, 5), board.getSquare(piece.getColumn(), piece.getRow()));
+        board.getMovementLogic().move(piece, new Square(3, 5), sit);
+        assertEquals(new Square(3, 5), piece.getLocation());
     }
 
     @Test
     public void movingRemovesPieceFromPreviousSquare() {
-        board.getMovementLogic().move(piece, board.getSquare(3, 5), sit);
+        board.getMovementLogic().move(piece, new Square(3, 5), sit);
         assertEquals(null, board.getPiece(3, 4));
     }
 
     @Test
     public void movingAddsPieceToTargetSquare() {
-        board.getMovementLogic().move(piece, board.getSquare(3, 5), sit);
+        board.getMovementLogic().move(piece, new Square(3, 5), sit);
         assertEquals(piece, board.getPiece(3, 5));
     }
 
     @Test
     public void movingToEmptySquareUpdatesHashCorrectly() {
-        board.getMovementLogic().move(piece, board.getSquare(3, 5), sit);
+        board.getMovementLogic().move(piece, new Square(3, 5), sit);
         ChessBoard comp = new ChessBoard(new MovementLogic());
         putPieceOnBoard(comp, piece);
         putPieceOnBoard(comp, pawn);
@@ -87,7 +88,7 @@ public class PieceMoverTest {
 
     @Test
     public void takingAPieceUpdatesHashCorrectly() {
-        board.getMovementLogic().move(piece, board.getSquare(3, 6), sit);
+        board.getMovementLogic().move(piece, new Square(3, 6), sit);
         ChessBoard comp = new ChessBoard(new MovementLogic());
         putPieceOnBoard(comp, piece);
         assertEquals(sit.getHasher().hash(comp), sit.getBoardHash());

@@ -70,8 +70,8 @@ public abstract class ChessBoardInitializer {
      */
     public static void putPieceOnBoard(ChessBoard board, Piece piece) {
         if (board.withinTable(piece.getColumn(), piece.getRow())) {
-            board.getSquare(piece.getColumn(), piece.getRow()).setPiece(piece);
-            addPieceToOwner(board.getSquare(piece.getColumn(), piece.getRow()), board);
+            board.setPiece(piece.getColumn(), piece.getRow(),piece);
+            addPieceToOwner(new Square(piece.getColumn(), piece.getRow()), board);
         }
     }
 }

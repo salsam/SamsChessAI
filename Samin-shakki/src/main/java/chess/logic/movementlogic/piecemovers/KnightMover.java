@@ -35,6 +35,6 @@ public class KnightMover extends PieceMover {
         int[] rowChange = new int[]{-2, -2, -1, -1, 1, 1, 2, 2};
         int[] columnChange = new int[]{1, -1, 2, -2, 2, -2, 1, -1};
 
-        return possibilities(board.getSquare(piece.getColumn(), piece.getRow()), columnChange, rowChange, board);
+        return possibilities(piece.getLocation(), columnChange, rowChange, board);
     }
 }

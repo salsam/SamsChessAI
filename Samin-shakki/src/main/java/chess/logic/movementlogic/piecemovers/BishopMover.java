@@ -35,7 +35,7 @@ public class BishopMover extends PieceMover {
     @Override
     public Set<Square> threatenedSquares(Piece bishop, ChessBoard board) {
         Set<Square> possibilities = new HashSet<>();
-        addDiagonalPossibilities(board.getSquare(bishop.getColumn(), bishop.getRow()), board, possibilities);
+        addDiagonalPossibilities(bishop.getLocation(), board, possibilities);
 
         return possibilities;
     }

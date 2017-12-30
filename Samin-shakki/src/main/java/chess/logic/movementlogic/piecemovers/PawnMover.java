@@ -44,8 +44,7 @@ public class PawnMover extends PieceMover {
         }
 
         if (!sit.getChessBoard().squareIsOccupied(target) && target.getColumn() != piece.getColumn()) {
-            Square enPassanted = sit.getChessBoard()
-                    .getSquare(target.getColumn(), piece.getRow());
+            Square enPassanted = new Square(target.getColumn(), piece.getRow());
             sit.updateHashForTakingPiece(enPassanted);
             sit.getChessBoard().getPiece(enPassanted).setTaken(true);
         }
@@ -74,7 +73,7 @@ public class PawnMover extends PieceMover {
         }
 
         if (!sit.getChessBoard().squareIsOccupied(move.getTarget()) && move.getTargetColumn() != move.getFrom().getColumn()) {
-            Square enPassanted = sit.getChessBoard().getSquare(move.getTargetColumn(), move.getFrom().getRow());
+            Square enPassanted = new Square(move.getTargetColumn(), move.getFrom().getRow());
             sit.updateHashForTakingPiece(enPassanted);
             sit.getChessBoard().getPiece(enPassanted).setTaken(true);
         }
@@ -102,7 +101,7 @@ public class PawnMover extends PieceMover {
 
         for (int i = 0; i < 2; i++) {
             if (board.withinTable(column + columnChange[i], row)) {
-                Square target = board.getSquare(column + columnChange[i], row);
+                Square target = new Square(column + columnChange[i], row);
                 squares.add(target);
             }
         }
@@ -118,12 +117,12 @@ public class PawnMover extends PieceMover {
 
         for (int i = 0; i < 2; i++) {
             if (board.withinTable(piece.getColumn() + columnChange[i], piece.getRow())) {
-                target = board.getSquare(piece.getColumn() + columnChange[i], piece.getRow());
+                target = new Square(piece.getColumn() + columnChange[i], piece.getRow());
 
                 if (targetContainsAnEnemyPawn(piece.getOwner(), target, board)) {
                     Piece opposingPawn = board.getPiece(target);
                     if (opposingPawn.isMovedTwoSquaresLastTurn()) {
-                        squares.add(board.getSquare(target.getColumn(), target.getRow() + piece.getOwner().getDirection()));
+                        squares.add(new Square(target.getColumn(), target.getRow() + piece.getOwner().getDirection()));
                     }
                 }
             }
@@ -184,7 +183,7 @@ public class PawnMover extends PieceMover {
 
     private boolean addSquareIfWithinTableAndEmpty(ChessBoard board, int column, int row, Set<Square> moves) {
         if (board.withinTable(column, row)) {
-            Square target = board.getSquare(column, row);
+            Square target = new Square(column, row);
 
             if (!board.squareIsOccupied(target)) {
                 moves.add(target);
