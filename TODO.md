@@ -10,6 +10,6 @@
 * MovementLogic should be game specific not chessboard specific!
 * More testing for classes. Will be easier after refactorization.
 * Is it really good idea to have each piece know it's location? Is this necessary? Main benefit is easy looping through piece list.
-* Fix random moves showing before first AI move.
 * Fix last move changing when trying illegal move (when checked).
 * Fix AI sometimes stopping looking for better move to early. (Recursion depth 1)
+* Repainting now works "immediately" by waiting 100ms before AI starts doing anything. Better solution would be nice.
