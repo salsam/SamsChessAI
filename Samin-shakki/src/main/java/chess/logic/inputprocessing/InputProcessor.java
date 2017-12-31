@@ -58,7 +58,7 @@ public class InputProcessor {
      */
     public InputProcessor(Game game) {
         ais = new AI[2];
-        this.ais[0] = new SimpleNegamax();
+        this.ais[0] = new AILogic();
         this.ais[1] = new AILogic();
         this.game = game;
     }
@@ -158,14 +158,8 @@ public class InputProcessor {
             return;
         }
         
-        if (!game.isAIsTurn()) {
-            updateScreen();
-        }
-        
         game.getSituation().nextTurn();
-        if (!game.isAIsTurn()) {
-            updateScreen();
-        }
+        updateScreen();
         updateTextArea();
     }
 

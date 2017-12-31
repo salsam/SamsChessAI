@@ -24,7 +24,7 @@ public class Game {
 
     public Game() {
         this.ais = new boolean[2];
-        AIisComputing=false;
+        AIisComputing = false;
         this.situation = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
         this.input = new InputProcessor(this);
         this.continues = false;
@@ -42,11 +42,11 @@ public class Game {
     public void addMove(Move move) {
         moves.add(move);
     }
-    
+
     public void cancelLastMove() {
         if (!moves.isEmpty()) {
             moves.removeLast();
-        } 
+        }
     }
 
     public GameSituation getSituation() {
@@ -56,7 +56,7 @@ public class Game {
     public InputProcessor getInput() {
         return input;
     }
-    
+
     public boolean getAIisComputing() {
         return this.AIisComputing;
     }
@@ -103,12 +103,15 @@ public class Game {
                         };
                     }
                     if (isAIsTurn()) {
-                        AIisComputing=true;
-                        //Problem is that repaint as a delay. Possible solution would be giving AI its own game to play.
-                        //Then have to keep AIs game and real game synchronized!
-                        //input.updateScreen();
+                        AIisComputing = true;
+                        try {
+                            sleep(100);
+                        } catch (Exception e) {
+                        };
+                        long start=System.currentTimeMillis();
                         moves.add(input.makeBestMoveAccordingToAILogic());
-                        AIisComputing=false;
+                        System.out.println("Movement took: " + (System.currentTimeMillis()-start));
+                        AIisComputing = false;
                     }
                 }
             }
