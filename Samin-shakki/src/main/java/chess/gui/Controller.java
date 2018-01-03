@@ -49,9 +49,9 @@ public class Controller implements ActionListener {
             main.setVisible(false);
             main.getGameWindow().getGame().setBlackAI(true);
             main.getGameWindow().getGame().setWhiteAI(true);
-            main.getGameWindow().getGame().start();
             main.getGameWindow().setVisible(true);
             frames.get("adc").dispose();
+            main.getGameWindow().getGame().start();
         }
     }
 

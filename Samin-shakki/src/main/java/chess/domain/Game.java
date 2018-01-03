@@ -104,12 +104,13 @@ public class Game {
                     }
                     if (isAIsTurn()) {
                         AIisComputing = true;
+                        input.updateScreen();
                         try {
-                            sleep(100);
+                            sleep(200);
                         } catch (Exception e) {
                         };
                         long start=System.currentTimeMillis();
-                        moves.add(input.makeBestMoveAccordingToAILogic());
+                        input.makeBestMoveAccordingToAILogic();
                         System.out.println("Movement took: " + (System.currentTimeMillis()-start));
                         AIisComputing = false;
                     }

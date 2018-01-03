@@ -86,8 +86,6 @@ public class CheckingLogic {
             }
         }
 
-        game.setContinues(false);
-
         return true;
     }
 

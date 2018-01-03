@@ -58,8 +58,8 @@ public class InputProcessor {
      */
     public InputProcessor(Game game) {
         ais = new AI[2];
-        this.ais[0] = new AILogic();
-        this.ais[1] = new AILogic();
+        this.ais[0] = new SimpleNegamax();
+        this.ais[1] = new SimpleNegamax();
         this.game = game;
     }
 
@@ -136,6 +136,7 @@ public class InputProcessor {
 
     public Move makeBestMoveAccordingToAILogic() {
         Move move = ais[game.getSituation().getTurn() % 2].findBestMove(game.getSituation());
+        game.addMove(move);
         setChosen(move.getPiece());
         moveToTargetLocation(move.getTargetColumn(), move.getTargetRow(), true);
         return move;

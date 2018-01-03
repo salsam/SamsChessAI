@@ -48,7 +48,7 @@ public class AILogic implements AI {
     private int[] bestValues;
     private long timeLimit;
     private long start;
-    private final int plies = 10;
+    private final int plies = 3;
     private int lastPlies;
     private int searchDepth;
     private int oldestIndex;
@@ -135,7 +135,8 @@ public class AILogic implements AI {
      * @return random best move
      */
     public Move getBestMove() {
-        return bestMoves.get(new Random().nextInt(bestMoves.size()));
+        //return bestMoves.get(new Random().nextInt(bestMoves.size()));
+        return bestMoves.get(0);
     }
 
     /**
@@ -538,7 +539,9 @@ public class AILogic implements AI {
                 break;
             }
         }
-        //System.out.println("Recursion depth: " + i);
+        System.out.println("Recursion depth: " + i);
+        //i out of bounds?
+        System.out.println(bestValues[i-1]);
 
         lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
     }
