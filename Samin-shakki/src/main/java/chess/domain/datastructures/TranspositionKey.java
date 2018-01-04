@@ -4,7 +4,7 @@ import chess.domain.board.Player;
 import java.util.Objects;
 
 /**
- * This class is used as keys in transposition tables.
+ * This class is used as keys in transposition tables. NOTE:Doesn't account for whole game situation like turnsTillDraw and previousSituations!!!!!
  *
  * @author sami
  */

@@ -13,6 +13,7 @@ import static chess.domain.board.Klass.QUEEN;
 import chess.domain.board.Piece;
 import chess.logic.ailogic.AI;
 import chess.logic.ailogic.AILogic;
+import chess.logic.ailogic.NegamaxAlphaBeta;
 import chess.logic.ailogic.SimpleNegamax;
 import chess.logic.gamelogic.PromotionLogic;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class InputProcessor {
     public InputProcessor(Game game) {
         ais = new AI[2];
         this.ais[0] = new SimpleNegamax();
-        this.ais[1] = new SimpleNegamax();
+        this.ais[1] = new NegamaxAlphaBeta();
         this.game = game;
     }
 

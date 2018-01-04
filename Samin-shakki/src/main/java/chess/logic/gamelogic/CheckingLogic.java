@@ -59,6 +59,15 @@ public class CheckingLogic {
         game.getChessBoard().updateThreatenedSquares(getOpponent(player));
         return game.getChessBoard().threatenedSquares(getOpponent(player)).contains(playersKing.getLocation());
     }
+    
+    public static boolean checkIfChecked(ChessBoard board, Player player) {
+        Piece playersKing = board.getKings().get(player);
+        if (playersKing == null) {
+            return false;
+        }
+        board.updateThreatenedSquares(getOpponent(player));
+        return board.threatenedSquares(getOpponent(player)).contains(playersKing.getLocation());
+    }
 
     /**
      * Checks whether or not player is checkmated in this game.
