@@ -24,7 +24,7 @@ public class Game {
 
     public Game() {
         this.ais = new boolean[2];
-        AIisComputing = false;
+        this.AIisComputing = false;
         this.situation = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
         this.input = new InputProcessor(this);
         this.continues = false;
@@ -111,7 +111,7 @@ public class Game {
                         };
                         long start=System.currentTimeMillis();
                         input.makeBestMoveAccordingToAILogic();
-                        System.out.println("Movement took: " + (System.currentTimeMillis()-start));
+                        //System.out.println("Movement took: " + (System.currentTimeMillis()-start));
                         AIisComputing = false;
                     }
                 }

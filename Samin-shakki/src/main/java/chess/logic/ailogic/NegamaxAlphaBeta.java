@@ -34,7 +34,7 @@ public class NegamaxAlphaBeta implements AI {
         if (depth == 0) {
             return GameSituationEvaluator.evaluateGameSituation(sit, player);
         } else if (CheckingLogic.checkMate(sit, player)) {
-            return -123456789;
+            return -123456789-depth;
         }
 
         int best = Integer.MIN_VALUE;

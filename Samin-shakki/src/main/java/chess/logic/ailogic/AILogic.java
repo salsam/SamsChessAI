@@ -48,7 +48,7 @@ public class AILogic implements AI {
     private int[] bestValues;
     private long timeLimit;
     private long start;
-    private final int plies = 3;
+    private final int plies = 10;
     private int lastPlies;
     private int searchDepth;
     private int oldestIndex;
@@ -138,7 +138,7 @@ public class AILogic implements AI {
      */
     public Move getBestMove() {
         //return bestMoves.get(new Random().nextInt(bestMoves.size()));
-        System.out.println("Number of as good choices: " + bestMoves.size());
+        //System.out.println("Number of as good choices: " + bestMoves.size());
         return bestMoves.get(0);
     }
 
@@ -166,7 +166,7 @@ public class AILogic implements AI {
         if (System.currentTimeMillis() - start >= timeLimit) {
             return -123456789;
         }
-        TranspositionKey key=null;
+        TranspositionKey key = null;
 
         if (useTranspositionTable) {
             key = new TranspositionKey(maxingPlayer, sit.getBoardHash());
@@ -193,10 +193,12 @@ public class AILogic implements AI {
         }
         if (height == 0) {
             int value = evaluateGameSituation(sit, maxingPlayer);
-            if (useTranspositionTable) transpositionTable.put(key, new TranspositionEntry(height, value, Type.EXACT));
+            if (useTranspositionTable) {
+                transpositionTable.put(key, new TranspositionEntry(height, value, Type.EXACT));
+            }
             return value;
         } else if (CheckingLogic.checkMate(sit, maxingPlayer)) {
-            return -123456789;
+            return -123456789 - height;
         }
         return tryAllPossibleMoves(height, ogAlpha, alpha, maxingPlayer, beta);
     }
@@ -231,20 +233,21 @@ public class AILogic implements AI {
         alpha = testPrincipalMove(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
         alpha = testKillerMoves(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
 
-        for (int loopCount = 0; loopCount < 1; loopCount++) {
-            for (Piece piece : sit.getChessBoard().getPieces(maxingPlayer)) {
-                if (alpha >= beta || System.currentTimeMillis() - start >= timeLimit) {
-                    break;
-                }
-
-                if (piece.isTaken()) {
-                    continue;
-                }
-
-                Square from = piece.getLocation();
-                alpha = tryMovingPiece(height, loopCount, piece, from, ogAlpha, alpha, beta, maxingPlayer, backUp);
+        for (Move movement : sit.getChessBoard().getMovementLogic().possibleMovementsByPlayer(maxingPlayer, sit.getChessBoard())) {
+            if (alpha >= beta || System.currentTimeMillis() - start >= timeLimit) {
+                break;
             }
+
+            alpha = testAMove(movement.getPiece(), movement.getTarget(), movement.getFrom(), maxingPlayer, height, ogAlpha, alpha, beta, backUp);
+
+            if (alpha >= beta) {
+                saveNewKillerMove(height);
+                break;
+            }
+            killerCandidates[searchDepth - height] = movement;
+
         }
+
         return bestValues[height];
     }
 
@@ -475,8 +478,10 @@ public class AILogic implements AI {
             return alpha;
         }
         int value = -negaMax(height - 1, -beta, -alpha, getOpponent(maxingPlayer));
-        
-        if (useTranspositionTable) addSituationToTranspositionTable(maxingPlayer, height, value, ogAlpha, beta);
+
+        if (useTranspositionTable) {
+            addSituationToTranspositionTable(maxingPlayer, height, value, ogAlpha, beta);
+        }
 
         if (value >= bestValues[height]) {
             keepTrackOfBestMoves(height, value, piece, from, possibility);
@@ -513,7 +518,7 @@ public class AILogic implements AI {
      * @param possibility square piece was moved to.
      */
     private void keepTrackOfBestMoves(int height, int value, Piece piece, Square from, Square possibility) {
-        if (height == searchDepth) {
+        if (height == searchDepth && System.currentTimeMillis() < start + timeLimit) {
             if (value > bestValues[height]) {
                 bestMoves.clear();
             }
@@ -558,6 +563,7 @@ public class AILogic implements AI {
     Find best move for current player in this game situation.
      */
     public Move findBestMove(GameSituation situation) {
+        System.out.println("Finding best move for " + situation.whoseTurn());
         findBestMoves(situation);
         return getBestMove();
     }

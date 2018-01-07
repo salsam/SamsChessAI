@@ -59,7 +59,7 @@ public class InputProcessor {
      */
     public InputProcessor(Game game) {
         ais = new AI[2];
-        this.ais[0] = new AILogic();
+        this.ais[0] = new NegamaxAlphaBeta();
         this.ais[1] = new AILogic();
         this.game = game;
     }
@@ -136,6 +136,7 @@ public class InputProcessor {
     }
 
     public Move makeBestMoveAccordingToAILogic() {
+        System.out.println(textArea.getText());
         Move move = ais[game.getSituation().getTurn() % 2].findBestMove(game.getSituation());
         game.addMove(move);
         setChosen(move.getPiece());
