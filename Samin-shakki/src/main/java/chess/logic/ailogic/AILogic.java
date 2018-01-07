@@ -12,10 +12,10 @@ import chess.domain.board.*;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import static chess.logic.ailogic.GameSituationEvaluator.getValue;
+import chess.logic.gamelogic.CheckingLogic;
 import chess.logic.gamelogic.PromotionLogic;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * This class is responsible for calculating AI's next move and then returning
@@ -59,6 +59,8 @@ public class AILogic implements AI {
     private TranspositionTable transpositionTable;
     private long sum = 0;
     private int count = 0;
+
+    private boolean useTranspositionTable = false;
 
     public AILogic() {
         bestValues = new int[plies + 1];
@@ -136,6 +138,7 @@ public class AILogic implements AI {
      */
     public Move getBestMove() {
         //return bestMoves.get(new Random().nextInt(bestMoves.size()));
+        System.out.println("Number of as good choices: " + bestMoves.size());
         return bestMoves.get(0);
     }
 
@@ -161,35 +164,39 @@ public class AILogic implements AI {
     public int negaMax(int height, int alpha, int beta, Player maxingPlayer) {
         int ogAlpha = alpha;
         if (System.currentTimeMillis() - start >= timeLimit) {
-            return -123456790;
+            return -123456789;
         }
+        TranspositionKey key=null;
 
-        TranspositionKey key = new TranspositionKey(maxingPlayer, sit.getBoardHash());
+        if (useTranspositionTable) {
+            key = new TranspositionKey(maxingPlayer, sit.getBoardHash());
 
-        if (transpositionTable.containsRelevantKey(key, height)) {
-            TranspositionEntry entry = transpositionTable.get(key);
-            transpositionTable.makeSaved(key);
-            switch (entry.getType()) {
-                case EXACT:
+            if (transpositionTable.containsRelevantKey(key, height)) {
+                TranspositionEntry entry = transpositionTable.get(key);
+                transpositionTable.makeSaved(key);
+                switch (entry.getType()) {
+                    case EXACT:
+                        return entry.getValue();
+
+                    case ALPHA:
+                        alpha = Math.max(alpha, entry.getValue());
+                        break;
+
+                    case BETA:
+                        beta = Math.min(beta, entry.getValue());
+                        break;
+                }
+                if (alpha >= beta) {
                     return entry.getValue();
-
-                case ALPHA:
-                    alpha = Math.max(alpha, entry.getValue());
-                    break;
-
-                case BETA:
-                    beta = Math.min(beta, entry.getValue());
-                    break;
-            }
-            if (alpha >= beta) {
-                return entry.getValue();
+                }
             }
         }
         if (height == 0) {
             int value = evaluateGameSituation(sit, maxingPlayer);
-            sit.setContinues(true);
-            transpositionTable.put(key, new TranspositionEntry(height, value, Type.EXACT));
+            if (useTranspositionTable) transpositionTable.put(key, new TranspositionEntry(height, value, Type.EXACT));
             return value;
+        } else if (CheckingLogic.checkMate(sit, maxingPlayer)) {
+            return -123456789;
         }
         return tryAllPossibleMoves(height, ogAlpha, alpha, maxingPlayer, beta);
     }
@@ -224,7 +231,7 @@ public class AILogic implements AI {
         alpha = testPrincipalMove(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
         alpha = testKillerMoves(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
 
-        for (int loopCount = 0; loopCount < 4; loopCount++) {
+        for (int loopCount = 0; loopCount < 1; loopCount++) {
             for (Piece piece : sit.getChessBoard().getPieces(maxingPlayer)) {
                 if (alpha >= beta || System.currentTimeMillis() - start >= timeLimit) {
                     break;
@@ -268,11 +275,11 @@ public class AILogic implements AI {
             if (System.currentTimeMillis() - start >= timeLimit) {
                 break;
             }
-
+            /*
             if (!handledOnThisLoopThrough(loopCount, possibility, height, moved, sit.getChessBoard())) {
                 continue;
             }
-
+             */
             alpha = testAMove(moved, possibility, from, maxingPlayer, height, ogAlpha, alpha, beta, backUp);
 
             if (alpha >= beta) {
@@ -468,7 +475,8 @@ public class AILogic implements AI {
             return alpha;
         }
         int value = -negaMax(height - 1, -beta, -alpha, getOpponent(maxingPlayer));
-        addSituationToTranpositionTable(maxingPlayer, height, value, ogAlpha, beta);
+        
+        if (useTranspositionTable) addSituationToTranspositionTable(maxingPlayer, height, value, ogAlpha, beta);
 
         if (value >= bestValues[height]) {
             keepTrackOfBestMoves(height, value, piece, from, possibility);
@@ -481,7 +489,7 @@ public class AILogic implements AI {
         return alpha;
     }
 
-    private void addSituationToTranpositionTable(Player maxingPlayer, int height, int value, int ogAlpha, int beta) {
+    private void addSituationToTranspositionTable(Player maxingPlayer, int height, int value, int ogAlpha, int beta) {
         TranspositionKey key = new TranspositionKey(maxingPlayer, sit.getBoardHash());
         TranspositionEntry entry = new TranspositionEntry(height, value, Type.ALPHA);
 
@@ -541,7 +549,7 @@ public class AILogic implements AI {
         }
         System.out.println("Recursion depth: " + i);
         //i out of bounds?
-        System.out.println(bestValues[i-1]);
+        System.out.println(bestValues[i - 1]);
 
         lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
     }

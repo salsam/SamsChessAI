@@ -1,5 +1,6 @@
 package chess.logic.gamelogic;
 
+import chess.domain.Game;
 import chess.domain.GameSituation;
 import chess.domain.board.ChessBoard;
 import chess.domain.board.Player;
@@ -92,6 +93,29 @@ public class CheckingLogic {
                     return false;
                 }
                 undoMove(backUp, game, from, possibility);
+            }
+        }
+
+        return true;
+    }
+    
+    public static boolean checkMate(GameSituation gameSit, Player player) {
+        ChessBoard backUp = ChessBoardCopier.copy(gameSit.getChessBoard());
+        for (Piece piece : gameSit.getChessBoard().getPieces(player)) {
+            if (piece.isTaken()) {
+                continue;
+            }
+
+            Square from = piece.getLocation();
+            gameSit.getChessBoard().updateThreatenedSquares(getOpponent(player));
+            for (Square possibility : gameSit.getChessBoard().getMovementLogic().possibleMoves(piece, gameSit.getChessBoard())) {
+                gameSit.getChessBoard().getMovementLogic().move(piece, possibility, gameSit);
+                gameSit.getChessBoard().updateThreatenedSquares(getOpponent(player));
+                if (!checkIfChecked(gameSit.getChessBoard(), player)) {
+                    undoMove(backUp, gameSit, from, possibility);
+                    return false;
+                }
+                undoMove(backUp, gameSit, from, possibility);
             }
         }
 

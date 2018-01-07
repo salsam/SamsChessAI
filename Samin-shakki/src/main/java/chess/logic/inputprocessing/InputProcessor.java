@@ -37,7 +37,7 @@ public class InputProcessor {
      */
     private JLabel textArea;
     /**
-     * Map containing all frames in the GUI so this class repaint game and open
+     * Map containing all frames in the GUI so this class can repaint game and open
      * ending screen.
      */
     private Map<String, JFrame> frames;
@@ -59,8 +59,8 @@ public class InputProcessor {
      */
     public InputProcessor(Game game) {
         ais = new AI[2];
-        this.ais[0] = new SimpleNegamax();
-        this.ais[1] = new NegamaxAlphaBeta();
+        this.ais[0] = new AILogic();
+        this.ais[1] = new AILogic();
         this.game = game;
     }
 
