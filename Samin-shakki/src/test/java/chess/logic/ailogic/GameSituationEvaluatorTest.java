@@ -10,6 +10,7 @@ import static chess.logic.ailogic.GameSituationEvaluator.evaluateGameSituation;
 import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
 import chess.logic.chessboardinitializers.EmptyBoardInitializer;
+import chess.logic.gamelogic.CheckingLogic;
 import chess.logic.movementlogic.MovementLogic;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
@@ -36,21 +37,22 @@ public class GameSituationEvaluatorTest {
 
     @Before
     public void setUp() {
+        //situation = new GameSituation(init, new MovementLogic());
         situation.reset();
-        init.initialize(situation.getChessBoard());
+        //init.initialize(situation.getChessBoard());
     }
 
     @Test
     public void emptyChessBoardValuedZero() {
-        assertEquals(0, evaluateGameSituation(situation, Player.WHITE));
-        assertEquals(0, evaluateGameSituation(situation, Player.BLACK));
+        assertEquals(0, GameSituationEvaluator.evaluateWithoutWinConditions(situation, Player.BLACK));
+        assertEquals(0, GameSituationEvaluator.evaluateWithoutWinConditions(situation, Player.WHITE));
     }
 
     @Test
     public void standardStartingPositionIsWorthZero() {
-        situation = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
-        assertEquals(0, evaluateGameSituation(situation, Player.BLACK));
-        assertEquals(0, evaluateGameSituation(situation, Player.WHITE));
+        GameSituation sit = new GameSituation(new StandardChessBoardInitializer(), new MovementLogic());
+        assertEquals(0, evaluateGameSituation(sit, Player.BLACK));
+        assertEquals(0, evaluateGameSituation(sit, Player.WHITE));
     }
 
     @Test
@@ -64,7 +66,12 @@ public class GameSituationEvaluatorTest {
     public void gameSitutionValuedZeroWhenStaleMate() {
         Piece queen = new Piece(QUEEN, 1, 1, Player.WHITE, "wp");
         putPieceOnBoard(situation.getChessBoard(), queen);
-        assertEquals(0, evaluateGameSituation(situation, Player.BLACK));
+        situation.getChessBoard().printTable();
+//        for (Piece p : situation.getChessBoard().getPieces(Player.BLACK)) {
+//            System.out.println(p);
+//        }
+//        System.out.println(CheckingLogic.checkIfChecked(situation.getChessBoard(), Player.BLACK));
+//        System.out.println(CheckingLogic.checkMate(situation, Player.BLACK));
         assertEquals(0, evaluateGameSituation(situation, Player.BLACK));
     }
 
@@ -97,7 +104,7 @@ public class GameSituationEvaluatorTest {
     }
 
     @Test
-    public void checkMateWorth100000000() {
+    public void checkMateWorth123456789() {
         Piece wk = new Piece(KING, 0, 7, Player.WHITE, "wk");
         Piece bk = new Piece(KING, 2, 6, Player.BLACK, "bk");
         Piece bq = new Piece(QUEEN, 1, 2, Player.BLACK, "bq");
@@ -111,7 +118,7 @@ public class GameSituationEvaluatorTest {
 
         ml.move(bq, new Square(1, 6), situation);
 
-        assertEquals(-100000000, evaluateGameSituation(situation, Player.WHITE));
+        assertEquals(-123456789, evaluateGameSituation(situation, Player.WHITE));
     }
 
     @Test

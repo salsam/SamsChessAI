@@ -15,6 +15,9 @@ import static java.lang.Integer.max;
 /**
  *Negamax with alphabeta-pruning and simple(lossless) transposition table.
  * @author sami
+ * 
+ * 
+ * Simple lossless transposition table TODO
  */
 public class NegamaxTranspositionAB implements AI {
 
@@ -39,13 +42,14 @@ public class NegamaxTranspositionAB implements AI {
 
         int best = Integer.MIN_VALUE;
         ChessBoard backUp = ChessBoardCopier.copy(sit.getChessBoard());
+        int movesTillDraw=sit.getMovesTillDraw();
         int ogAlpha = alpha;
 
         for (Move m : sit.getChessBoard().getMovementLogic().possibleMovementsByPlayer(player, sit.getChessBoard())) {
             sit.getChessBoard().getMovementLogic().move(m.getPiece(), m.getTarget(), sit);
 
             if (CheckingLogic.checkIfChecked(sit.getChessBoard(), player)) {
-                ChessBoardCopier.undoMove(backUp, sit, m.getFrom(), m.getTarget());
+                ChessBoardCopier.undoMove(backUp, sit, m.getFrom(), m.getTarget(),movesTillDraw);
                 continue;
             }
 
@@ -62,7 +66,7 @@ public class NegamaxTranspositionAB implements AI {
             }
             if (alphaBeta) {
                 alpha = max(alpha, comp);
-                ChessBoardCopier.undoMove(backUp, sit, m.getFrom(), m.getTarget());
+                ChessBoardCopier.undoMove(backUp, sit, m.getFrom(), m.getTarget(),movesTillDraw);
                 if (alpha >= beta) {
                     break;
                 }

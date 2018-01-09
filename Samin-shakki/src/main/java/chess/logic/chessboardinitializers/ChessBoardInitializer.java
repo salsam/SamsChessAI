@@ -4,6 +4,7 @@ import chess.domain.board.ChessBoard;
 import chess.domain.board.Square;
 import chess.domain.board.Piece;
 import static chess.domain.board.Klass.KING;
+import chess.domain.board.Player;
 
 /**
  * All classes that inherit this abstract class are used to initialize different
@@ -51,10 +52,13 @@ public abstract class ChessBoardInitializer {
     }
 
     protected void clearBoard(ChessBoard board) {
+        board.getPieces(Player.BLACK).clear();
+        board.getPieces(Player.WHITE).clear();
         for (int i = 0; i < board.columnAmount; i++) {
             for (int j = 0; j < board.rowAmount; j++) {
                 if (board.getPiece(i,j) != null) {
-                    removePieceFromOwner(board.getPiece(i, j), board);
+                    //Removing pieces one by one is inefficient
+                    //removePieceFromOwner(board.getPiece(i, j), board);
                     board.setPiece(i,j, null);
                 }
             }

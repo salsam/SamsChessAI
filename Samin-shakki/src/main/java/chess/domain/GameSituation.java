@@ -162,13 +162,25 @@ public class GameSituation {
     public void decrementMovesTillDraw() {
         movesTillDraw--;
     }
-    
+
     public void setMovesTillDraw(int moves) {
-        this.movesTillDraw=moves;
+        this.movesTillDraw = moves;
     }
 
     public int getMovesTillDraw() {
         return movesTillDraw;
+    }
+
+    public void setAis(boolean[] ais) {
+        this.ais = ais;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
+    public void setChessBoardSituationCounter(Map<Long, Integer> chessBoardSituationCounter) {
+        this.chessBoardSituationCounter = chessBoardSituationCounter;
     }
 
     /**
@@ -318,16 +330,15 @@ public class GameSituation {
     }
 
     /**
-     * 
+     *
      * @return true if current player has been checkmated.
      */
-    
     public boolean isLost() {
         return hasLost(whoseTurn());
     }
-    
+
     /**
-     * 
+     *
      * @param player to move.
      * @return true if player has been checkmated.
      */
@@ -336,16 +347,15 @@ public class GameSituation {
     }
 
     /**
-     * 
+     *
      * @return true if current situation is a draw.
      */
-    
     public boolean isDraw() {
         return isDrawForPlayer(whoseTurn());
     }
-    
+
     /**
-     * 
+     *
      * @param player player who is assumed to be moving next.
      * @return true if game ended as draw assuming players turn.
      */
@@ -364,21 +374,36 @@ public class GameSituation {
 
         return checkLogic.insufficientMaterial();
     }
-    
+
     /**
-     * 
+     *
      * @return true if game has ended.
      */
     public boolean isEnded() {
         return isDraw() || isEnded();
     }
-    
+
     /**
-     * 
+     *
      * @param player to move.
      * @return true if game has ended when player is next to move.
      */
     public boolean isEndedForPlayer(Player player) {
         return isDrawForPlayer(player) || hasLost(player);
+    }
+
+    /**
+     * Clones current GameSituations.
+     *
+     * @return new GameSituation only reusing movementLogic and
+     * ChessBoardInitializer.
+     */
+    public GameSituation clone() {
+        GameSituation copy = new GameSituation(init, board.getMovementLogic());
+        copy.setTurn(turn);
+        copy.setMovesTillDraw(movesTillDraw);
+        copy.setChessBoardSituationCounter(chessBoardSituationCounter);
+        copy.setAis(ais);
+        return copy;
     }
 }

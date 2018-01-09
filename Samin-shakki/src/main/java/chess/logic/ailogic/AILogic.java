@@ -69,7 +69,7 @@ public class AILogic implements AI {
     private boolean usingKillerMoves = true;
     private boolean randomized = false;
 
-    private boolean debug = true;
+    private boolean debug = false;
 
     //Complete levels should be used to prevent incorrect data being used in movement computation
     private boolean usingCompleteLevels = true;
@@ -392,6 +392,7 @@ public class AILogic implements AI {
             return alpha;
         }
 
+        int movesTillDraw=sit.getMovesTillDraw();
         ml.move(piece, possibility, sit);
         if (piece.getKlass() == PAWN && piece.isAtOpposingEnd()) {
             sit.decrementCountOfCurrentBoardSituation();
@@ -399,7 +400,7 @@ public class AILogic implements AI {
             sit.incrementCountOfCurrentBoardSituation();
         }
         alpha = checkForChange(piece, from, possibility, height, maxingPlayer, ogAlpha, alpha, beta);
-        undoMove(backUp, sit, from, possibility);
+        undoMove(backUp, sit, from, possibility, movesTillDraw);
         sit.setContinues(true);
         return alpha;
     }

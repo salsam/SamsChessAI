@@ -114,6 +114,19 @@ public class ChessBoardCopier {
 
         handleDestination(backUp, to, sit, from);
     }
+    
+    /**
+     * Undo move and set movesTillDraw.
+     * @param backUp
+     * @param sit
+     * @param from
+     * @param to
+     * @param movesTillDraw 
+     */
+    public static void undoMove(ChessBoard backUp, GameSituation sit, Square from, Square to, int movesTillDraw) {
+        undoMove(backUp, sit, from, to);
+        sit.setMovesTillDraw(movesTillDraw);
+    }
 
     private static void handleDestination(ChessBoard backUp, Square to, GameSituation sit, Square from) {
         Piece taken = backUp.getPiece(to);

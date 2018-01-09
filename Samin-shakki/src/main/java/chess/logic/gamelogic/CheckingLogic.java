@@ -60,7 +60,7 @@ public class CheckingLogic {
         game.getChessBoard().updateThreatenedSquares(getOpponent(player));
         return game.getChessBoard().threatenedSquares(getOpponent(player)).contains(playersKing.getLocation());
     }
-    
+
     public static boolean checkIfChecked(ChessBoard board, Player player) {
         Piece playersKing = board.getKings().get(player);
         if (playersKing == null) {
@@ -78,6 +78,7 @@ public class CheckingLogic {
      */
     public boolean checkMate(Player player) {
         ChessBoard backUp = ChessBoardCopier.copy(game.getChessBoard());
+        int movesTillDraw = game.getMovesTillDraw();
         for (Piece piece : game.getChessBoard().getPieces(player)) {
             if (piece.isTaken()) {
                 continue;
@@ -89,18 +90,19 @@ public class CheckingLogic {
                 game.getChessBoard().getMovementLogic().move(piece, possibility, game);
                 game.getChessBoard().updateThreatenedSquares(getOpponent(player));
                 if (!checkIfChecked(player)) {
-                    undoMove(backUp, game, from, possibility);
+                    undoMove(backUp, game, from, possibility, movesTillDraw);
                     return false;
                 }
-                undoMove(backUp, game, from, possibility);
+                undoMove(backUp, game, from, possibility, movesTillDraw);
             }
         }
 
         return true;
     }
-    
+
     public static boolean checkMate(GameSituation gameSit, Player player) {
         ChessBoard backUp = ChessBoardCopier.copy(gameSit.getChessBoard());
+        int movesTillDraw = gameSit.getMovesTillDraw();
         for (Piece piece : gameSit.getChessBoard().getPieces(player)) {
             if (piece.isTaken()) {
                 continue;
@@ -112,10 +114,10 @@ public class CheckingLogic {
                 gameSit.getChessBoard().getMovementLogic().move(piece, possibility, gameSit);
                 gameSit.getChessBoard().updateThreatenedSquares(getOpponent(player));
                 if (!checkIfChecked(gameSit.getChessBoard(), player)) {
-                    undoMove(backUp, gameSit, from, possibility);
+                    undoMove(backUp, gameSit, from, possibility, movesTillDraw);
                     return false;
                 }
-                undoMove(backUp, gameSit, from, possibility);
+                undoMove(backUp, gameSit, from, possibility, movesTillDraw);
             }
         }
 
@@ -129,13 +131,15 @@ public class CheckingLogic {
      * @return true player has no legal moves otherwise false.
      */
     public boolean stalemate(Player player) {
+        if (game.getChessBoard().getPieces(player).isEmpty()) {
+            return true;
+        }
         if (game.getChessBoard().getPieces(player).stream()
                 .filter((piece) -> !(piece.isTaken()))
                 .anyMatch((piece) -> (!game.getChessBoard().getMovementLogic()
                         .possibleMoves(piece, game.getChessBoard()).isEmpty()))) {
             return false;
         }
-        game.setContinues(false);
         return true;
     }
 

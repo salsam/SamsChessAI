@@ -20,12 +20,12 @@ public class NegamaxAlphaBeta implements AI {
     private GameSituation sit;
     private Move bestMove;
     private int searchDepth = 3;
-    private int highestVictory = GameSituationEvaluator.victory+3;
+    private int highestVictory = GameSituationEvaluator.victory + 3;
     private boolean alphaBeta = true;
 
     public void setSearchDepth(int searchDepth) {
         this.searchDepth = searchDepth;
-        highestVictory = GameSituationEvaluator.victory+searchDepth;
+        highestVictory = GameSituationEvaluator.victory + searchDepth;
     }
 
     public void setAlphaBeta(boolean alphaBeta) {
@@ -36,17 +36,18 @@ public class NegamaxAlphaBeta implements AI {
         if (depth == 0) {
             return GameSituationEvaluator.evaluateGameSituation(sit, player);
         } else if (CheckingLogic.checkMate(sit, player)) {
-            return -123456789-depth;
+            return -123456789 - depth;
         }
 
         int best = Integer.MIN_VALUE;
+        int movesTillDraw = sit.getMovesTillDraw();
         ChessBoard backUp = ChessBoardCopier.copy(sit.getChessBoard());
 
         for (Move m : sit.getChessBoard().getMovementLogic().possibleMovementsByPlayer(player, sit.getChessBoard())) {
             sit.getChessBoard().getMovementLogic().move(m.getPiece(), m.getTarget(), sit);
 
             if (CheckingLogic.checkIfChecked(sit.getChessBoard(), player)) {
-                ChessBoardCopier.undoMove(backUp, sit, m.getFrom(), m.getTarget());
+                ChessBoardCopier.undoMove(backUp, sit, m.getFrom(), m.getTarget(), movesTillDraw);
                 continue;
             }
 
@@ -61,7 +62,7 @@ public class NegamaxAlphaBeta implements AI {
                     bestMove = m;
                 }
             }
-            ChessBoardCopier.undoMove(backUp, sit, m.getFrom(), m.getTarget());
+            ChessBoardCopier.undoMove(backUp, sit, m.getFrom(), m.getTarget(), movesTillDraw);
             if (alphaBeta) {
                 alpha = max(alpha, comp);
                 if (alpha >= beta) {

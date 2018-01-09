@@ -149,14 +149,13 @@ public class InputProcessor {
         Square target = new Square(column, row);
         Square from = chosen.getLocation();
 
-        int movesTillDrawBeforeMovement = game.getSituation().getMovesTillDraw();
+        int movesTillDraw = game.getSituation().getMovesTillDraw();
         
         game.moveOnMainBoard(chosen, target);
         handlePromotion(aisTurn);
 
         if (game.getSituation().getCheckLogic().checkIfChecked(game.getSituation().whoseTurn())) {
-            undoMove(backUp, game.getSituation(), from, target);
-            game.getSituation().setMovesTillDraw(movesTillDrawBeforeMovement);
+            undoMove(backUp, game.getSituation(), from, target, movesTillDraw);
             game.cancelLastMove();
             return;
         }
