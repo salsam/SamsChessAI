@@ -20,10 +20,12 @@ public class NegamaxAlphaBeta implements AI {
     private GameSituation sit;
     private Move bestMove;
     private int searchDepth = 3;
+    private int highestVictory = GameSituationEvaluator.victory+3;
     private boolean alphaBeta = true;
 
     public void setSearchDepth(int searchDepth) {
         this.searchDepth = searchDepth;
+        highestVictory = GameSituationEvaluator.victory+searchDepth;
     }
 
     public void setAlphaBeta(boolean alphaBeta) {
@@ -73,7 +75,7 @@ public class NegamaxAlphaBeta implements AI {
     @Override
     public Move findBestMove(GameSituation sit) {
         this.sit = sit;
-        int best = negaMax(searchDepth, sit.whoseTurn(), -1000000000, 1000000000);
+        int best = negaMax(searchDepth, sit.whoseTurn(), -highestVictory, highestVictory);
         System.out.println("Best val: " + best);
         return bestMove;
     }

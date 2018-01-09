@@ -22,6 +22,7 @@ public class GameSituationEvaluator {
     private static Map<Klass, Integer> values;
     private static Map<Klass, Integer[][]> positionalValues;
     private static final int mobilityWeight = 10;
+    public static final int victory = 123456789;
 
     private static void initValues() {
         values = new HashMap();
@@ -116,15 +117,19 @@ public class GameSituationEvaluator {
      * @return value of given game situation from given player's point of view.
      */
     public static int evaluateGameSituation(GameSituation sit, Player player) {
-        int value = 0;
         if (sit.getCountOfCurrentSituation() >= 3) {
             return 0;
         } else if (sit.getCheckLogic().checkIfCheckedAndMated(player)) {
-            return -100000000;
+            return -victory;
         } else if (sit.getCheckLogic().stalemate(player)) {
             return 0;
         }
 
+        return evaluateWithoutWinConditions(sit, player);
+    }
+    
+    public static int evaluateWithoutWinConditions(GameSituation sit, Player player) {
+        int value=0;
         value += materialValue(sit, player);
         value += mobilityValue(sit, player);
         return value;

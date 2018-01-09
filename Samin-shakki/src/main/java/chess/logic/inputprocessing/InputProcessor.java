@@ -149,17 +149,20 @@ public class InputProcessor {
         Square target = new Square(column, row);
         Square from = chosen.getLocation();
 
+        int movesTillDrawBeforeMovement = game.getSituation().getMovesTillDraw();
+        
         game.moveOnMainBoard(chosen, target);
         handlePromotion(aisTurn);
 
-        chosen = null;
-        possibilities = null;
-
         if (game.getSituation().getCheckLogic().checkIfChecked(game.getSituation().whoseTurn())) {
             undoMove(backUp, game.getSituation(), from, target);
+            game.getSituation().setMovesTillDraw(movesTillDrawBeforeMovement);
             game.cancelLastMove();
             return;
         }
+        
+        chosen = null;
+        possibilities = null;
         
         game.getSituation().nextTurn();
         updateScreen();
@@ -195,13 +198,12 @@ public class InputProcessor {
         boolean ended = false;
         //Third repetition is currently disabled due to hashing errors!
         //To fix change <0 to game.getSituation().getCountOfCurrentSituation()>=3
-        if (false) {
+        if (game.getSituation().getCountOfCurrentSituation()>=3) {
             System.out.println(game.getSituation().getCountOfCurrentSituation());
             game.stop();
             textArea.setText("Third repetition of situation. Game ended as a draw!");
             ended = true;
-        } else if (game.getSituation().getMovesTillDraw() < -10) {
-            //Disabled, set condition to < 1 when fixing
+        } else if (game.getSituation().getMovesTillDraw() < 1) {
             game.stop();
             textArea.setText("50-move rule reached. Game ended as a draw!");
             ended = true;

@@ -162,6 +162,10 @@ public class GameSituation {
     public void decrementMovesTillDraw() {
         movesTillDraw--;
     }
+    
+    public void setMovesTillDraw(int moves) {
+        this.movesTillDraw=moves;
+    }
 
     public int getMovesTillDraw() {
         return movesTillDraw;
@@ -313,4 +317,68 @@ public class GameSituation {
         turn = 1;
     }
 
+    /**
+     * 
+     * @return true if current player has been checkmated.
+     */
+    
+    public boolean isLost() {
+        return hasLost(whoseTurn());
+    }
+    
+    /**
+     * 
+     * @param player to move.
+     * @return true if player has been checkmated.
+     */
+    public boolean hasLost(Player player) {
+        return checkLogic.checkIfCheckedAndMated(player);
+    }
+
+    /**
+     * 
+     * @return true if current situation is a draw.
+     */
+    
+    public boolean isDraw() {
+        return isDrawForPlayer(whoseTurn());
+    }
+    
+    /**
+     * 
+     * @param player player who is assumed to be moving next.
+     * @return true if game ended as draw assuming players turn.
+     */
+    public boolean isDrawForPlayer(Player player) {
+        if (getCountOfCurrentSituation() > 3) {
+            return true;
+        }
+
+        if (getMovesTillDraw() < 1) {
+            return true;
+        }
+
+        if (checkLogic.stalemate(player)) {
+            return true;
+        }
+
+        return checkLogic.insufficientMaterial();
+    }
+    
+    /**
+     * 
+     * @return true if game has ended.
+     */
+    public boolean isEnded() {
+        return isDraw() || isEnded();
+    }
+    
+    /**
+     * 
+     * @param player to move.
+     * @return true if game has ended when player is next to move.
+     */
+    public boolean isEndedForPlayer(Player player) {
+        return isDrawForPlayer(player) || hasLost(player);
+    }
 }

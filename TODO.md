@@ -1,6 +1,6 @@
 #Todo-list
 * Restructure running the program, AI's should have their own threads and copies of game to play with, which start running as game is started.
-* General refactorization of code into smaller functions and classes. For example AILogic should have AI interface so multiple versions easier to use.0
+* General refactorization of code into smaller functions and classes. For example AILogic should have AI interface so multiple versions easier to use.
 * Add static exchange evaluation to improve AI
 * Improve evaluation function by adding king safety/pawn structure
 * Add memory for moves and function that allows players to undo their moves
@@ -14,6 +14,9 @@
 * Fix AI sometimes stopping looking for better move to early. (Recursion depth 1)
 * Repainting now works "immediately" by waiting 100ms before AI starts doing anything. Better solution would be nice.
 * AIs should have their own game objects which will be synchronized each turn. This fixes repainting as well as allows AI to use players turn for computing next move.
+* To compare results from different levels, choose move with highest associated value from best move for last completed BFS and first incomplete. Alternative would be always taking best from last complete.
+* Add option to suggest to end game as a draw (could even make AI agreed if and only if it evaluates current situation negative)
+* The reason game ends in draw so often is that tested moves increment/reset counter even if they end up being undone. Fix by either saving movesTillDraw and resetting to old value with undoMove or by separating movement and movesTillDraw updates.
 
 Class specifics:
 
@@ -40,7 +43,14 @@ GameSituationEvaluator:
 AI in general:
 * Also end recursion if game has ended
 
+CheckingLgic:
+* Should static methods be preferred over non-static? Would alleviate number of unnecessary function calls but object version better for possible future gamemodes.
+
 GUI improvements:
 * Consider checks when showing possible moves.
 * Better end game screen to make game result more clear.
 * Option to quit/restart/main menu for gamewindow
+
+##Fixing moves till draw
+* Currently each time a move is tested, moves till draw decreases even when move gets reverted
+* Fix by memorizing movesTillDraw before movement and resetting to old value with undo.

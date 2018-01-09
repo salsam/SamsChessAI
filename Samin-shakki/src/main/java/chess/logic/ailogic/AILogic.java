@@ -16,6 +16,7 @@ import chess.logic.gamelogic.CheckingLogic;
 import chess.logic.gamelogic.PromotionLogic;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * This class is responsible for calculating AI's next move and then returning
@@ -57,10 +58,21 @@ public class AILogic implements AI {
     private Move[] killerCandidates;
     private Move[][] killerMoves;
     private TranspositionTable transpositionTable;
-    private long sum = 0;
-    private int count = 0;
 
-    private boolean useTranspositionTable = false;
+    private final int highestVictoryValue = GameSituationEvaluator.victory + plies;
+    List<Move> bestMovesFromCompleteLevels = new ArrayList<>();
+    int bestValueFromCompleteLevels = -highestVictoryValue;
+
+    //Lossful transposition table currently disabled, lossless TBA
+    private boolean usingTranspositionTable = false;
+    private boolean usingPrincipalVariation = true;
+    private boolean usingKillerMoves = true;
+    private boolean randomized = false;
+
+    private boolean debug = true;
+
+    //Complete levels should be used to prevent incorrect data being used in movement computation
+    private boolean usingCompleteLevels = true;
 
     public AILogic() {
         bestValues = new int[plies + 1];
@@ -98,6 +110,30 @@ public class AILogic implements AI {
 
     public long getTimeLimit() {
         return timeLimit;
+    }
+
+    public boolean isUsingTranspositionTable() {
+        return usingTranspositionTable;
+    }
+
+    public void setUsingTranspositionTable(boolean usingTranspositionTable) {
+        this.usingTranspositionTable = usingTranspositionTable;
+    }
+
+    public boolean isUsingPrincipalVariation() {
+        return usingPrincipalVariation;
+    }
+
+    public void setUsingPrincipalVariation(boolean usingPrincipalVariation) {
+        this.usingPrincipalVariation = usingPrincipalVariation;
+    }
+
+    public boolean isUsingKillerMoves() {
+        return usingKillerMoves;
+    }
+
+    public void setUsingKillerMoves(boolean usingKillerMoves) {
+        this.usingKillerMoves = usingKillerMoves;
     }
 
     /**
@@ -139,6 +175,10 @@ public class AILogic implements AI {
     public Move getBestMove() {
         //return bestMoves.get(new Random().nextInt(bestMoves.size()));
         //System.out.println("Number of as good choices: " + bestMoves.size());
+        if (usingCompleteLevels) {
+            if (randomized) return bestMovesFromCompleteLevels.get(new Random().nextInt(bestMovesFromCompleteLevels.size()));
+            return bestMovesFromCompleteLevels.get(0);
+        }
         return bestMoves.get(0);
     }
 
@@ -168,7 +208,7 @@ public class AILogic implements AI {
         }
         TranspositionKey key = null;
 
-        if (useTranspositionTable) {
+        if (usingTranspositionTable) {
             key = new TranspositionKey(maxingPlayer, sit.getBoardHash());
 
             if (transpositionTable.containsRelevantKey(key, height)) {
@@ -193,12 +233,12 @@ public class AILogic implements AI {
         }
         if (height == 0) {
             int value = evaluateGameSituation(sit, maxingPlayer);
-            if (useTranspositionTable) {
+            if (usingTranspositionTable) {
                 transpositionTable.put(key, new TranspositionEntry(height, value, Type.EXACT));
             }
             return value;
         } else if (CheckingLogic.checkMate(sit, maxingPlayer)) {
-            return -123456789 - height;
+            return -GameSituationEvaluator.victory - height;
         }
         return tryAllPossibleMoves(height, ogAlpha, alpha, maxingPlayer, beta);
     }
@@ -217,8 +257,6 @@ public class AILogic implements AI {
      * for being killer move. If beta-cutoff was reached, last killer candidate
      * will be saved as new killer move assuming such exists.
      *
-     * LoopCount keeps track of which of 4 loopthroughs is happening. First loop
-     * through only considers winning captures.
      *
      * @param height recursion depth left (height from leaves).
      * @param ogAlpha original alpha value at this height.
@@ -228,10 +266,14 @@ public class AILogic implements AI {
      * @return highest value associated with all legal moves.
      */
     public int tryAllPossibleMoves(int height, int ogAlpha, int alpha, Player maxingPlayer, int beta) {
-        bestValues[height] = -123456789;
+        bestValues[height] = -highestVictoryValue;
         ChessBoard backUp = copy(sit.getChessBoard());
-        alpha = testPrincipalMove(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
-        alpha = testKillerMoves(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
+        if (usingPrincipalVariation) {
+            alpha = testPrincipalMove(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
+        }
+        if (usingKillerMoves) {
+            alpha = testKillerMoves(height, maxingPlayer, ogAlpha, alpha, beta, backUp);
+        }
 
         for (Move movement : sit.getChessBoard().getMovementLogic().possibleMovementsByPlayer(maxingPlayer, sit.getChessBoard())) {
             if (alpha >= beta || System.currentTimeMillis() - start >= timeLimit) {
@@ -241,10 +283,14 @@ public class AILogic implements AI {
             alpha = testAMove(movement.getPiece(), movement.getTarget(), movement.getFrom(), maxingPlayer, height, ogAlpha, alpha, beta, backUp);
 
             if (alpha >= beta) {
-                saveNewKillerMove(height);
+                if (usingKillerMoves) {
+                    saveNewKillerMove(height);
+                }
                 break;
             }
-            killerCandidates[searchDepth - height] = movement;
+            if (usingKillerMoves) {
+                killerCandidates[searchDepth - height] = movement;
+            }
 
         }
 
@@ -286,10 +332,14 @@ public class AILogic implements AI {
             alpha = testAMove(moved, possibility, from, maxingPlayer, height, ogAlpha, alpha, beta, backUp);
 
             if (alpha >= beta) {
-                saveNewKillerMove(height);
+                if (usingKillerMoves) {
+                    saveNewKillerMove(height);
+                }
                 break;
             }
-            killerCandidates[searchDepth - height] = new Move(moved, possibility);
+            if (usingKillerMoves) {
+                killerCandidates[searchDepth - height] = new Move(moved, possibility);
+            }
         }
 
         return alpha;
@@ -479,7 +529,7 @@ public class AILogic implements AI {
         }
         int value = -negaMax(height - 1, -beta, -alpha, getOpponent(maxingPlayer));
 
-        if (useTranspositionTable) {
+        if (usingTranspositionTable) {
             addSituationToTranspositionTable(maxingPlayer, height, value, ogAlpha, beta);
         }
 
@@ -489,7 +539,9 @@ public class AILogic implements AI {
         }
         if (value > alpha) {
             alpha = value;
-            principalMoves[searchDepth - height] = new Move(piece, from, possibility);
+            if (usingPrincipalVariation) {
+                principalMoves[searchDepth - height] = new Move(piece, from, possibility);
+            }
         }
         return alpha;
     }
@@ -541,29 +593,45 @@ public class AILogic implements AI {
         sit = situation;
         transpositionTable.makePairsUnsaved();
         ml = sit.getChessBoard().getMovementLogic();
-        salvageLastPrincipalVariation();
+
+        bestMovesFromCompleteLevels = new ArrayList<>();
+        bestValueFromCompleteLevels = -highestVictoryValue;
+
+        if (usingPrincipalVariation) {
+            salvageLastPrincipalVariation();
+        }
         int i = 1;
         for (; i <= plies; i++) {
             searchDepth = i;
-            negaMax(i, -123456789, 123456789, situation.whoseTurn());
+            negaMax(i, -highestVictoryValue, highestVictoryValue, situation.whoseTurn());
             lastPlies++;
-            if (System.currentTimeMillis() - start >= timeLimit
-                    || Math.abs(bestValues[i]) > 20000) {
+            if (System.currentTimeMillis() - start >= timeLimit) {
                 break;
             }
-        }
-        System.out.println("Recursion depth: " + i);
-        //i out of bounds?
-        System.out.println(bestValues[i - 1]);
 
-        lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
+            bestMovesFromCompleteLevels = new ArrayList<>(bestMoves);
+            bestValueFromCompleteLevels = bestValues[i];
+            if (Math.abs(bestValues[i]) > 20000) {
+                break;
+            }
+
+        }
+        if (debug) {
+            System.out.println("Recursion depth: " + i);
+            System.out.println(bestValues[i]);
+            System.out.println("BestValue for compelete level was " + bestValueFromCompleteLevels);
+        }
+
+        if (usingPrincipalVariation) {
+            lastPrincipalVariation = new Pair(sit.getTurn(), principalMoves);
+        }
     }
 
     /*
     Find best move for current player in this game situation.
      */
     public Move findBestMove(GameSituation situation) {
-        System.out.println("Finding best move for " + situation.whoseTurn());
+        if (debug) System.out.println("Finding best move for " + situation.whoseTurn());
         findBestMoves(situation);
         return getBestMove();
     }
