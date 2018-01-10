@@ -10,6 +10,7 @@ import chess.domain.board.Piece;
 import chess.logic.chessboardinitializers.EmptyBoardInitializer;
 import static chess.domain.board.Klass.KING;
 import static chess.domain.board.Klass.PAWN;
+import chess.logic.chessboardinitializers.ChessBoardInitializer;
 import static chess.logic.chessboardinitializers.ChessBoardInitializer.putPieceOnBoard;
 import chess.logic.chessboardinitializers.StandardChessBoardInitializer;
 import org.junit.Before;
@@ -23,7 +24,7 @@ import org.junit.BeforeClass;
  */
 public class GameSituationTest {
 
-    private GameSituation game;
+    private static GameSituation game;
     private static StandardChessBoardInitializer init;
 
     public GameSituationTest() {
@@ -203,5 +204,16 @@ public class GameSituationTest {
         assertEquals(oldHash, game.getBoardHash());
 
         game = new GameSituation(new EmptyBoardInitializer(), new MovementLogic());
+    }
+    
+    @Test
+    public void resettingChessBoardRemovesExtraPieces() {
+        ChessBoardInitializer.putPieceOnBoard(game.getChessBoard(), new Piece(PAWN, 4,4,Player.WHITE, "wpp"));
+        game.reset();
+        assertEquals(0, game.getChessBoard().getPieces(Player.WHITE).size());
+        assertEquals(null, game.getChessBoard().getPiece(4, 4));
+        for (Piece piece : game.getChessBoard().getPieces(Player.WHITE)) {
+            assertNotEquals("wpp",piece.getPieceCode());
+        }
     }
 }

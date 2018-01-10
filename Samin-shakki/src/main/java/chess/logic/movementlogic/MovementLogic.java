@@ -5,6 +5,7 @@ import chess.domain.GameSituation;
 import chess.domain.Move;
 import chess.logic.movementlogic.piecemovers.*;
 import chess.domain.board.ChessBoard;
+import chess.domain.board.ChessBoardCopier;
 import chess.domain.board.Player;
 import chess.domain.board.Square;
 import static chess.domain.board.Klass.*;
@@ -182,28 +183,26 @@ public class MovementLogic {
     *Commit selected move by moving specified piece from selected square to target square.
      */
     public void commitMove(Move move, GameSituation sit) {
-        switch (move.getPiece().getKlass()) {
-            case BISHOP:
-                bishopMover.commitMove(move, sit);
-                break;
-            case KING:
-                kingMover.commitMove(move, sit);
-                break;
-            case KNIGHT:
-                knightMover.commitMove(move, sit);
-                break;
-            case PAWN:
-                pawnMover.commitMove(move, sit);
-                break;
-            case QUEEN:
-                queenMover.commitMove(move, sit);
-                break;
-            case ROOK:
-                rookMover.commitMove(move, sit);
-                break;
+        move(move.getPiece(),move.getTarget(), sit);
+    }
+    /**
+     * 
+     * @param move
+     * @param sit
+     * @return true if move committed successfully.
+     */
+    public boolean commitMoveIfKingWillNotGetChecked(Move move, GameSituation sit) {
+        int movesTillDraw=sit.getMovesTillDraw();
+        Player player=move.getPiece().getOwner();
+        ChessBoard backUp=ChessBoardCopier.copy(sit.getChessBoard());
+        
+        commitMove(move, sit);
+        
+        if (sit.getCheckLogic().checkIfChecked(player)) {
+            ChessBoardCopier.undoMove(backUp, sit, move, movesTillDraw);
+            return false;
         }
-
-        sit.incrementCountOfCurrentBoardSituation();
+        return true;
     }
 
     /**

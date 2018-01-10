@@ -136,4 +136,12 @@ public class PawnMoverTest {
         pawnMover.move(pawn, new Square(3, 5), sit);
         assertEquals(sit.getHasher().hash(board), sit.getBoardHash());
     }
+    
+    @Test
+    public void movingPawnResetsMovesTillDraw() {
+        sit.setMovesTillDraw(50);
+        assertEquals(50, sit.getMovesTillDraw());
+        pawnMover.move(pawn, new Square(2,5), sit);
+        assertEquals(100, sit.getMovesTillDraw());
+    }
 }

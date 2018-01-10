@@ -39,6 +39,7 @@ public class AILogicTest {
         sit = new GameSituation(new EmptyBoardInitializer(), new MovementLogic());
         ai.setSituation(sit);
         ai.setSearchDepth(3);
+        ai.setPlies(3);
     }
 
     @Test
@@ -450,5 +451,74 @@ public class AILogicTest {
         ai.setStart(System.currentTimeMillis());
         ai.findBestMoves(sit);
         assertTrue(chessBoardsAreDeeplyEqual(cb, bu));
+    }
+    
+    @Test
+    public void findingBestMovementDoesNotAffectMovesTillDraw() {
+        sit.setMovesTillDraw(50);
+        ChessBoard cb = sit.getChessBoard();
+
+        Piece bk = new Piece(KING, 1, 1, Player.BLACK, "bk");
+        Piece wk = new Piece(KING, 4, 5, Player.WHITE, "wk");
+        Piece bp1 = new Piece(PAWN, 1, 2, Player.BLACK, "bp1");
+        Piece wp1 = new Piece(PAWN, 1, 3, Player.WHITE, "wp1");
+        Piece wn1 = new Piece(KNIGHT, 2, 2, Player.WHITE, "wn1");
+        Piece bp2 = new Piece(PAWN, 5, 5, Player.BLACK, "bp2");
+        Piece wp2 = new Piece(PAWN, 6, 3, Player.WHITE, "wp2");
+        Piece wp3 = new Piece(PAWN, 7, 4, Player.WHITE, "wp3");
+
+        bp1.setHasBeenMoved(true);
+        bp2.setHasBeenMoved(true);
+        wp1.setHasBeenMoved(true);
+        wp2.setHasBeenMoved(true);
+        wp3.setHasBeenMoved(true);
+
+        putPieceOnBoard(cb, bk);
+        putPieceOnBoard(cb, wk);
+        putPieceOnBoard(cb, bp1);
+        putPieceOnBoard(cb, wp1);
+        putPieceOnBoard(cb, wn1);
+        putPieceOnBoard(cb, bp2);
+        putPieceOnBoard(cb, wp2);
+        putPieceOnBoard(cb, wp3);
+        
+        
+        ai.findBestMove(sit);
+        assertEquals(50, sit.getMovesTillDraw());
+    }
+    
+    @Test
+    public void findingBestMovementDoesNotAffectMovesTillDrawWhenChecked() {
+        sit.setMovesTillDraw(50);
+        ChessBoard cb = sit.getChessBoard();
+
+        Piece bk = new Piece(KING, 1, 1, Player.BLACK, "bk");
+        Piece wk = new Piece(KING, 4, 5, Player.WHITE, "wk");
+        Piece bp1 = new Piece(PAWN, 1, 2, Player.BLACK, "bp1");
+        Piece wp1 = new Piece(PAWN, 1, 3, Player.WHITE, "wp1");
+        Piece wn1 = new Piece(KNIGHT, 2, 2, Player.WHITE, "wn1");
+        Piece bp2 = new Piece(PAWN, 5, 5, Player.BLACK, "bp2");
+        Piece wp2 = new Piece(PAWN, 6, 3, Player.WHITE, "wp2");
+        Piece wp3 = new Piece(PAWN, 7, 4, Player.WHITE, "wp3");
+
+        bp1.setHasBeenMoved(true);
+        bp2.setHasBeenMoved(true);
+        wp1.setHasBeenMoved(true);
+        wp2.setHasBeenMoved(true);
+        wp3.setHasBeenMoved(true);
+
+        putPieceOnBoard(cb, bk);
+        putPieceOnBoard(cb, wk);
+        putPieceOnBoard(cb, bp1);
+        putPieceOnBoard(cb, wp1);
+        putPieceOnBoard(cb, wn1);
+        putPieceOnBoard(cb, bp2);
+        putPieceOnBoard(cb, wp2);
+        putPieceOnBoard(cb, wp3);
+        putPieceOnBoard(cb, new Piece(QUEEN, 4,4,Player.BLACK, "bq"));
+        
+        
+        ai.findBestMove(sit);
+        assertEquals(50, sit.getMovesTillDraw());
     }
 }

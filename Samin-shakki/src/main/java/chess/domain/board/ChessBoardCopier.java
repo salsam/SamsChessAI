@@ -1,6 +1,7 @@
 package chess.domain.board;
 
 import chess.domain.GameSituation;
+import chess.domain.Move;
 import static chess.domain.board.Klass.KING;
 import static chess.domain.board.Klass.PAWN;
 import chess.logic.chessboardinitializers.ChessBoardInitializer;
@@ -126,6 +127,10 @@ public class ChessBoardCopier {
     public static void undoMove(ChessBoard backUp, GameSituation sit, Square from, Square to, int movesTillDraw) {
         undoMove(backUp, sit, from, to);
         sit.setMovesTillDraw(movesTillDraw);
+    }
+    
+    public static void undoMove(ChessBoard backUp, GameSituation sit, Move move, int movesTillDraw) {
+        undoMove(backUp, sit, move.getFrom(), move.getTarget(), movesTillDraw);
     }
 
     private static void handleDestination(ChessBoard backUp, Square to, GameSituation sit, Square from) {

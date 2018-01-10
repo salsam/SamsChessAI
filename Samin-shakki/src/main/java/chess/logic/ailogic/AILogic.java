@@ -49,7 +49,7 @@ public class AILogic implements AI {
     private int[] bestValues;
     private long timeLimit;
     private long start;
-    private final int plies = 10;
+    private int plies = 10;
     private int lastPlies;
     private int searchDepth;
     private int oldestIndex;
@@ -97,6 +97,10 @@ public class AILogic implements AI {
 
     public void setSearchDepth(int searchDepth) {
         this.searchDepth = searchDepth;
+    }
+
+    public void setPlies(int plies) {
+        this.plies = plies;
     }
 
     public void setSituation(GameSituation sit) {
@@ -176,7 +180,9 @@ public class AILogic implements AI {
         //return bestMoves.get(new Random().nextInt(bestMoves.size()));
         //System.out.println("Number of as good choices: " + bestMoves.size());
         if (usingCompleteLevels) {
-            if (randomized) return bestMovesFromCompleteLevels.get(new Random().nextInt(bestMovesFromCompleteLevels.size()));
+            if (randomized) {
+                return bestMovesFromCompleteLevels.get(new Random().nextInt(bestMovesFromCompleteLevels.size()));
+            }
             return bestMovesFromCompleteLevels.get(0);
         }
         return bestMoves.get(0);
@@ -392,7 +398,7 @@ public class AILogic implements AI {
             return alpha;
         }
 
-        int movesTillDraw=sit.getMovesTillDraw();
+        int movesTillDraw = sit.getMovesTillDraw();
         ml.move(piece, possibility, sit);
         if (piece.getKlass() == PAWN && piece.isAtOpposingEnd()) {
             sit.decrementCountOfCurrentBoardSituation();
@@ -632,7 +638,9 @@ public class AILogic implements AI {
     Find best move for current player in this game situation.
      */
     public Move findBestMove(GameSituation situation) {
-        if (debug) System.out.println("Finding best move for " + situation.whoseTurn());
+        if (debug) {
+            System.out.println("Finding best move for " + situation.whoseTurn());
+        }
         findBestMoves(situation);
         return getBestMove();
     }
