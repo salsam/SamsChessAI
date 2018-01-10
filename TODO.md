@@ -16,7 +16,12 @@
 * AIs should have their own game objects which will be synchronized each turn. This fixes repainting as well as allows AI to use players turn for computing next move.
 * To compare results from different levels, choose move with highest associated value from best move for last completed BFS and first incomplete. Alternative would be always taking best from last complete.
 * Add option to suggest to end game as a draw (could even make AI agreed if and only if it evaluates current situation negative)
-* The reason game ends in draw so often is that tested moves increment/reset counter even if they end up being undone. Fix by either saving movesTillDraw and resetting to old value with undoMove or by separating movement and movesTillDraw updates.
+* Add method that moves a piece and cancels movement if players king is left checked.
+
+
+
+*MORE TESTS!
+
 
 Class specifics:
 
