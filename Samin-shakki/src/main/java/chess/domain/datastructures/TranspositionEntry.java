@@ -10,12 +10,14 @@ public class TranspositionEntry {
 
     private int height;
     private int value;
+    private boolean saved;
     private Type type;
 
     public TranspositionEntry(int height, int value, Type type) {
         this.height = height;
         this.value = value;
         this.type = type;
+        this.saved=false;
     }
 
     public int getHeight() {
@@ -40,6 +42,14 @@ public class TranspositionEntry {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public boolean isSaved() {
+        return saved;
+    }
+
+    public void setSaved(boolean saved) {
+        this.saved = saved;
     }
 
 }

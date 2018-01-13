@@ -7,7 +7,7 @@ import chess.domain.board.ChessBoardCopier;
 import static chess.domain.board.Klass.PAWN;
 import static chess.domain.board.Klass.QUEEN;
 import chess.domain.board.Player;
-import chess.domain.datastructures.TranspositionTable;
+import chess.domain.datastructures.LossfulTranspositionTable;
 import chess.logic.gamelogic.CheckingLogic;
 import chess.logic.gamelogic.PromotionLogic;
 import static java.lang.Integer.max;
@@ -25,7 +25,7 @@ public class NegamaxTranspositionAB implements AI {
     private Move bestMove;
     private int searchDepth = 3;
     private boolean alphaBeta = true;
-    private TranspositionTable cache;
+    private LossfulTranspositionTable cache;
 
     public void setSearchDepth(int searchDepth) {
         this.searchDepth = searchDepth;

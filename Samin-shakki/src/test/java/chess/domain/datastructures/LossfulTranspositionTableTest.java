@@ -12,39 +12,39 @@ import static org.junit.Assert.*;
  *
  * @author sami
  */
-public class TranspositionTableTest {
+public class LossfulTranspositionTableTest {
 
-    private TranspositionTable tt;
+    private LossfulTranspositionTable tt;
 
-    public TranspositionTableTest() {
+    public LossfulTranspositionTableTest() {
     }
 
     @Before
     public void setUp() {
-        tt = new TranspositionTable();
+        tt = new LossfulTranspositionTable();
     }
 
     @Test
     public void containsRelevantKeyReturnsFalseIfTableDoesNotContainKey() {
-        assertFalse(tt.containsRelevantKey(new TranspositionKey(Player.WHITE, 42), 0));
+        assertFalse(tt.containsKey(new TranspositionKey(Player.WHITE, 42), 0));
     }
 
     @Test
     public void containsKeyReturnsTrueIfKeyWasAdded() {
         tt.put(new TranspositionKey(Player.WHITE, 0), new TranspositionEntry(0, 0, Type.ALPHA));
-        assertTrue(tt.containsRelevantKey(new TranspositionKey(Player.WHITE, 0), 0));
+        assertTrue(tt.containsKey(new TranspositionKey(Player.WHITE, 0), 0));
     }
 
     @Test
     public void containsKeyReturnsFalseIfTableOnlyContainsKeyWithLowerDepth() {
         tt.put(new TranspositionKey(Player.WHITE, 0), new TranspositionEntry(0, 0, Type.ALPHA));
-        assertFalse(tt.containsRelevantKey(new TranspositionKey(Player.WHITE, 0), 1));
+        assertFalse(tt.containsKey(new TranspositionKey(Player.WHITE, 0), 1));
     }
 
     @Test
     public void containsKeyTrueIfTableContainsKeyWithHigherDepth() {
         tt.put(new TranspositionKey(Player.WHITE, 0), new TranspositionEntry(2, 0, Type.ALPHA));
-        assertTrue(tt.containsRelevantKey(new TranspositionKey(Player.WHITE, 0), 1));
+        assertTrue(tt.containsKey(new TranspositionKey(Player.WHITE, 0), 1));
     }
 
     @Test
@@ -56,11 +56,11 @@ public class TranspositionTableTest {
     }
 
     @Test
-    public void addedKeysHaveSavedFalse() {
+    public void addedEntriesHaveSavedFalse() {
         TranspositionKey key = new TranspositionKey(Player.WHITE, 0);
         TranspositionEntry entry = new TranspositionEntry(2, 0, Type.ALPHA);
         tt.put(key, entry);
-        assertFalse(key.isSaved());
+        assertFalse(entry.isSaved());
     }
 
     @Test
@@ -88,17 +88,17 @@ public class TranspositionTableTest {
     }
 
     @Test
-    public void makeAllKeysUnsavedMakesAllKeysUnsaved() {
+    public void makeAllPairsUnsavedMakesAllEntriesUnsaved() {
         TranspositionKey key = new TranspositionKey(Player.WHITE, 0);
         TranspositionEntry entry = new TranspositionEntry(2, 1, Type.EXACT);
         tt.put(key, entry);
         TranspositionKey newKey = new TranspositionKey(Player.BLACK, 7);
         TranspositionEntry deep = new TranspositionEntry(7, 42, Type.ALPHA);
         tt.put(newKey, deep);
-        key.setSaved(true);
-        newKey.setSaved(true);
+        tt.get(key).setSaved(true);
+        tt.get(newKey).setSaved(true);
         tt.makePairsUnsaved();
-        assertFalse(key.isSaved());
-        assertFalse(newKey.isSaved());
+        assertFalse(tt.get(key).isSaved());
+        assertFalse(tt.get(newKey).isSaved());
     }
 }

@@ -3,7 +3,6 @@ package chess.logic.ailogic;
 import chess.domain.GameSituation;
 import chess.domain.Move;
 import static chess.domain.board.ChessBoardCopier.copy;
-import static chess.domain.board.ChessBoardCopier.undoMove;
 import static chess.domain.board.Player.getOpponent;
 import static chess.logic.ailogic.GameSituationEvaluator.evaluateGameSituation;
 import chess.logic.movementlogic.MovementLogic;
@@ -17,6 +16,7 @@ import chess.logic.gamelogic.PromotionLogic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import static chess.domain.board.ChessBoardCopier.undoMove;
 
 /**
  * This class is responsible for calculating AI's next move and then returning
@@ -57,14 +57,14 @@ public class AILogic implements AI {
     private Move[] principalMoves;
     private Move[] killerCandidates;
     private Move[][] killerMoves;
-    private TranspositionTable transpositionTable;
+    private SimpleTranspositionTable transpositionTable;
 
     private final int highestVictoryValue = GameSituationEvaluator.victory + plies;
     List<Move> bestMovesFromCompleteLevels = new ArrayList<>();
     int bestValueFromCompleteLevels = -highestVictoryValue;
 
     //Lossful transposition table currently disabled, lossless TBA
-    private boolean usingTranspositionTable = false;
+    private boolean usingTranspositionTable = true;
     private boolean usingPrincipalVariation = true;
     private boolean usingKillerMoves = true;
     private boolean randomized = false;
@@ -84,7 +84,7 @@ public class AILogic implements AI {
         principalMoves = new Move[plies];
         searchDepth = 3;
         timeLimit = 1000;
-        transpositionTable = new TranspositionTable();
+        transpositionTable = new SimpleTranspositionTable();
     }
 
     public int[] getBestValues() {
@@ -215,9 +215,9 @@ public class AILogic implements AI {
         TranspositionKey key = null;
 
         if (usingTranspositionTable) {
-            key = new TranspositionKey(maxingPlayer, sit.getBoardHash());
+            key = new TranspositionKey(maxingPlayer, sit.getBoardHash(), height, sit.getMovesTillDraw());
 
-            if (transpositionTable.containsRelevantKey(key, height)) {
+            if (transpositionTable.containsKey(key)) {
                 TranspositionEntry entry = transpositionTable.get(key);
                 transpositionTable.makeSaved(key);
                 switch (entry.getType()) {
@@ -554,7 +554,7 @@ public class AILogic implements AI {
     }
 
     private void addSituationToTranspositionTable(Player maxingPlayer, int height, int value, int ogAlpha, int beta) {
-        TranspositionKey key = new TranspositionKey(maxingPlayer, sit.getBoardHash());
+        TranspositionKey key = new TranspositionKey(maxingPlayer, sit.getBoardHash(), height, sit.getMovesTillDraw());
         TranspositionEntry entry = new TranspositionEntry(height, value, Type.ALPHA);
 
         if (bestValues[height] <= ogAlpha) {

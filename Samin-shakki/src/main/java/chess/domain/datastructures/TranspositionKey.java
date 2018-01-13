@@ -4,7 +4,9 @@ import chess.domain.board.Player;
 import java.util.Objects;
 
 /**
- * This class is used as keys in transposition tables. NOTE:Doesn't account for whole game situation like turnsTillDraw and previousSituations!!!!!
+ * This class is used as keys in transposition tables.
+ * 
+ * Note:Doesn't account for earlier met situations!
  *
  * @author sami
  */
@@ -12,12 +14,19 @@ public class TranspositionKey {
 
     private Player whoseTurn;
     private long hashedBoard;
-    private boolean saved;
+    private int height;
+    private int turnsTillDraw;
 
     public TranspositionKey(Player whoseTurn, long hash) {
         this.whoseTurn = whoseTurn;
         this.hashedBoard = hash;
-        this.saved = false;
+    }
+
+    public TranspositionKey(Player whoseTurn, long hash, int height, int turnsTillDraw) {
+        this.whoseTurn = whoseTurn;
+        this.hashedBoard = hash;
+        this.height = height;
+        this.turnsTillDraw = turnsTillDraw;
     }
 
     public Player getWhoseTurn() {
@@ -36,19 +45,29 @@ public class TranspositionKey {
         this.hashedBoard = hashedBoard;
     }
 
-    public boolean isSaved() {
-        return saved;
+    public int getTurnsTillDraw() {
+        return turnsTillDraw;
     }
 
-    public void setSaved(boolean saved) {
-        this.saved = saved;
+    public void setTurnsTillDraw(int turnsTillDraw) {
+        this.turnsTillDraw = turnsTillDraw;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + Objects.hashCode(this.whoseTurn);
-        hash = 47 * hash + (int) (this.hashedBoard ^ (this.hashedBoard >>> 32));
+        int hash = 5;
+        hash = 83 * hash + Objects.hashCode(this.whoseTurn);
+        hash = 83 * hash + (int) (this.hashedBoard ^ (this.hashedBoard >>> 32));
+        hash = 83 * hash + this.height;
+        hash = 83 * hash + this.turnsTillDraw;
         return hash;
     }
 
@@ -64,10 +83,16 @@ public class TranspositionKey {
             return false;
         }
         final TranspositionKey other = (TranspositionKey) obj;
-        if (this.hashedBoard != other.getHashedBoard()) {
+        if (this.hashedBoard != other.hashedBoard) {
             return false;
         }
-        if (this.whoseTurn != other.getWhoseTurn()) {
+        if (this.height != other.height) {
+            return false;
+        }
+        if (this.turnsTillDraw != other.turnsTillDraw) {
+            return false;
+        }
+        if (this.whoseTurn != other.whoseTurn) {
             return false;
         }
         return true;
